@@ -74,13 +74,13 @@ describe('Integrity Suite', () => {
       expect(content).toContain('Fixed');
     });
 
-    it('should have a REQUIREMENTS.md file in Spanish', () => {
-      const reqPath = path.join(rootDir, '.integrity-suite', 'docs', 'REQUIREMENTS.md');
-      expect(fs.existsSync(reqPath), 'REQUIREMENTS.md is missing').toBe(true);
+    it('should have a requirements.md file in Spanish', () => {
+      const reqPath = path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md');
+      expect(fs.existsSync(reqPath), 'requirements.md is missing').toBe(true);
       const content = fs.readFileSync(reqPath, 'utf8');
 
       // Check for legal notice
-      expect(content, 'REQUIREMENTS.md missing language policy notice').toContain(
+      expect(content, 'requirements.md missing language policy notice').toContain(
         'mantiene estrictamente en **castellano**',
       );
 
@@ -90,7 +90,7 @@ describe('Integrity Suite', () => {
 
       // Check for at least some Spanish-specific character (optional but reinforces it's not plain ASCII)
       const spanishChars = /[áéíóúñÁÉÍÓÚÑ]/;
-      expect(spanishChars.test(content), 'REQUIREMENTS.md should contain Spanish characters').toBe(
+      expect(spanishChars.test(content), 'requirements.md should contain Spanish characters').toBe(
         true,
       );
     });
@@ -151,8 +151,8 @@ describe('Integrity Suite', () => {
     });
 
     it('should forbid commits if the latest requirement is not Approved', () => {
-      const reqPath = path.join(rootDir, '.integrity-suite', 'docs', 'REQUIREMENTS.md');
-      expect(fs.existsSync(reqPath), 'REQUIREMENTS.md is missing').toBe(true);
+      const reqPath = path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md');
+      expect(fs.existsSync(reqPath), 'requirements.md is missing').toBe(true);
       const content = fs.readFileSync(reqPath, 'utf8');
 
       // Find the "## Historial de requerimientos" section to ignore templates

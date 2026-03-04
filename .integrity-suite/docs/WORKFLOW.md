@@ -10,7 +10,7 @@ resolver problemas.
    2.1. Si el agente tiene suficiente información, procede a procesar el requerimiento.
    2.2. Si el agente necesita más información, solicita al usuario que proporcione los detalles necesarios.
    2.2.1. El usuario proporciona la información adicional solicitada.
-3. El agente procesa la información recibida y crea un registro en el histórico `REQUIREMENTS.md` con el formato
+3. El agente procesa la información recibida y crea un registro en el histórico `requirements.md` con el formato
    especificado en el archivo.
    3.1. Comprueba si existen tests que contradigan el requerimiento.
    3.1.1. Si existen tests contradictorios, el agente informa al usuario sobre los conflictos y solicita una resolución.
@@ -65,7 +65,7 @@ una colaboración eficiente para resolver problemas y cumplir con los requerimie
   del usuario.
 - El agente NO realiza commits de forma autónoma.
 - El agente sugiere un mensaje de commit cada vez que habla con el usuario y hay cambios, y pide autorización para efectuarlo.
-- El usuario autoriza el commit cambiando el campo **Estado** a **Aprobado** en el último requerimiento de `REQUIREMENTS.md`.
+- El usuario autoriza el commit cambiando el campo **Estado** a **Aprobado** en el último requerimiento de `requirements.md`.
 - La Integrity Suite bloquea cualquier commit si el último requerimiento no está **Aprobado**.
 - El agente SOLO realiza commits cuando el usuario lo autoriza y el estado es **Aprobado**.
 
@@ -74,5 +74,5 @@ una colaboración eficiente para resolver problemas y cumplir con los requerimie
 - El usuario solo expresa requerimientos o necesidades en el chat.
 - El usuario no modifica los tests.
 - El usuario no modifica el historial de requerimientos.
-- El usuario no modifica `REQUIREMENTS.md` ni `WORKFLOW.md`.
+- El usuario no modifica `requirements.md` ni `workflow.md`.
 - El usuario no modifica el código.

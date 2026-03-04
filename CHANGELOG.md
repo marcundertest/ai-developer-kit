@@ -5,20 +5,27 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] - 2026-03-05
+
+### Changed
+
+- Normalized infrastructure filenames by renaming `REQUIREMENTS.md` and `WORKFLOW.md` to lowercase (`requirements.md` and `workflow.md`).
+- Updated all references in documentation and tests to reflect these naming changes.
+
 ## [1.3.0] - 2026-03-05
 
 ### Added
 
-- Implemented "Commit Lockdown" mechanism: the Integrity Suite now blocks commits unless the latest requirement in `REQUIREMENTS.md` is explicitly marked as **Approved**.
-- Updated `WORKFLOW.md` and `prompt.md` to enforce the mandatory commit approval flow.
+- Implemented "Commit Lockdown" mechanism: the Integrity Suite now blocks commits unless the latest requirement in `requirements.md` is explicitly marked as **Approved**.
+- Updated `workflow.md` and `prompt.md` to enforce the mandatory commit approval flow.
 - Added automated test to verify the "Approved" status of requirements.
 
 ## [1.2.2] - 2026-03-04
 
 ### Changed
 
-- Reinforced language policy enforcement by explicitly stating requirements in `CHANGELOG.md` and `REQUIREMENTS.md`.
-- Added automated tests to ensure `CHANGELOG.md` remains in English (ASCII) and `REQUIREMENTS.md` remains in Spanish.
+- Reinforced language policy enforcement by explicitly stating requirements in `CHANGELOG.md` and `requirements.md`.
+- Added automated tests to ensure `CHANGELOG.md` remains in English (ASCII) and `requirements.md` remains in Spanish.
 
 ## [1.2.1] - 2026-03-04
 

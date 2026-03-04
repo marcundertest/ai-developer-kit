@@ -63,6 +63,27 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 028
+
+- **Fecha**: 2026-03-05 00:25
+- **Requerimiento**: Cambia el nombre de `WORKFLOW.md` y `REQUIREMENTS.md` a lowercase. Revisa todo el proyecto para que las referencias se actualicen.
+- **Información adicional**: N/A
+- **Interpretación**:
+  1. Renombrar físicamente los archivos a `workflow.md` y `requirements.md`.
+  2. Sustituir todas las menciones en el código, tests y documentación para mantener la consistencia.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `.integrity-suite/docs/requirements.md` (estado: renombrado)
+  - `.integrity-suite/docs/workflow.md` (estado: renombrado)
+  - `tests/integrity-suite.test.ts` (estado: modificado)
+  - `CHANGELOG.md` (estado: modificado)
+  - `.integrity-suite/docs/prompt.md` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 00:30 - ✅ Filenames normalized to lowercase and references updated (version 1.3.1)
+
 ### Requerimiento 027
 
 - **Fecha**: 2026-03-05 00:15
@@ -70,13 +91,13 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Información adicional**: El usuario debe marcar el requerimiento como "Aprobado" para permitir el commit. El agente debe sugerir el mensaje de commit.
 - **Interpretación**:
   1. Implementar un test en la Integrity Suite que bloquee el commit si el último requerimiento no está en estado "Aprobado".
-  2. Actualizar `WORKFLOW.md` y `prompt.md` con esta nueva mecánica de seguridad.
+  2. Actualizar `workflow.md` y `prompt.md` con esta nueva mecánica de seguridad.
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/integrity-suite.test.ts` (estado: modificado)
-  - `.integrity-suite/docs/WORKFLOW.md` (estado: modificado)
+  - `.integrity-suite/docs/workflow.md` (estado: modificado)
   - `.integrity-suite/docs/prompt.md` (estado: modificado)
-  - `.integrity-suite/docs/REQUIREMENTS.md` (estado: modificado)
+  - `.integrity-suite/docs/requirements.md` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
 - **Estado**: Aprobado
@@ -86,15 +107,15 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 026
 
 - **Fecha**: 2026-03-05 00:05
-- **Requerimiento**: Reforzar política de idiomas. Indicar inglés en `CHANGELOG.md` y castellano en `REQUIREMENTS.md`. Añadir tests de validación.
+- **Requerimiento**: Reforzar política de idiomas. Indicar inglés en `CHANGELOG.md` y castellano en `requirements.md`. Añadir tests de validación.
 - **Información adicional**: N/A
 - **Interpretación**:
-  1. Modificar cabeceras de `CHANGELOG.md` y `REQUIREMENTS.md`.
+  1. Modificar cabeceras de `CHANGELOG.md` y `requirements.md`.
   2. Actualizar `integrity-suite.test.ts` para verificar avisos legales y presencia de caracteres específicos.
 - **Testeable**: true
 - **Archivos afectados**:
   - `CHANGELOG.md` (estado: modificado)
-  - `.integrity-suite/docs/REQUIREMENTS.md` (estado: modificado)
+  - `.integrity-suite/docs/requirements.md` (estado: modificado)
   - `tests/integrity-suite.test.ts` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)

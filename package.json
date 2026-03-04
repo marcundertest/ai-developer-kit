@@ -1,6 +1,6 @@
 {
   "name": "project-template",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "type": "module",
   "description": "Strict project template for automated setup and code quality.",
   "main": "index.js",
