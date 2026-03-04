@@ -62,6 +62,44 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 008
+
+- **Fecha**: 2026-03-04 21:18
+- **Requerimiento**: crear directorios prompts y utils dentro de tools; archivos prompts/00-backlog-generation.md, 01-start.md, 02-resume.md, 03-health-check.md y utils/CHANGELOG.md
+- **Información adicional**: N/A
+- **Interpretación**: Completar la estructura de carpetas de herramientas (`tools`) incluyendo prompts base y utilidades: `developer-kit/tools/prompts/` y `developer-kit/tools/utils/CHANGELOG.md`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `developer-kit/tools/prompts/00-backlog-generation.md` (estado: creado)
+  - `developer-kit/tools/prompts/01-start.md` (estado: creado)
+  - `developer-kit/tools/prompts/02-resume.md` (estado: creado)
+  - `developer-kit/tools/prompts/03-health-check.md` (estado: creado)
+  - `developer-kit/tools/utils/CHANGELOG.md` (estado: creado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-04 21:20 - ✅ Folders and empty files created (version 1.0.5)
+
+### Requerimiento 007
+
+- **Fecha**: 2026-03-04 21:15
+- **Requerimiento**: dentro de developer-kit crea los archivos vacíos agent-rules.md y README.md; dentro de setup crea install.js, uninstall.js y backup.js; dentro de developer-kit crea el directorio docs y dentro backlog.md y style-guide.md
+- **Información adicional**: N/A
+- **Interpretación**: Poblar el kit con archivos base y estructura de documentación: `developer-kit/{agent-rules.md,README.md,docs/{backlog.md,style-guide.md}}` y `developer-kit/setup/{install.js,uninstall.js,backup.js}`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `developer-kit/agent-rules.md` (estado: creado)
+  - `developer-kit/README.md` (estado: creado)
+  - `developer-kit/setup/install.js` (estado: creado)
+  - `developer-kit/setup/uninstall.js` (estado: creado)
+  - `developer-kit/setup/backup.js` (estado: creado)
+  - `developer-kit/docs/backlog.md` (estado: creado)
+  - `developer-kit/docs/style-guide.md` (estado: creado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-04 21:18 - ✅ All files created and verified (version 1.0.6)
+
 ### Requerimiento 006
 
 - **Fecha**: 2026-03-04 21:10
