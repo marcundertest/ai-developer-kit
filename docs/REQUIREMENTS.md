@@ -62,6 +62,23 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 011
+
+- **Fecha**: 2026-03-04 22:00
+- **Requerimiento**: El proyecto debe tener un nombre genérico. Este repositorio será una plantilla inicial para cualquier otro proyecto.
+- **Información adicional**: N/A
+- **Interpretación**: Renombrar todas las referencias de `ai-developer-kit` a un nombre más genérico (`project-template`) en `package.json`, `LICENSE` y los tests correspondientes, ya que el repositorio servirá como base para otros proyectos.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `package.json` (estado: modificado)
+  - `LICENSE` (estado: modificado)
+  - `tests/initial-setup.test.ts` (estado: modificado)
+  - `tests/strict-commits.test.ts` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-04 22:05 - ✅ Project renamed and validated (version 1.0.8)
+
 ### Requerimiento 010
 
 - **Fecha**: 2026-03-04 21:35

@@ -48,8 +48,8 @@ describe('License Verification', () => {
     const licensePath = path.join(rootDir, 'LICENSE');
     const content = fs.readFileSync(licensePath, 'utf8');
 
-    expect(content).toContain('AI Developer Kit');
-    expect(content).toContain('ai-developer-kit');
+    expect(content).toContain('Project Template');
+    expect(content).toContain('project-template');
     expect(content).toContain('Marc Galindo');
     expect(content).toContain('https://marcundertest.com');
     expect(content).toContain('marcundertest');

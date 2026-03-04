@@ -11,7 +11,7 @@ describe('Project Initial Setup', () => {
     const pkgPath = path.join(rootDir, 'package.json');
     expect(fs.existsSync(pkgPath)).toBe(true);
     const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
-    expect(pkg.name).toBe('ai-developer-kit');
+    expect(pkg.name).toBe('project-template');
     expect(pkg.author).toContain('Marc Galindo');
     expect(pkg.author).toContain('marcundertest');
     expect(pkg.author).toContain('https://marcundertest.com');

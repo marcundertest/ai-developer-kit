@@ -1,8 +1,8 @@
 {
-  "name": "ai-developer-kit",
-  "version": "1.0.7",
+  "name": "project-template",
+  "version": "1.0.8",
   "type": "module",
-  "description": "AI-powered developer kit for automated coding and project setup.",
+  "description": "Strict project template for automated setup and code quality.",
   "main": "index.js",
   "scripts": {
     "test": "vitest run",
