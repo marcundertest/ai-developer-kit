@@ -63,6 +63,24 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 037
+
+- **Fecha**: 2026-03-05 00:50
+- **Requerimiento**: Proteger la estructura e integridad semántica del documento `requirements.md`.
+- **Información adicional**: Un despiste humano o divergencia de la IA podría eliminar una cabecera `### Requerimiento <num>` y fusionar dos requerimientos distintos bajo el mismo ID, pasando todos los controles subyacentes. Se debe testear que los bloques se mantengan separados (máximo un `Estado` o `Fecha` por bloque) y que además los identificadores numéricos decrezcan de forma estrictamente secuencial y ordenada.
+- **Interpretación**:
+  1. Añadir un test a `tests/meta/integrity-suite.test.ts` que recorra todos los bloques separados por encabezados de requerimientos.
+  2. Dentro del test, usar RegEx para vigilar que el número esté en secuencia decreciente respecto a sus predecesores y garantizar que no haya etiquetas maestras de metadatos duplicadas.
+  3. Modificar el mensaje de error del check de commits original para ser más explícito con el sujeto: `...by the user before committing`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 00:55 - ✅ Structural checks passed (version 1.4.3)
+
 ### Requerimiento 036
 
 - **Fecha**: 2026-03-05 00:45

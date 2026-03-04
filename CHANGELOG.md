@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.3] - 2026-03-05
+
+### Fixed
+
+- Added a robust structural validation test to `integrity-suite.test.ts` to prevent `.integrity-suite/docs/requirements.md` blocks from merging due to accidental missing headers. Ensures strict descending numeric sequence and no duplicate status entries per block.
+- Modified the unapproved commit test output message to enforce the user's role ("...Approved by the user before committing").
+
 ## [1.4.2] - 2026-03-05
 
 ### Added

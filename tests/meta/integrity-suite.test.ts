@@ -171,7 +171,7 @@ describe('Integrity Suite', () => {
       ).toBeGreaterThan(1);
 
       const historySection = historyParts[1];
-      const reqBlocks = historySection.split('### Requerimiento');
+      const reqBlocks = historySection.split('\n### Requerimiento');
 
       expect(
         reqBlocks.length,
@@ -182,8 +182,50 @@ describe('Integrity Suite', () => {
       // Ensure it contains "- **Estado**: Aprobado"
       expect(
         latestReq,
-        'The latest requirement must be marked as Approved before committing.',
+        'The latest requirement must be marked as Approved by the user before committing.',
       ).toContain('- **Estado**: Aprobado');
+    });
+
+    it('should maintain structured and sequential requirements in requirements.md', () => {
+      const reqPath = path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md');
+      if (!fs.existsSync(reqPath)) return;
+      const content = fs.readFileSync(reqPath, 'utf8');
+
+      const historyParts = content.split('## Historial de requerimientos');
+      if (historyParts.length < 2) return;
+
+      const reqBlocks = historyParts[1].split('\n### Requerimiento');
+      const numbers: number[] = [];
+
+      for (let i = 1; i < reqBlocks.length; i++) {
+        const block = reqBlocks[i];
+
+        // Prevent accidentally merged requirements (e.g. missing a heading)
+        const estadoMatches = (block.match(/- \*\*Estado\*\*:/g) || []).length;
+        expect(
+          estadoMatches,
+          `Multiple '- **Estado**:' entries found in a single Requerimiento block (missing heading?)`,
+        ).toBeLessThanOrEqual(1);
+
+        const fechaMatches = (block.match(/- \*\*Fecha\*\*:/g) || []).length;
+        expect(
+          fechaMatches,
+          `Multiple '- **Fecha**:' entries found in a single Requerimiento block (missing heading?)`,
+        ).toBeLessThanOrEqual(1);
+
+        // Check descending sequence
+        const numMatch = block.match(/^\s*(\d+)/);
+        if (numMatch) {
+          numbers.push(parseInt(numMatch[1], 10));
+        }
+      }
+
+      for (let i = 0; i < numbers.length - 1; i++) {
+        expect(
+          numbers[i],
+          `Requirements are not sorted in strict descending order: ${numbers[i]} followed by ${numbers[i + 1]}`,
+        ).toBeGreaterThan(numbers[i + 1]);
+      }
     });
 
     it('should have a zero-tolerance validation script with security audit', () => {
