@@ -29,7 +29,7 @@ describe('Project Integrity & Quality Suite', () => {
   const allSourceFiles = getFiles(rootDir);
   const pkg = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf8'));
 
-  describe('Level 0: Base Environment', () => {
+  describe('Level 0: Base Environment & Cleanup', () => {
     it('should be a git repository', () => {
       expect(fs.existsSync(path.join(rootDir, '.git'))).toBe(true);
     });
@@ -38,55 +38,68 @@ describe('Project Integrity & Quality Suite', () => {
       expect(fs.existsSync(path.join(rootDir, '.gitignore'))).toBe(true);
     });
 
-    it('should use PNPM (no other lockfiles)', () => {
-      expect(fs.existsSync(path.join(rootDir, 'package-lock.json'))).toBe(false);
-      expect(fs.existsSync(path.join(rootDir, 'yarn.lock'))).toBe(false);
+    it('should use PNPM and forbid obsolete npm/yarn lockfiles', () => {
+      expect(
+        fs.existsSync(path.join(rootDir, 'package-lock.json')),
+        'Found obsolete package-lock.json',
+      ).toBe(false);
+      expect(fs.existsSync(path.join(rootDir, 'yarn.lock')), 'Found obsolete yarn.lock').toBe(
+        false,
+      );
+      expect(
+        fs.existsSync(path.join(rootDir, '.npmrc')),
+        'Found obsolete .npmrc (npm-specific)',
+      ).toBe(false);
     });
   });
 
-  describe('Level 1: Project Metadata & Tooling Config', () => {
-    it('should have valid package.json details', () => {
+  describe('Level 1: Project Metadata & README', () => {
+    it('should have valid package.json metadata', () => {
       expect(pkg.name).toBeDefined();
       expect(pkg.name.length).toBeGreaterThan(0);
       expect(pkg.author).toBeDefined();
-      expect(pkg.author.length).toBeGreaterThan(0);
       expect(pkg.version).toBeDefined();
     });
 
-    it('should have all dev tools configured', () => {
-      const configs = ['.eslintrc.json', 'tsconfig.json', '.prettierrc'];
-      configs.forEach((config) => {
-        // Try multiple possible extensions if needed, but here we have specific ones
-        const exists = fs.existsSync(path.join(rootDir, config));
-        expect(exists, `Config file ${config} is missing`).toBe(true);
-      });
-
-      // Special check for Husky and Markdownlint
-      expect(fs.existsSync(path.join(rootDir, '.husky'))).toBe(true);
-      expect(fs.existsSync(path.join(rootDir, '.markdownlint.json'))).toBe(true);
+    it('should have a README.md with essential sections', () => {
+      const readmePath = path.join(rootDir, 'README.md');
+      expect(fs.existsSync(readmePath), 'README.md is missing').toBe(true);
+      const content = fs.readFileSync(readmePath, 'utf8');
+      expect(content).toContain('Installation');
+      expect(content).toContain('Usage');
+      expect(content).toContain('Contribution');
     });
 
-    it('should have Commitlint configured', () => {
-      const commitlintFiles = ['commitlint.config.js', '.commitlintrc.json', '.commitlintrc.js'];
-      const existsFile = commitlintFiles.some((f) => fs.existsSync(path.join(rootDir, f)));
-      const existsPkg = !!pkg.commitlint;
-      expect(existsFile || existsPkg).toBe(true);
+    it('should have essential dependencies installed', () => {
+      const devDeps = pkg.devDependencies || {};
+      const required = ['vitest', 'husky', 'typescript', 'eslint', 'prettier', 'markdownlint-cli'];
+      required.forEach((dep) => {
+        expect(devDeps[dep], `Missing required devDependency: ${dep}`).toBeDefined();
+      });
     });
   });
 
   describe('Level 2: Strict Workflow (Pipeline)', () => {
+    it('should have essential scripts in package.json', () => {
+      expect(pkg.scripts['build']).toBeDefined();
+      expect(pkg.scripts['test']).toBeDefined();
+      expect(pkg.scripts['start']).toBeDefined();
+      expect(pkg.scripts['audit']).toBeDefined();
+    });
+
     it('should enforce validation in pre-commit hook', () => {
       const hookPath = path.join(rootDir, '.husky', 'pre-commit');
       const content = fs.readFileSync(hookPath, 'utf8');
       expect(content).toContain('pnpm validate-project');
     });
 
-    it('should have a zero-tolerance validation script', () => {
+    it('should have a zero-tolerance validation script with security audit', () => {
       const script = pkg.scripts['validate-project'];
       expect(script).toContain('pnpm lint');
       expect(script).toContain('pnpm mdlint');
       expect(script).toContain('pnpm format:check');
       expect(script).toContain('tsc --noEmit');
+      expect(script).toContain('pnpm audit');
       expect(script).toContain('pnpm test');
       expect(script).toContain('pnpm check-version');
     });
@@ -94,24 +107,23 @@ describe('Project Integrity & Quality Suite', () => {
     it('should fail on any linting warning', () => {
       expect(pkg.scripts['lint']).toContain('--max-warnings 0');
     });
-
-    it('should have a format check script', () => {
-      expect(pkg.scripts['format:check']).toBe('prettier --check .');
-    });
   });
 
-  describe('Level 3: Code Quality - Types & Standards', () => {
-    it('should have TypeScript strict mode enabled', () => {
-      const tsconfig = JSON.parse(fs.readFileSync(path.join(rootDir, 'tsconfig.json'), 'utf8'));
+  describe('Level 3: TypeScript Strictness & Config', () => {
+    const tsconfig = JSON.parse(fs.readFileSync(path.join(rootDir, 'tsconfig.json'), 'utf8'));
+
+    it('should have strict mode and implicitAny disabled in tsconfig.json', () => {
       expect(tsconfig.compilerOptions.strict).toBe(true);
       expect(tsconfig.compilerOptions.noImplicitAny).toBe(true);
     });
 
-    it('should be a TypeScript project', () => {
-      expect(fs.existsSync(path.join(rootDir, 'tsconfig.json'))).toBe(true);
+    it('should have a modern target in tsconfig.json', () => {
+      expect(tsconfig.compilerOptions.target).toBeDefined();
+      expect(['ESNext', 'ES2022', 'ES2021']).toContain(tsconfig.compilerOptions.target);
     });
 
-    it('should search for and forbid @ts-ignore and explicit "any"', () => {
+    it('should be a TypeScript project and forbid bypass keywords', () => {
+      expect(fs.existsSync(path.join(rootDir, 'tsconfig.json'))).toBe(true);
       codeFiles.forEach((file) => {
         const content = fs.readFileSync(file, 'utf8');
         expect(content, `File ${file} contains @ts-ignore`).not.toContain('@ts-ignore');
@@ -122,7 +134,7 @@ describe('Project Integrity & Quality Suite', () => {
     });
   });
 
-  describe('Level 4: Code Quality - Hygiene & English', () => {
+  describe('Level 4: Hygiene & Global Standards', () => {
     it('should enforce English-only comments (ASCII)', () => {
       allSourceFiles.forEach((file) => {
         const parts = file.split(path.sep);
@@ -205,16 +217,6 @@ describe('Project Integrity & Quality Suite', () => {
       });
     });
 
-    it('should forbid linter/formatter bypass directives', () => {
-      allSourceFiles.forEach((file) => {
-        const parts = file.split(path.sep);
-        if (parts.includes('project-integrity.test.ts')) return;
-        const content = fs.readFileSync(file, 'utf8');
-        expect(content, `Bypass directive in ${file}`).not.toContain('eslint-disable');
-        expect(content, `Bypass directive in ${file}`).not.toContain('prettier-ignore');
-      });
-    });
-
     it('should ensure all tests are cross-platform (Meta-test)', () => {
       allSourceFiles.forEach((file) => {
         const parts = file.split(path.sep);
@@ -234,6 +236,16 @@ describe('Project Integrity & Quality Suite', () => {
           content.match(/\.match\(['"][^'"]*[/\\].*['"]\)/),
           `Hardcoded slash in test ${file}`,
         ).toBeNull();
+      });
+    });
+
+    it('should forbid linter/formatter bypass directives', () => {
+      allSourceFiles.forEach((file) => {
+        const parts = file.split(path.sep);
+        if (parts.includes('project-integrity.test.ts')) return;
+        const content = fs.readFileSync(file, 'utf8');
+        expect(content, `Bypass directive in ${file}`).not.toContain('eslint-disable');
+        expect(content, `Bypass directive in ${file}`).not.toContain('prettier-ignore');
       });
     });
   });

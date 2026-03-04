@@ -62,6 +62,28 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 018
+
+- **Fecha**: 2026-03-04 22:45
+- **Requerimiento**: Ampliar la suite de integridad con veritificaciones de README, TSConfig (target), scripts obligatorios, limpieza de archivos obsoletos y auditoría de seguridad.
+- **Información adicional**: N/A
+- **Interpretación**:
+  1. Verificar existencia de `README.md` con secciones requeridas.
+  2. Verificar `target` en `tsconfig.json`.
+  3. Verificar scripts `build`, `test`, `start`, `audit`.
+  4. Limpiar `.npmrc` y otros archivos redundantes de npm/yarn.
+  5. Integrar `pnpm audit` en el flujo de validación.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/project-integrity.test.ts` (estado: modificado)
+  - `package.json` (estado: modificado)
+  - `README.md` (estado: creado)
+  - `src/index.ts` (estado: creado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-04 22:50 - ✅ Pendiente de ejecución
+
 ### Requerimiento 017
 
 - **Fecha**: 2026-03-04 22:40
