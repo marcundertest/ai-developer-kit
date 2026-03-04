@@ -62,6 +62,32 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 012
+
+- **Fecha**: 2026-03-04 22:15
+- **Requerimiento**: Implementar una batería de reglas de calidad estrictas (inglés, no console.log, no TODOs, TS strict, no secretos, aislamiento de capas, tamaño de componentes, etc.) con tests individuales para cada una.
+- **Información adicional**: N/A
+- **Interpretación**: Crear una suite de pruebas completa en `tests/strict-quality.test.ts` que valide de forma individual:
+  1. Solo comentarios en inglés (ASCII).
+  2. Prohibición de `console.log/debug`.
+  3. Prohibición de `TODO/FIXME` fuera de Markdown.
+  4. Obligatoriedad de `strict: true` en TypeScript.
+  5. Prohibición de `@ts-ignore`.
+  6. Prohibición de `any` explícito.
+  7. Aislamiento de capas (no imports entre backend y frontend).
+  8. Límite de 300 líneas para componentes en `src/components`.
+  9. Prohibición de `eslint-disable` y `prettier-ignore`.
+  10. Detección básica de secretos (claves/contraseñas).
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/strict-quality.test.ts` (estado: creado)
+  - `package.json` (estado: modificado)
+  - `.eslintrc.json` (estado: modificado)
+- **Tests**:
+  - `tests/strict-quality.test.ts` (estado: creado)
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-04 22:20 - ✅ All individual strict rules verified (version 1.0.9)
+
 ### Requerimiento 011
 
 - **Fecha**: 2026-03-04 22:00
