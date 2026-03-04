@@ -275,6 +275,7 @@ describe('Project Integrity & Quality Suite', () => {
         const content = fs.readFileSync(file, 'utf8');
         expect(content, `Bypass directive in ${file}`).not.toContain('eslint-disable');
         expect(content, `Bypass directive in ${file}`).not.toContain('prettier-ignore');
+        expect(content, `Bypass directive in ${file}`).not.toContain('markdownlint-disable');
       });
     });
   });
