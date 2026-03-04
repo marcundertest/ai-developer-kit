@@ -1,6 +1,6 @@
 {
   "name": "project-template",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "type": "module",
   "description": "Strict project template for automated setup and code quality.",
   "main": "index.js",
@@ -18,7 +18,7 @@
     "mdlint": "markdownlint .",
     "check-version": "node .integrity-suite/scripts/check-version.js",
     "check-changelog": "node .integrity-suite/scripts/check-changelog.js",
-    "validate-project": "pnpm lint && pnpm mdlint && pnpm format:check && tsc --noEmit && pnpm audit && pnpm test && pnpm check-version && pnpm check-changelog",
+    "validate-project": "pnpm lint && pnpm mdlint && pnpm format:check && tsc --noEmit && pnpm audit && pnpm check-version && pnpm check-changelog && pnpm test",
     "prepare": "husky"
   },
   "author": "Marc Galindo (marcundertest) - https://marcundertest.com",

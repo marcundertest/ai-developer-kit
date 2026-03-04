@@ -63,6 +63,24 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 038
+
+- **Fecha**: 2026-03-05 01:00
+- **Requerimiento**: Ejecutar comprobaciones de metadatos antes de la suite de tests en `validate-project`.
+- **Información adicional**: Actualmente, `check-changelog` y `check-version` se ejecutan al final del comando de validación. Como los tests (`pnpm test`) pueden ser la parte más lenta o pueden fallar, la sanidad de los metadatos y del changelog no se evaluaría a menos que el test pase. Validarlos primero optimiza el fail-fast y asegura siempre un estado íntegro de changelog/versión.
+- **Interpretación**:
+  1. Mover `check-version` y `check-changelog` antes de `pnpm test` en el script `validate-project` del `package.json`.
+  2. Modificar el test original `should have a zero-tolerance validation script with security audit` para comprobar explícitamente y programáticamente en el array del script que `pnpm test` tiene un índice superior.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `package.json` (estado: modificado)
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 01:05 - ✅ Testing order asserted (version 1.4.4)
+
 ### Requerimiento 037
 
 - **Fecha**: 2026-03-05 00:50

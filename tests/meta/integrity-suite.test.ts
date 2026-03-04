@@ -235,8 +235,15 @@ describe('Integrity Suite', () => {
       expect(script).toContain('pnpm format:check');
       expect(script).toContain('tsc --noEmit');
       expect(script).toContain('pnpm audit');
-      expect(script).toContain('pnpm test');
       expect(script).toContain('pnpm check-version');
+      expect(script).toContain('pnpm check-changelog');
+      expect(script).toContain('pnpm test');
+
+      // Verify check-changelog and check-version run BEFORE test
+      expect(
+        script.indexOf('pnpm check-changelog'),
+        'check-changelog must run before pnpm test',
+      ).toBeLessThan(script.indexOf('pnpm test'));
     });
 
     it('should fail on any linting warning', () => {
