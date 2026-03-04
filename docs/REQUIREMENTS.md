@@ -62,6 +62,21 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 004
+
+- **Fecha**: 2026-03-04 21:05
+- **Requerimiento**: Quitar la regla de "line_length" en .markdownlint y reformatear todo el proyecto.
+- **Información adicional**: N/A
+- **Interpretación**: Desactivar la regla `MD013` en `.markdownlint.json` y ejecutar `npx prettier --write .` para normalizar el formato de todos los archivos del repositorio una única vez.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `.markdownlint.json` (estado: modificado)
+  - Todo el proyecto (estado: modificado por formateo)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-04 21:10 - ✅ 19/19 tests passed (version 1.0.2)
+
 ### Requerimiento 003
 
 - **Fecha**: 2026-03-04 21:00
