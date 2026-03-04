@@ -1,6 +1,6 @@
 {
   "name": "ai-developer-kit",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "type": "module",
   "description": "AI-powered developer kit for automated coding and project setup.",
   "main": "index.js",
@@ -36,8 +36,7 @@
   "lint-staged": {
     "*.ts": [
       "eslint --fix",
-      "prettier --write",
-      "vitest related --run --passWithNoTests"
+      "prettier --write"
     ],
     "*.md": [
       "markdownlint --fix",

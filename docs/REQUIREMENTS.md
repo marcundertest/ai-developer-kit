@@ -62,6 +62,20 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 005
+
+- **Fecha**: 2026-03-04 21:15
+- **Requerimiento**: que todos los tests se ejecuten antes de cada commit (sin excepción) y que si no pasa alguno, se interrumpa el commit
+- **Información adicional**: N/A
+- **Interpretación**: Asegurar que el flujo de pre-commit siempre ejecute la suite completa de tests (`vitest run`) y no solo los tests relacionados, abortando el commit si falla cualquier test.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `package.json` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-04 21:20 - ✅ 19/19 tests passed (version 1.0.3)
+
 ### Requerimiento 004
 
 - **Fecha**: 2026-03-04 21:05
