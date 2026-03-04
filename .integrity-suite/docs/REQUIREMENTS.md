@@ -62,6 +62,38 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 024
+
+- **Fecha**: 2026-03-04 23:45
+- **Requerimiento**: Traducir `prompt.md` al castellano.
+- **Información adicional**: N/A
+- **Interpretación**:
+  1. Traducir íntegramente el contenido de `prompt.md`.
+  2. Añadir regla explícita de idioma para que el agente responda en castellano.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `.integrity-suite/docs/prompt.md` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-04 23:50 - ✅ Prompt traducido al castellano (versión 1.2.0)
+
+### Requerimiento 023
+
+- **Fecha**: 2026-03-04 23:35
+- **Requerimiento**: Actualizar `prompt.md` para introducir la Integrity Suite y establecer restricciones de modificación para agentes.
+- **Información adicional**: N/A
+- **Interpretación**:
+  1. Redactar una introducción clara sobre `tests/integrity-suite.test.ts` y `.integrity-suite/`.
+  2. Prohibir explícitamente la modificación de estos archivos (excepto `REQUIREMENTS.md`).
+- **Testeable**: true
+- **Archivos afectados**:
+  - `.integrity-suite/docs/prompt.md` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-04 23:40 - ✅ Prompt updated with strict integrity rules (version 1.1.9)
+
 ### Requerimiento 022
 
 - **Fecha**: 2026-03-04 23:28
