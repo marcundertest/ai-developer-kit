@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-03-05
+
+### Changed
+
+- Moved `tests/integrity-suite.test.ts` to `tests/meta/integrity-suite.test.ts` to logically separate it from future unit/e2e tests.
+- Updated all internal project references (Prompts, Requirements, Workflows) to point to the new location.
+- Removed sample `src/index.ts` file to establish an authentic blank project template.
+- Separated testing strategy into `test:meta`, `test:unit`, and `test:e2e` scripts to allow sequential testing across different layers, enforcing all suites to succeed before commit.
+
 ## [1.3.5] - 2026-03-05
 
 ### Changed

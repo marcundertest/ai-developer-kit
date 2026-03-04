@@ -63,6 +63,46 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 034
+
+- **Fecha**: 2026-03-05 00:30
+- **Requerimiento**: Limpiar el proyecto eliminando `src/index.ts` y preparar los scripts de los tests para soportar la suite completa.
+- **Información adicional**: El archivo `index.ts` de ejemplo debe ser eliminado para dejar la plantilla limpia y vacía. Además, `package.json` debe definir scripts específicos: `test:meta`, `test:unit` y `test:e2e` que se ejecuten secuencialmente antes de cada commit.
+- **Interpretación**:
+  1. Eliminar `src/index.ts`.
+  2. Separar el script `test` en sub-scripts (`test:meta`, `test:unit`, `test:e2e`) usando `--passWithNoTests` para evitar falsos negativos en carpetas vacías/inexistentes.
+  3. Ejecutar todo secuencialmente (`pnpm test`) durante la validación del commit.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `src/index.ts` (estado: eliminado)
+  - `package.json` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 00:35 - ✅ Scripts updated, empty src ready, version 1.4.0
+
+### Requerimiento 033
+
+- **Fecha**: 2026-03-05 00:25
+- **Requerimiento**: Mover `tests/integrity-suite.test.ts` a `tests/meta/` para organizar mejor la carpeta de tests.
+- **Información adicional**: Se debe permitir que la carpeta `tests/` albergue tests unitarios y e2e. El Integrity Suite ahora se considera un meta-test. Se deben actualizar todas las referencias de rutas en el proyecto (`prompt.md`, `requirements.md`, `workflow.md`).
+- **Interpretación**:
+  1. Crear carpeta `tests/meta/`.
+  2. Mover el archivo.
+  3. Modificar rutas y la resolución de `rootDir` en el archivo de tests.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: movido y modificado)
+  - `.integrity-suite/docs/prompt.md` (estado: modificado)
+  - `.integrity-suite/docs/requirements.md` (estado: modificado)
+  - `.integrity-suite/docs/workflow.md` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 00:30 - ✅ File moved to tests/meta/ and all paths updated (version 1.4.0)
+
 ### Requerimiento 032
 
 - **Fecha**: 2026-03-05 01:15
@@ -73,7 +113,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   2. Implementar métodos de ofuscación (ej. `'eslint-' + 'disable'`) o chequeo de caracteres línea a línea (`every(char => char.charCodeAt <= 127)`) para evitar falsos positivos al leer el propio archivo de test.
 - **Testeable**: true
 - **Archivos afectados**:
-  - `tests/integrity-suite.test.ts` (estado: modificado)
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
 - **Estado**: Aprobado
@@ -90,7 +130,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   2. Corregir el filtro de exclusión de la carpeta `tests/` para que no contamine con rutas absolutas, y asegurar que `codeFiles` identifique correctamente todo archivo validable en la raíz.
 - **Testeable**: true
 - **Archivos afectados**:
-  - `tests/integrity-suite.test.ts` (estado: modificado)
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
 - **Estado**: Aprobado
@@ -107,7 +147,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   2. Implementar un patrón de búsqueda de secretos más robusto que no se limite a asignaciones simples y que detecte cadenas de alta entropía o formatos comunes de "leaks".
 - **Testeable**: true
 - **Archivos afectados**:
-  - `tests/integrity-suite.test.ts` (estado: modificado)
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
 - **Estado**: Aprobado
@@ -124,7 +164,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   2. Asegurar que si el parser falla, el commit se bloquee.
 - **Testeable**: true
 - **Archivos afectados**:
-  - `tests/integrity-suite.test.ts` (estado: modificado)
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
 - **Estado**: Aprobado
@@ -143,7 +183,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Archivos afectados**:
   - `.integrity-suite/docs/requirements.md` (estado: renombrado)
   - `.integrity-suite/docs/workflow.md` (estado: renombrado)
-  - `tests/integrity-suite.test.ts` (estado: modificado)
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
   - `CHANGELOG.md` (estado: modificado)
   - `.integrity-suite/docs/prompt.md` (estado: modificado)
 - **Tests**:
@@ -162,7 +202,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   2. Actualizar `workflow.md` y `prompt.md` con esta nueva mecánica de seguridad.
 - **Testeable**: true
 - **Archivos afectados**:
-  - `tests/integrity-suite.test.ts` (estado: modificado)
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
   - `.integrity-suite/docs/workflow.md` (estado: modificado)
   - `.integrity-suite/docs/prompt.md` (estado: modificado)
   - `.integrity-suite/docs/requirements.md` (estado: modificado)
@@ -184,7 +224,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Archivos afectados**:
   - `CHANGELOG.md` (estado: modificado)
   - `.integrity-suite/docs/requirements.md` (estado: modificado)
-  - `tests/integrity-suite.test.ts` (estado: modificado)
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
 - **Estado**: Aprobado
@@ -229,7 +269,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Requerimiento**: Actualizar `prompt.md` para introducir la Integrity Suite y establecer restricciones de modificación para agentes.
 - **Información adicional**: N/A
 - **Interpretación**:
-  1. Redactar una introducción clara sobre `tests/integrity-suite.test.ts` y `.integrity-suite/`.
+  1. Redactar una introducción clara sobre `tests/meta/integrity-suite.test.ts` y `.integrity-suite/`.
   2. Prohibir explícitamente la modificación de estos archivos (excepto `REQUIREMENTS.md`).
 - **Testeable**: true
 - **Archivos afectados**:
@@ -251,7 +291,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `.integrity-suite/` (estado: renombrado)
-  - `tests/integrity-suite.test.ts` (estado: renombrado)
+  - `tests/meta/integrity-suite.test.ts` (estado: renombrado)
   - `package.json` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
@@ -271,7 +311,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Archivos afectados**:
   - `.integrity-suite/` (estado: renombrado)
   - `package.json` (estado: modificado)
-  - `tests/integrity-suite.test.ts` (estado: modificado)
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
 - **Resultados de los tests**:
@@ -290,7 +330,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Archivos afectados**:
   - `package.json` (estado: modificado)
   - `.integrity-suite/` (estado: creado)
-  - `tests/integrity-suite.test.ts` (estado: modificado)
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
 - **Resultados de los tests**:

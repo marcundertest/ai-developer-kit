@@ -4,7 +4,7 @@ import * as path from 'path';
 import { fileURLToPath } from 'url';
 
 describe('Integrity Suite', () => {
-  const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 
   const getFiles = (dir: string, allFiles: string[] = []) => {
     if (!fs.existsSync(dir)) return allFiles;
