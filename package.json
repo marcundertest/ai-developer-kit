@@ -1,6 +1,6 @@
 {
   "name": "ai-developer-kit",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "type": "module",
   "description": "AI-powered developer kit for automated coding and project setup.",
   "main": "index.js",

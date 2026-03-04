@@ -62,6 +62,22 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 006
+
+- **Fecha**: 2026-03-04 21:10
+- **Requerimiento**: crear un directorio llamado "developer-kit" y dentro de él los directorios "tools", "scripts" y "setup"
+- **Información adicional**: N/A
+- **Interpretación**: Crear una estructura de directorios en la raíz del proyecto para organizar los componentes del kit: `developer-kit/{tools,scripts,setup}`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `developer-kit/tools/` (estado: creado)
+  - `developer-kit/scripts/` (estado: creado)
+  - `developer-kit/setup/` (estado: creado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-04 21:12 - ✅ All checks passed (version 1.0.4)
+
 ### Requerimiento 005
 
 - **Fecha**: 2026-03-04 21:15
