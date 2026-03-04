@@ -62,6 +62,25 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 020
+
+- **Fecha**: 2026-03-04 23:10
+- **Requerimiento**: Reorganizar el proyecto para ocultar infraestructura. Limpiar `developer-kit`. Mover `docs` y `scripts` a `.guardian`.
+- **Información adicional**: N/A
+- **Interpretación**:
+  1. Borrar `developer-kit`.
+  2. Crear `.guardian` y mover `docs` y `scripts` dentro.
+  3. Actualizar `package.json` y tests de integridad.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `package.json` (estado: modificado)
+  - `.guardian/` (estado: creado)
+  - `tests/project-integrity.test.ts` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-04 23:15 - ✅ Project reorganized into .guardian (version 1.1.7)
+
 ### Requerimiento 019
 
 - **Fecha**: 2026-03-04 22:55

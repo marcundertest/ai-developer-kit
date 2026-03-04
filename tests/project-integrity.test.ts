@@ -12,7 +12,12 @@ describe('Project Integrity & Quality Suite', () => {
     files.forEach((file) => {
       const name = path.join(dir, file);
       if (fs.statSync(name).isDirectory()) {
-        if (!name.includes('node_modules') && !name.includes('.git') && !name.includes('dist')) {
+        if (
+          !name.includes('node_modules') &&
+          !name.includes('.git') &&
+          !name.includes('dist') &&
+          !name.includes('.guardian')
+        ) {
           getFiles(name, allFiles);
         }
       } else {
@@ -186,7 +191,7 @@ describe('Project Integrity & Quality Suite', () => {
     it('should forbit console.log/debug in source', () => {
       codeFiles.forEach((file) => {
         const parts = file.split(path.sep);
-        if (parts.includes('scripts') || parts.includes('check-version.js')) return;
+        if (parts.includes('.guardian') || parts.includes('check-version.js')) return;
         const content = fs.readFileSync(file, 'utf8');
         expect(content, `Console usage in ${file}`).not.toMatch(/console\.(log|debug|info)/);
       });
