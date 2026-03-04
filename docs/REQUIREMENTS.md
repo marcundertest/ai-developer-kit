@@ -62,6 +62,28 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 019
+
+- **Fecha**: 2026-03-04 22:55
+- **Requerimiento**: Mover `CHANGELOG.md` a la raíz, usar plantilla "Keep a Changelog" en inglés y sin emojis, y asegurar que cambie en cada commit.
+- **Información adicional**: N/A
+- **Interpretación**:
+  1. Reubicar `CHANGELOG.md` desde las herramientas al root.
+  2. Implementar `scripts/check-changelog.js` para forzar actualizaciones.
+  3. Añadir tests de calidad (no emojis, ASCII) al Integrity Suite.
+  4. Integrar en `validate-project`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `CHANGELOG.md` (estado: movido y modificado)
+  - `scripts/check-changelog.js` (estado: creado)
+  - `package.json` (estado: modificado)
+  - `tests/project-integrity.test.ts` (estado: modificado)
+  - `.markdownlint.json` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-04 23:05 - ✅ CHANGELOG managed and verified (version 1.1.5)
+
 ### Requerimiento 018
 
 - **Fecha**: 2026-03-04 22:45

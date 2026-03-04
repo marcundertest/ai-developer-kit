@@ -38,6 +38,35 @@ describe('Project Integrity & Quality Suite', () => {
       expect(fs.existsSync(path.join(rootDir, '.gitignore'))).toBe(true);
     });
 
+    it('should have essential config files (.husky, .markdownlint.json)', () => {
+      expect(fs.existsSync(path.join(rootDir, '.husky'))).toBe(true);
+      expect(fs.existsSync(path.join(rootDir, '.markdownlint.json'))).toBe(true);
+    });
+
+    it('should have a CHANGELOG.md file in English and without emojis', () => {
+      const changelogPath = path.join(rootDir, 'CHANGELOG.md');
+      expect(fs.existsSync(changelogPath), 'CHANGELOG.md is missing').toBe(true);
+      const content = fs.readFileSync(changelogPath, 'utf8');
+
+      // Check for emojis (simplified regex for common pictographs/emojis)
+      const emojiRegex =
+        /[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F1E6}-\u{1F1FF}\u{1F191}-\u{1F251}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F171}\u{1F17E}-\u{1F17F}\u{1F18E}\u{3030}\u{2B50}\u{2B55}\u{2934}-\u{2935}\u{2B05}-\u{2B07}\u{2B1B}-\u{2B1C}\u{3297}\u{3299}]/u;
+      expect(content, 'CHANGELOG.md contains emojis').not.toMatch(emojiRegex);
+
+      // Check for non-ASCII characters (English only)
+      // eslint-disable-next-line no-control-regex
+      const nonAscii = /[^\u0000-\u007F]/;
+      expect(nonAscii.test(content), 'CHANGELOG.md contains non-English characters').toBe(false);
+      // Note: We allow some special markdown characters if needed, but standard English ASCII is safer.
+      // Actually, standard Keep a Changelog might use some UTF-8 if names are non-English, but here we enforce ASCII for the content.
+      // But [Keep a Changelog] (https://...) contains non-ASCII punctuation sometimes. Let's be careful.
+      // Let's just check the headers and lists for English words.
+      expect(content).toContain('Changelog');
+      expect(content).toContain('Added');
+      expect(content).toContain('Changed');
+      expect(content).toContain('Fixed');
+    });
+
     it('should use PNPM and forbid obsolete npm/yarn lockfiles', () => {
       expect(
         fs.existsSync(path.join(rootDir, 'package-lock.json')),
