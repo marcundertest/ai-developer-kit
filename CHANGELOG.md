@@ -5,12 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.8] - 2026-03-04
+
+### Changed
+
+- Renamed the infrastructure directory to `.integrity-suite`.
+- Renamed the main test file to `tests/integrity-suite.test.ts`.
+- Updated all internal references, scripts, and ignore patterns to the new naming.
+
 ## [1.1.7] - 2026-03-04
 
 ### Changed
 
 - Reorganized project structure to isolate template-specific files.
-- Moved `docs` and `scripts` into a new hidden directory: `.guardian`.
+- Moved `docs` and `scripts` into a new hidden directory: `.integrity-suite` (originally `.guardian`).
 - Updated all internal references (package.json, tests) to the new structure.
 
 ### Removed

@@ -62,24 +62,62 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 022
+
+- **Fecha**: 2026-03-04 23:28
+- **Requerimiento**: Renombrar el directorio `.project-integrity` y el test `project-integrity.test.ts` a `integrity-suite`.
+- **Información adicional**: N/A
+- **Interpretación**:
+  1. Cambiar nombre de carpeta a `.integrity-suite`.
+  2. Cambiar nombre de archivo de test a `integrity-suite.test.ts`.
+  3. Actualizar `package.json` y lógica de exclusión.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `.integrity-suite/` (estado: renombrado)
+  - `tests/integrity-suite.test.ts` (estado: renombrado)
+  - `package.json` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-04 23:30 - ✅ Suite and directory renamed to integrity-suite (version 1.1.8)
+
+### Requerimiento 021
+
+- **Fecha**: 2026-03-04 23:20
+- **Requerimiento**: Renombrar el directorio de infraestructura de `.guardian` a `.project-integrity` (ahora `integrity-suite`) para consistencia con la suite de tests.
+- **Información adicional**: N/A
+- **Interpretación**:
+  1. Cambiar nombre de carpeta.
+  2. Actualizar scripts en `package.json`.
+  3. Actualizar lógica de exclusión en los tests.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `.integrity-suite/` (estado: renombrado)
+  - `package.json` (estado: modificado)
+  - `tests/integrity-suite.test.ts` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-04 23:25 - ✅ Infrastructure directory renamed to .project-integrity (version 1.1.8)
+
 ### Requerimiento 020
 
 - **Fecha**: 2026-03-04 23:10
-- **Requerimiento**: Reorganizar el proyecto para ocultar infraestructura. Limpiar `developer-kit`. Mover `docs` y `scripts` a `.guardian`.
+- **Requerimiento**: Reorganizar el proyecto para ocultar infraestructura. Limpiar `developer-kit`. Mover `docs` y `scripts` a `.integrity-suite`.
 - **Información adicional**: N/A
 - **Interpretación**:
   1. Borrar `developer-kit`.
-  2. Crear `.guardian` y mover `docs` y `scripts` dentro.
+  2. Crear `.integrity-suite` y mover `docs` y `scripts` dentro.
   3. Actualizar `package.json` y tests de integridad.
 - **Testeable**: true
 - **Archivos afectados**:
   - `package.json` (estado: modificado)
-  - `.guardian/` (estado: creado)
-  - `tests/project-integrity.test.ts` (estado: modificado)
+  - `.integrity-suite/` (estado: creado)
+  - `tests/integrity-suite.test.ts` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
 - **Resultados de los tests**:
-  - **Iteración 01**: 2026-03-04 23:15 - ✅ Project reorganized into .guardian (version 1.1.7)
+  - **Iteración 01**: 2026-03-04 23:15 - ✅ Project reorganized into .integrity-suite (version 1.1.7)
 
 ### Requerimiento 019
 

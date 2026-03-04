@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 
-describe('Project Integrity & Quality Suite', () => {
+describe('Integrity Suite', () => {
   const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
   const getFiles = (dir: string, allFiles: string[] = []) => {
@@ -16,7 +16,7 @@ describe('Project Integrity & Quality Suite', () => {
           !name.includes('node_modules') &&
           !name.includes('.git') &&
           !name.includes('dist') &&
-          !name.includes('.guardian')
+          !name.includes('.integrity-suite')
         ) {
           getFiles(name, allFiles);
         }
@@ -172,7 +172,7 @@ describe('Project Integrity & Quality Suite', () => {
     it('should enforce English-only comments (ASCII)', () => {
       allSourceFiles.forEach((file) => {
         const parts = file.split(path.sep);
-        if (parts.includes('project-integrity.test.ts')) return;
+        if (parts.includes('integrity-suite.test.ts')) return;
         const content = fs.readFileSync(file, 'utf8');
         const commentRegex = /(\/\/[^\n]*|\/\*[\s\S]*?\*\/|<!--[\s\S]*?-->)/g;
         const comments = content.match(commentRegex);
@@ -191,7 +191,7 @@ describe('Project Integrity & Quality Suite', () => {
     it('should forbit console.log/debug in source', () => {
       codeFiles.forEach((file) => {
         const parts = file.split(path.sep);
-        if (parts.includes('.guardian') || parts.includes('check-version.js')) return;
+        if (parts.includes('.integrity-suite') || parts.includes('integrity-suite.test.ts')) return;
         const content = fs.readFileSync(file, 'utf8');
         expect(content, `Console usage in ${file}`).not.toMatch(/console\.(log|debug|info)/);
       });
@@ -201,7 +201,7 @@ describe('Project Integrity & Quality Suite', () => {
       allSourceFiles.forEach((file) => {
         if (file.endsWith('.md')) return;
         const parts = file.split(path.sep);
-        if (parts.includes('project-integrity.test.ts')) return;
+        if (parts.includes('integrity-suite.test.ts')) return;
         const content = fs.readFileSync(file, 'utf8');
         expect(content, `Unresolved task in ${file}`).not.toMatch(/TODO|FIXME/i);
       });
@@ -255,7 +255,7 @@ describe('Project Integrity & Quality Suite', () => {
       allSourceFiles.forEach((file) => {
         const parts = file.split(path.sep);
         if (!parts.includes('tests')) return;
-        if (parts.includes('project-integrity.test.ts')) return;
+        if (parts.includes('integrity-suite.test.ts')) return;
 
         const content = fs
           .readFileSync(file, 'utf8')
@@ -276,7 +276,7 @@ describe('Project Integrity & Quality Suite', () => {
     it('should forbid linter/formatter bypass directives', () => {
       allSourceFiles.forEach((file) => {
         const parts = file.split(path.sep);
-        if (parts.includes('project-integrity.test.ts')) return;
+        if (parts.includes('integrity-suite.test.ts')) return;
         const content = fs.readFileSync(file, 'utf8');
         expect(content, `Bypass directive in ${file}`).not.toContain('eslint-disable');
         expect(content, `Bypass directive in ${file}`).not.toContain('prettier-ignore');
