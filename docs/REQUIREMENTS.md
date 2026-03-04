@@ -62,6 +62,24 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 013
+
+- **Fecha**: 2026-03-04 22:20
+- **Requerimiento**: Garantizar que todos los tests sean cross-platform (macOS/Windows) y añadir un test que detecte si se introducen tests en el futuro que no cumplan esto.
+- **Información adicional**: N/A
+- **Interpretación**:
+  1. Corregir los tests actuales para que no dependan de separadores de ruta hardcodeados (`/`).
+  2. Implementar `RULE 11` en la suite de calidad para escanear el directorio `tests/` y detectar el uso de separadores de ruta manuales en lógica de archivos.
+  3. Asegurar el uso de `path.sep` o normalización de rutas en comparaciones.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/strict-quality.test.ts` (estado: modificado)
+  - `package.json` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-04 22:25 - ✅ Cross-platform verified and meta-test (RULE 11) added (version 1.1.0)
+
 ### Requerimiento 012
 
 - **Fecha**: 2026-03-04 22:15

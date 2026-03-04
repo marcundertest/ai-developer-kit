@@ -25,12 +25,13 @@ describe('Strict Quality Rules', () => {
     return allFiles;
   };
 
-  const codeFiles = getFiles(rootDir).filter((f) => !f.includes('tests/'));
+  const codeFiles = getFiles(rootDir).filter((f) => !f.split(path.sep).includes('tests'));
   const allSourceFiles = getFiles(rootDir);
 
   it('RULE 1: Only English comments (ASCII only) in all code files', () => {
     allSourceFiles.forEach((file) => {
-      if (file.includes('strict-quality.test.ts')) return;
+      const parts = file.split(path.sep);
+      if (parts.includes('strict-quality.test.ts')) return;
       const content = fs.readFileSync(file, 'utf8');
       const commentRegex = /(\/\/[^\n]*|\/\*[\s\S]*?\*\/|<!--[\s\S]*?-->)/g;
       const comments = content.match(commentRegex);
@@ -49,7 +50,8 @@ describe('Strict Quality Rules', () => {
 
   it('RULE 2: No console.log or console.debug in source code', () => {
     codeFiles.forEach((file) => {
-      if (file.includes('scripts/') || file.includes('check-version.js')) return;
+      const parts = file.split(path.sep);
+      if (parts.includes('scripts') || parts.includes('check-version.js')) return;
       const content = fs.readFileSync(file, 'utf8');
       expect(content).not.toMatch(/console\.(log|debug|info)/);
     });
@@ -58,7 +60,8 @@ describe('Strict Quality Rules', () => {
   it('RULE 3: No TODO or FIXME in non-markdown files', () => {
     allSourceFiles.forEach((file) => {
       if (file.endsWith('.md')) return;
-      if (file.includes('strict-quality.test.ts')) return;
+      const parts = file.split(path.sep);
+      if (parts.includes('strict-quality.test.ts')) return;
       const content = fs.readFileSync(file, 'utf8');
       expect(content).not.toMatch(/TODO|FIXME/i);
     });
@@ -92,12 +95,13 @@ describe('Strict Quality Rules', () => {
   it('RULE 7: Layer isolation (No cross-imports between backend and frontend)', () => {
     codeFiles.forEach((file) => {
       const content = fs.readFileSync(file, 'utf8');
-      if (file.includes('/backend/')) {
+      const parts = file.split(path.sep);
+      if (parts.includes('backend')) {
         expect(content, `Backend file ${file} should not import from frontend`).not.toMatch(
           /from\s+['"].*\/frontend\//,
         );
       }
-      if (file.includes('/frontend/')) {
+      if (parts.includes('frontend')) {
         expect(content, `Frontend file ${file} should not import from backend`).not.toMatch(
           /from\s+['"].*\/backend\//,
         );
@@ -106,7 +110,7 @@ describe('Strict Quality Rules', () => {
   });
 
   it('RULE 8: Component size limit (max 300 lines in src/components)', () => {
-    const componentDir = path.join(rootDir, 'src/components');
+    const componentDir = path.join(rootDir, 'src', 'components');
     const componentFiles = getFiles(componentDir);
     componentFiles.forEach((file) => {
       const content = fs.readFileSync(file, 'utf8');
@@ -120,7 +124,8 @@ describe('Strict Quality Rules', () => {
 
   it('RULE 9: No eslint-disable or prettier-ignore directives', () => {
     allSourceFiles.forEach((file) => {
-      if (file.includes('strict-quality.test.ts')) return;
+      const parts = file.split(path.sep);
+      if (parts.includes('strict-quality.test.ts')) return;
       const content = fs.readFileSync(file, 'utf8');
       expect(content).not.toContain('eslint-disable');
       expect(content).not.toContain('prettier-ignore');
@@ -136,6 +141,34 @@ describe('Strict Quality Rules', () => {
         const assignmentRegex = new RegExp(`${pattern.source}\\s*[:=]\\s*['"][\\w-]{8,}['"]`, 'i');
         expect(content, `Potential secret found in ${file}`).not.toMatch(assignmentRegex);
       });
+    });
+  });
+
+  it('RULE 11: Cross-platform compatibility (No hardcoded path separators in tests)', () => {
+    const testFiles = getFiles(path.join(rootDir, 'tests'));
+    testFiles.forEach((file) => {
+      const parts = file.split(path.sep);
+      if (parts.includes('strict-quality.test.ts')) return;
+      const content = fs.readFileSync(file, 'utf8');
+
+      // We allow standard imports and URLs
+      const cleanedContent = content
+        .replace(/import\s+.*from\s+['"].*['"]/g, '')
+        .replace(/https?:\/\/[^\s'"]+/g, '');
+
+      // Detect hardcoded slashes in strings like .includes('src/components')
+      const includesSlash = /\.includes\(['"][^'"]*[/\\].*['"]\)/;
+      const matchSlash = /\.match\(['"][^'"]*[/\\].*['"]\)/;
+
+      expect(
+        cleanedContent.match(includesSlash),
+        `File ${file} uses hardcoded path separators in .includes(). Use path.sep or split().`,
+      ).toBeNull();
+
+      expect(
+        cleanedContent.match(matchSlash),
+        `File ${file} uses hardcoded path separators in .match(). Use path.sep or split().`,
+      ).toBeNull();
     });
   });
 });
