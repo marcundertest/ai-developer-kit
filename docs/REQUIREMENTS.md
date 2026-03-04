@@ -62,6 +62,38 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 017
+
+- **Fecha**: 2026-03-04 22:40
+- **Requerimiento**: Consolidación final de todos los tests en `project-integrity.test.ts` y flexibilización de metadatos para uso como plantilla.
+- **Información adicional**: N/A
+- **Interpretación**: Crear una suite única organizada por "Niveles de Integridad" (0-5). Flexibilizar las pruebas de `package.json` para que solo verifiquen que los campos existen y no están vacíos, permitiendo la personalización de la plantilla. Eliminar todos los demás archivos de tests redundantes.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/project-integrity.test.ts` (estado: creado)
+  - `tests/initial-setup.test.ts` (estado: eliminado)
+  - `tests/strict-validation.test.ts` (estado: eliminado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-04 22:45 - ✅ Unified integrity suite (Level 0-5) established (version 1.1.3)
+
+### Requerimiento 016
+
+- **Fecha**: 2026-03-04 22:35
+- **Requerimiento**: Unificar `strict-commits.test.ts` y `strict-quality.test.ts` en un solo archivo organizado por bloques temáticos.
+- **Información adicional**: N/A
+- **Interpretación**: Crear `tests/strict-validation.test.ts` que agrupe todas las validaciones de infraestructura y calidad de código bajo una estructura clara de `describe` blocks. Eliminar los archivos antiguos.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/strict-validation.test.ts` (estado: creado)
+  - `tests/strict-commits.test.ts` (estado: eliminado)
+  - `tests/strict-quality.test.ts` (estado: eliminado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-04 22:40 - ✅ Tests unified and grouped by block (version 1.1.3)
+
 ### Requerimiento 015
 
 - **Fecha**: 2026-03-04 22:28
