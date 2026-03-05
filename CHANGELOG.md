@@ -17,8 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Removed redundant scripts: `lint`, `format`, `format:check`, `mdlint`, `audit`, `audit:report`.
   - Created capture-linter-results.js helper to capture ESLint, Prettier, markdownlint, and TypeScript results.
   - Updated validation tests to verify linter integration in test scripts rather than individual scripts.
-  - Core-protection test now allows modifications to .integrity-suite/scripts/\*.js files during development.
-
+  - Core-protection test now allows modifications to .integrity-suite/scripts/\*.js files during development.  - `.husky/pre-push` now only runs `check-version:relaxed` and `check-changelog`, eliminating redundant full-suite execution on push.
 ### Result
 
 - Single source of truth for validation logic (tests and CLI scripts use same functions).

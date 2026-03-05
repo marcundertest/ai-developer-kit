@@ -704,18 +704,17 @@ describe('Integrity Suite', () => {
       expect(script, '&& exit 0 bypass in test:full').not.toMatch(/&&\s*exit\s+0/);
     });
 
-    it('should have a pre-push hook that runs relaxed validation (version equal to HEAD is OK)', () => {
+    it('should have a pre-push hook that runs only relaxed version/changelog checks', () => {
       const prePushPath = path.join(rootDir, '.husky', 'pre-push');
       expect(fs.existsSync(prePushPath), '.husky/pre-push hook is missing').toBe(true);
       const prePushContent = fs.readFileSync(prePushPath, 'utf8');
       expect(
         prePushContent,
-        'pre-push hook must run pnpm test:nobump (with relaxed version check)',
-      ).toContain('pnpm test:nobump');
-      expect(
-        prePushContent,
-        'pre-push must not contain strict test:full (that is for commit)',
-      ).not.toMatch(/pnpm\s+test:full(\s|$)/);
+        'pre-push hook must invoke check-version:relaxed and check-changelog',
+      ).toMatch(/check-version:relaxed[\s\S]*check-changelog/);
+      expect(prePushContent, 'pre-push must not contain full test commands').not.toMatch(
+        /test:(?:full|nobump)/,
+      );
     });
 
     it('should not have INTEGRITY_SKIP_PROTECTION bypass in scripts or hooks', () => {

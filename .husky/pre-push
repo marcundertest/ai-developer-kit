@@ -1,4 +1,5 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-pnpm test:nobump
+# Only relaxed version/changelog validation is required on push; full tests should have run at commit time
+pnpm check-version:relaxed && pnpm check-changelog
