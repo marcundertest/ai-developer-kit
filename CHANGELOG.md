@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.18] - 2026-03-05
+
+### Added
+
+- Meta-test covering em dash in `.integrity-suite/docs/` files (previously excluded from `getFiles`).
+- Meta-test verifying `lint-staged` config has ESLint, Prettier, and Markdownlint wired to the correct globs.
+- Meta-test verifying `test:meta`, `test:unit`, and `test:e2e` are all present and in the correct order in the `test` script.
+- Meta-test verifying the `prepare` script invokes `husky`.
+- Meta-test detecting `exclude:` blocks inside the `vitest.config.ts` coverage section.
+
+### Fixed
+
+- Corrected `.gitignore` allowlist matching: removed the inverted `r.startsWith(norm)` condition that made any short prefix (e.g. `di`, `.e`) pass validation.
+
 ## [1.4.17] - 2026-03-05
 
 ### Added

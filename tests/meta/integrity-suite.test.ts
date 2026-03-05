@@ -151,9 +151,24 @@ describe('Integrity Suite', () => {
         const withoutCodeBlocks = content.replace(/```[\s\S]*?```/g, '');
         expect(
           withoutCodeBlocks,
-          `Em dash (—) found in ${file} : use ":" or ";" instead`,
-        ).not.toContain('—');
+          `Em dash (\u2014) found in ${file} : use ":" or ";" instead`,
+        ).not.toContain('\u2014');
       });
+    });
+
+    it('should forbid em dash in integrity-suite documentation', () => {
+      const docsDir = path.join(rootDir, '.integrity-suite', 'docs');
+      if (!fs.existsSync(docsDir)) return;
+      fs.readdirSync(docsDir)
+        .filter((f) => f.endsWith('.md'))
+        .forEach((f) => {
+          const content = fs.readFileSync(path.join(docsDir, f), 'utf8');
+          const withoutCodeBlocks = content.replace(/```[\s\S]*?```/g, '');
+          expect(
+            withoutCodeBlocks,
+            `Em dash (\u2014) found in .integrity-suite/docs/${f}: use ":" or ";" instead`,
+          ).not.toContain('\u2014');
+        });
     });
 
     it('should have valid package.json metadata', () => {
@@ -318,8 +333,8 @@ describe('Integrity Suite', () => {
         .split('\n')
         .map((l) => l.trim())
         .filter((l) => l && !l.startsWith('#'));
-      // Normalize by stripping trailing slashes and wildcard suffixes for comparison
-      const normalize = (s: string) => s.replace(/\/+$/, '').replace(/\*$/, '');
+      // Normalize by stripping trailing slashes; wildcard suffixes handled by startsWith
+      const normalize = (s: string) => s.replace(/\/+$/, '');
       const allowedRoots = [
         'node_modules',
         '.pnp',
@@ -365,9 +380,7 @@ describe('Integrity Suite', () => {
       ];
       lines.forEach((line) => {
         const norm = normalize(line);
-        const isAllowed = allowedRoots.some(
-          (r) => norm === r || norm.startsWith(r) || r.startsWith(norm),
-        );
+        const isAllowed = allowedRoots.some((r) => norm === r || norm.startsWith(r));
         expect(
           isAllowed,
           `Unexpected entry in .gitignore: "${line}" - possible agent hiding files`,
@@ -485,6 +498,38 @@ describe('Integrity Suite', () => {
         script.indexOf('pnpm check-changelog'),
         'check-changelog must run before pnpm test',
       ).toBeLessThan(script.indexOf('pnpm test'));
+    });
+
+    it('should call all three test suites in correct order in the test script', () => {
+      const testScript: string = pkg.scripts['test'];
+      expect(testScript).toBeDefined();
+      const metaIdx = testScript.indexOf('test:meta');
+      const unitIdx = testScript.indexOf('test:unit');
+      const e2eIdx = testScript.indexOf('test:e2e');
+      expect(metaIdx, 'test:meta is missing from test script').toBeGreaterThan(-1);
+      expect(unitIdx, 'test:unit is missing from test script').toBeGreaterThan(-1);
+      expect(e2eIdx, 'test:e2e is missing from test script').toBeGreaterThan(-1);
+      expect(metaIdx, 'test:meta must run before test:unit').toBeLessThan(unitIdx);
+      expect(unitIdx, 'test:unit must run before test:e2e').toBeLessThan(e2eIdx);
+    });
+
+    it('should have prepare script configured to install husky', () => {
+      expect(pkg.scripts['prepare'], 'prepare script is missing').toBeDefined();
+      expect(pkg.scripts['prepare'], 'prepare script must invoke husky').toContain('husky');
+    });
+
+    it('should have lint-staged configured to lint and format TypeScript files', () => {
+      const lintStaged = pkg['lint-staged'] as Record<string, string[]> | undefined;
+      expect(lintStaged, 'lint-staged config is missing from package.json').toBeDefined();
+      const tsCommands: string[] = lintStaged?.['*.ts'] ?? [];
+      expect(tsCommands, 'lint-staged must process *.ts files').not.toHaveLength(0);
+      const hasEslint = tsCommands.some((cmd) => cmd.includes('eslint'));
+      const hasPrettier = tsCommands.some((cmd) => cmd.includes('prettier'));
+      expect(hasEslint, 'lint-staged must run eslint on *.ts files').toBe(true);
+      expect(hasPrettier, 'lint-staged must run prettier on *.ts files').toBe(true);
+      const mdCommands: string[] = lintStaged?.['*.md'] ?? [];
+      const hasMdlint = mdCommands.some((cmd) => cmd.includes('markdownlint'));
+      expect(hasMdlint, 'lint-staged must run markdownlint on *.md files').toBe(true);
     });
 
     it('should fail on any linting warning', () => {
@@ -827,6 +872,15 @@ describe('Integrity Suite', () => {
         fs.existsSync(path.join(rootDir, 'src')),
         'src/ directory is missing: coverage target does not exist',
       ).toBe(true);
+    });
+
+    it('should not have coverage exclusions in vitest.config.ts', () => {
+      const content = fs.readFileSync(path.join(rootDir, 'vitest.config.ts'), 'utf8');
+      const coverageBlock = content.match(/coverage:\s*\{([\s\S]*?)^\s*\}/m)?.[1] ?? '';
+      expect(
+        coverageBlock,
+        'vitest.config.ts coverage block must not have an exclude list',
+      ).not.toMatch(/\bexclude\s*:/);
     });
 
     it('should enforce test coverage flag in package.json scripts', () => {

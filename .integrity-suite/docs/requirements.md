@@ -63,6 +63,28 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 052
+
+- **Fecha**: 2026-03-05 03:12
+- **Requerimiento**: Corregir falso positivo en la allowlist de .gitignore y ampliar la cobertura de checks a scripts, husky, lint-staged, docs internas y cobertura.
+- **Información adicional**: N/A
+- **Interpretación**:
+  1. Bug corregido: eliminada la tercera rama `r.startsWith(norm)` del matching del .gitignore que permitía cualquier prefijo corto (ej: `di`, `.e`) como entrada válida.
+  2. Test de em dash extendido a los archivos `prompt.md`, `workflow.md` y `requirements.md` de `.integrity-suite/docs/`, que `getFiles` excluye.
+  3. Test que verifica que `lint-staged` tiene ESLint, Prettier y Markdownlint configurados para sus respectivos globs en `package.json`.
+  4. Test que verifica que los tres test suites (`test:meta`, `test:unit`, `test:e2e`) están presentes y en el orden correcto en el script `test`.
+  5. Test que verifica que el script `prepare` invoca `husky` (punto de entrada de toda la cadena de hooks).
+  6. Test que detecta bloques `exclude:` dentro de la sección `coverage:` de `vitest.config.ts`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+  - `package.json` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 03:13 - ✅ 71 tests pass including 6 new checks and 1 bug fix (version 1.4.18)
+
 ### Requerimiento 051
 
 - **Fecha**: 2026-03-05 03:01
