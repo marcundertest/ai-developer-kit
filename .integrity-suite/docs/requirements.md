@@ -63,6 +63,23 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 067
+
+- **Fecha**: 2026-03-05 13:29
+- **Requerimiento**: Prohibir el uso de valores de `tabIndex` positivos en HTML/JSX/TSX.
+- **Información adicional**: Mejora la accesibilidad (a11y) evitando que se rompa el orden natural de navegación por teclado. Se permiten `tabIndex="0"` y `tabIndex="-1"`.
+- **Interpretación**:
+  1. Nuevo meta-test en el Nivel 4 que escanea archivos en busca de `tabIndex` con valores mayores que cero.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+  - `package.json` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 13:30 - ✅ tabIndex validation enforced (86 tests)
+
 ### Requerimiento 066
 
 - **Fecha**: 2026-03-05 13:25

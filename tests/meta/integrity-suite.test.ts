@@ -848,6 +848,19 @@ describe('Integrity Suite', () => {
         expect(content, `Potential low-contrast color in ${file}`).not.toMatch(lowContrastPattern);
       });
     });
+
+    it('should not use positive tabIndex values in HTML/JSX/TSX files', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(
+          content,
+          `Positive tabIndex in ${file}: disrupts keyboard navigation order`,
+        ).not.toMatch(/tabIndex\s*=\s*['"]\s*[1-9]/i);
+      });
+    });
   });
 
   describe('Level 5: Architecture & Security', () => {
