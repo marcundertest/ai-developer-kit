@@ -63,6 +63,24 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 135
+
+- **Fecha**: 2026-03-05 16:40
+- **Requerimiento**: Generar un reporte HTML de auditoría basado en los meta-tests.
+- **Información adicional**: Se busca facilitar la auditoría de proyectos externos mediante un informe visual y profesional que resuma los hallazgos de la Integrity Suite.
+- **Interpretación**:
+  1. Crear un script `generate-report.js` en `.integrity-suite/scripts/`.
+  2. El script debe ejecutar la suite con el reporter JSON de Vitest.
+  3. Transformar los resultados JSON en un archivo HTML con estética premium.
+  4. Añadir un script `pnpm audit:report` en `package.json`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `package.json` (estado: pendiente)
+  - `.integrity-suite/scripts/generate-report.js` (estado: pendiente)
+- **Estado**: Completado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 16:40 - ✅ Reporte HTML generado con éxito con estética premium.
+
 ### Requerimiento 134
 
 - **Fecha**: 2026-03-05 16:35

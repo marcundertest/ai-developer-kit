@@ -1,6 +1,6 @@
 {
   "name": "integrity-suite",
-  "version": "1.4.51",
+  "version": "1.4.52",
   "type": "module",
   "description": "Strict project template for automated setup and code quality.",
   "main": "index.js",
@@ -29,6 +29,7 @@
     "mdlint": "markdownlint .",
     "check-version": "node .integrity-suite/scripts/check-version.js",
     "check-changelog": "node .integrity-suite/scripts/check-changelog.js",
+    "audit:report": "node .integrity-suite/scripts/generate-report.js",
     "validate-project": "pnpm lint && pnpm mdlint && pnpm format:check && tsc --noEmit && pnpm audit && pnpm check-version && pnpm check-changelog && pnpm test",
     "prepare": "husky"
   },

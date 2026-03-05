@@ -307,7 +307,14 @@ describe('Integrity Suite', () => {
 
     it('should forbid arbitrary tool directories in linting ignore files', () => {
       const allowedPatternsByFile: Record<string, string[]> = {
-        '.prettierignore': ['node_modules', 'dist', 'build', 'coverage', 'pnpm-lock.yaml'],
+        '.prettierignore': [
+          'node_modules',
+          'dist',
+          'build',
+          'coverage',
+          'pnpm-lock.yaml',
+          'tests/meta/reports',
+        ],
         '.markdownlintignore': ['node_modules', 'dist', 'build', 'coverage'],
       };
       Object.entries(allowedPatternsByFile).forEach(([ignoreFile, allowedPatterns]) => {
@@ -380,6 +387,7 @@ describe('Integrity Suite', () => {
         '.vitest-results',
         '.integrity-suite/integrity-suite.sha256',
         '.integrity-suite/.user_secret',
+        'tests/meta/reports',
       ];
       lines.forEach((line) => {
         const norm = normalize(line);
@@ -617,9 +625,10 @@ describe('Integrity Suite', () => {
       ];
 
       lines.forEach((line) => {
-        const targetsCoreKit = coreKitPatterns.some(
-          (p) => line === p || line.startsWith(p) || p.startsWith(line),
-        );
+        const isReport = line === 'tests/meta/reports' || line.startsWith('tests/meta/reports');
+        const targetsCoreKit =
+          !isReport &&
+          coreKitPatterns.some((p) => line === p || line.startsWith(p) || p.startsWith(line));
 
         if (line === 'tests') {
           expect(line, `Kit vulnerability: .gitignore must not hide the tests directory`).not.toBe(
@@ -759,7 +768,9 @@ describe('Integrity Suite', () => {
     });
 
     it('should enforce test file naming conventions', () => {
-      const testFiles = allSourceFiles.filter((f) => f.startsWith(testsDir));
+      const testFiles = allSourceFiles.filter(
+        (f) => f.startsWith(testsDir) && !f.includes(`${path.sep}reports${path.sep}`),
+      );
       testFiles.forEach((file) => {
         const basename = path.basename(file);
         const validPattern = /\.(test|spec)\.(ts|tsx)$/;
