@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
 
-describe('Dummy E2E Test', () => {
-  it('should pass', () => {
-    expect(true).toBe(true);
+describe('Environment Bootstrap', () => {
+  it('should verify basic environment sanity', () => {
+    expect(process.version).toBeDefined();
+    expect(typeof process.version).toBe('string');
   });
 });

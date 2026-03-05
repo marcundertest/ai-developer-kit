@@ -63,6 +63,25 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 056
+
+- **Fecha**: 2026-03-05 11:08
+- **Requerimiento**: Prohibir aserciones triviales o "dummy" en los archivos de test.
+- **Información adicional**: Se busca evitar que el agente use aserciones como `expect(true).toBe(true)` para cumplir formalmente con la cobertura pero sin testear realmente nada.
+- **Interpretación**:
+  1. Nuevo meta-test en Level 4 que escanea archivos de test en busca de patrones como `expect(true).toBe(true)`, `expect(1).toBe(1)`, etc.
+  2. Actualización del test de bootstrap `dummy.spec.ts` para que realice una validación real del entorno (ej: versión de Node) en lugar de una aserción trivial.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+  - `tests/e2e/dummy.spec.ts` (estado: modificado)
+  - `package.json` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 11:09 - ✅ No trivial assertions found in 75 tests. (Removed redundant `tests/unit/dummy.test.ts`).
+
 ### Requerimiento 055
 
 - **Fecha**: 2026-03-05 11:04

@@ -735,6 +735,23 @@ describe('Integrity Suite', () => {
         });
       });
     });
+
+    it('should not have trivially passing dummy assertions in test files', () => {
+      const testFiles = allSourceFiles.filter(
+        (f) => f.startsWith(testsDir) && /\.(test|spec)\.(ts|tsx)$/.test(f),
+      );
+      testFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        const trivialPatterns = [
+          /expect\(true\)\.toBe\(true\)/,
+          /expect\(1\)\.toBe\(1\)/,
+          /expect\(false\)\.toBe\(false\)/,
+        ];
+        trivialPatterns.forEach((pattern) => {
+          expect(content, `Trivial dummy assertion in ${file}`).not.toMatch(pattern);
+        });
+      });
+    });
   });
 
   describe('Level 5: Architecture & Security', () => {
