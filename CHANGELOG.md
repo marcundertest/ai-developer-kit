@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.38] - 2026-03-05
+
+### Added
+
+- Added extensive DOM, UX, and accessibility validations:
+  - Enforce `loading="lazy"` on `<img/>`.
+  - Enforce `type` attribute on `<button>`.
+  - Enforce `autocomplete` on `<input type="text">`.
+  - Forbid `href="#"` on `<a>`.
+  - Forbid `<a>` nested inside `<button>`.
+  - Enforce `width` and `height` attributes on `<img/>`.
+  - Enforce `name` attribute on `<input>` inside `<form>`.
+  - Enforce `role="presentation"` on `<img/>` missing `alt` description (using `alt=""`).
+
 ## [1.4.37] - 2026-03-05
 
 ### Added

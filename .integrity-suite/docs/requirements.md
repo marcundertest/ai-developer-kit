@@ -63,6 +63,118 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 081
+
+- **Fecha**: 2026-03-05 13:58
+- **Requerimiento**: Imponer `role="presentation"` en imágenes decorativas (`alt=""`).
+- **Información adicional**: Mejora la accesibilidad (a11y) asegurando que los lectores de pantalla descarten correctamente elementes puramente visuales sin descripción.
+- **Interpretación**:
+  1. Meta-test que escanea archivos en busca de `<img alt="">` y valida que tengan explícitamente `role="presentation"`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:00 - ✅ All validation checks enforced (100 tests)
+
+### Requerimiento 080
+
+- **Fecha**: 2026-03-05 13:58
+- **Requerimiento**: Atributo `name` obligatorio en `inputs` dentro de `form`.
+- **Información adicional**: Evita bugs de formularios donde datos ingresados no se envían por carecer de nombre identitario.
+- **Interpretación**:
+  1. Meta-test que escanea formularios y verifica sus `<input>` conteniendo `name`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Pendiente
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:00 - ✅ All validation checks enforced (100 tests)
+
+### Requerimiento 079
+
+- **Fecha**: 2026-03-05 13:58
+- **Requerimiento**: Atributos `width` y `height` en imágenes.
+- **Información adicional**: Previene el Cumulative Layout Shift (CLS), un problema de performance esencial en métricas Core Web Vitals.
+- **Interpretación**:
+  1. Meta-test que evalúa la presencia de ambos atributos descriptivos en elementos `<img>`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Pendiente
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:00 - ✅ All validation checks enforced (100 tests)
+
+### Requerimiento 078
+
+- **Fecha**: 2026-03-05 13:58
+- **Requerimiento**: Prohibir enlaces `<a>` anidados en botones `<button>`.
+- **Información adicional**: Este es un anti-patrón de accesibilidad y HTML semántico que confunde herramientas interactivas.
+- **Interpretación**:
+  1. Meta-test que detecte una etiqueta de anclaje que se encuentre envuelta (como hijo) de un botón.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Pendiente
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:00 - ✅ All validation checks enforced (100 tests)
+
+### Requerimiento 077
+
+- **Fecha**: 2026-03-05 13:58
+- **Requerimiento**: Prohibir enlaces `<a>` con `href="#"`.
+- **Información adicional**: Evita placeholders inútiles que provocan top-scrolling indeseados y empeoran la experiencia de navegación para lectores de pantalla.
+- **Interpretación**:
+  1. Meta-test validando que no se utilicen anclajes vacíos apuntando a almohadilla.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Pendiente
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:00 - ✅ All validation checks enforced (100 tests)
+
+### Requerimiento 076
+
+- **Fecha**: 2026-03-05 13:58
+- **Requerimiento**: Imponer atributo `autocomplete` en `<input type="text">`.
+- **Información adicional**: Facilita la finalización de formularios mediante el relleno automático del navegador. Beneficioso a niveles de experiencia de usuario y accesibilidad (WCAG autocompletado).
+- **Interpretación**:
+  1. Meta-test para los `<input>` explícitamente declarados como texto.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Pendiente
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:00 - ✅ All validation checks enforced (100 tests)
+
+### Requerimiento 075
+
+- **Fecha**: 2026-03-05 13:58
+- **Requerimiento**: Atributo `type` obligatorio en `<button>`.
+- **Información adicional**: Corrijo el default-submission behavior de Chrome que trata cualquier botón dentro de un formulario como `submit`.
+- **Interpretación**:
+  1. Meta-test exigiendo `type` (`button`, `submit` o `reset`) en la directiva.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Pendiente
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:00 - ✅ All validation checks enforced (100 tests)
+
+### Requerimiento 074
+
+- **Fecha**: 2026-03-05 13:58
+- **Requerimiento**: Atributo optimizado `loading="lazy"` en `<img>`.
+- **Información adicional**: Asegura la optimización de activos y deferral para imágenes fuera del viewport, exigida constantemente por Lighthouse/Web Vitals.
+- **Interpretación**:
+  1. Meta-test escaneando cada tag img y requiriendo el lazy flag configurado.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Pendiente
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:00 - ✅ All validation checks enforced (100 tests)
+
 ### Requerimiento 073
 
 - **Fecha**: 2026-03-05 13:45

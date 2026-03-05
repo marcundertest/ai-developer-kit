@@ -977,6 +977,106 @@ describe('Integrity Suite', () => {
         });
       });
     });
+
+    it('should not have images without loading="lazy"', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(content, `Image without loading="lazy" in ${file}`).not.toMatch(
+          /<img(?![^>]*\bloading\s*=\s*["']lazy["'])[^>]*>/i,
+        );
+      });
+    });
+
+    it('should not have buttons without type attribute', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(content, `Button without type attribute in ${file}`).not.toMatch(
+          /<button(?![^>]*\btype\s*=)[^>]*>/i,
+        );
+      });
+    });
+
+    it('should not have text inputs without autocomplete attribute', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(content, `Text input without autocomplete in ${file}`).not.toMatch(
+          /<input[^>]*type\s*=\s*["']text["'](?![^>]*\bautocomplete\s*=)[^>]*>/i,
+        );
+      });
+    });
+
+    it('should not have anchors with href="#"', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(content, `Anchor with href="#" found in ${file}`).not.toMatch(
+          /<a[^>]*href\s*=\s*["']#["'][^>]*>/i,
+        );
+      });
+    });
+
+    it('should not have anchors inside buttons', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(content, `Anchor inside button found in ${file}`).not.toMatch(
+          /<button[^>]*>[\s\S]*?<a[^>]*>[\s\S]*?<\/a>[\s\S]*?<\/button>/i,
+        );
+      });
+    });
+
+    it('should not have images without width and height attributes', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(content, `Image missing width or height in ${file}`).not.toMatch(
+          /<img(?![^>]*\bwidth\s*=)(?![^>]*\bheight\s*=)[^>]*>/i,
+        );
+      });
+    });
+
+    it('should not have inputs without name attribute inside forms', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        const inputsInForms =
+          content.match(/<form[^>]*>[\s\S]*?<input[^>]*>[\s\S]*?<\/form>/gi) ?? [];
+        inputsInForms.forEach((inputBlock) => {
+          expect(inputBlock, `Input without name attribute inside form in ${file}`).not.toMatch(
+            /<input(?![^>]*\bname\s*=)[^>]*>/i,
+          );
+        });
+      });
+    });
+
+    it('should not have images with empty alt without role="presentation"', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(content, `Image with empty alt but not marked decorative in ${file}`).not.toMatch(
+          /<img[^>]*alt\s*=\s*["']\s*["'](?![^>]*role\s*=\s*["']presentation["'])[^>]*>/i,
+        );
+      });
+    });
   });
 
   describe('Level 5: Architecture & Security', () => {
