@@ -1,6 +1,6 @@
 {
   "name": "project-template",
-  "version": "1.4.15",
+  "version": "1.4.16",
   "type": "module",
   "description": "Strict project template for automated setup and code quality.",
   "main": "index.js",
@@ -24,8 +24,8 @@
   "author": "Marc Galindo (marcundertest) - https://marcundertest.com",
   "license": "SEE LICENSE IN LICENSE",
   "devDependencies": {
-    "@commitlint/cli": "^19.3.0",
-    "@commitlint/config-conventional": "^19.2.2",
+    "@commitlint/cli": "^20.0.0",
+    "@commitlint/config-conventional": "^20.0.0",
     "@types/node": "^25.3.3",
     "@typescript-eslint/eslint-plugin": "^7.11.0",
     "@typescript-eslint/parser": "^7.11.0",

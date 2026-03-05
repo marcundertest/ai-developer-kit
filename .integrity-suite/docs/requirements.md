@@ -63,6 +63,30 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 050
+
+- **Fecha**: 2026-03-05 02:52
+- **Requerimiento**: Corregir cuatro bugs y riesgos detectados: case sensitivity en REQUIREMENTS.md, rastro de Gemini en archivos de ignore, `git add` incorrecto en pre-commit, y compatibilidad ESM de commitlint.
+- **Información adicional**: N/A
+- **Interpretación**:
+  1. Renombrado `REQUIREMENTS.md` a `requirements.md` con `git mv` para corregir el fallo silencioso en sistemas de ficheros sensibles a mayúsculas (Linux/CI).
+  2. Eliminado `.gemini` de `.prettierignore` y `.markdownlintignore`. Añadido meta-test en Level 2 que bloquea entradas no permitidas en ambos archivos de ignore.
+  3. Eliminado `git add pnpm-lock.yaml package.json` del hook `pre-commit` (el snapshot ya está calculado cuando el hook corre). Añadido meta-test en Level 2 que lo detecta.
+  4. Actualizado `@commitlint/cli` y `@commitlint/config-conventional` de v19 a v20 para resolver el bug conocido de resolución de configuración ESM.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `.integrity-suite/docs/requirements.md` (estado: renombrado)
+  - `.prettierignore` (estado: modificado)
+  - `.markdownlintignore` (estado: modificado)
+  - `.husky/pre-commit` (estado: modificado)
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+  - `package.json` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 02:52 - ✅ All tests pass with four bugs fixed (version 1.4.16)
+
 ### Requerimiento 049
 
 - **Fecha**: 2026-03-05 02:43

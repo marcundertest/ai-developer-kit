@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.16] - 2026-03-05
+
+### Added
+
+- Meta-test blocking arbitrary tool directories (e.g. agent working dirs) from being added to `.prettierignore` or `.markdownlintignore` as a linting bypass.
+- Meta-test forbidding `git add` inside the pre-commit hook, which silently defers staged changes to the next commit.
+
+### Fixed
+
+- Renamed `.integrity-suite/docs/REQUIREMENTS.md` to lowercase `requirements.md` to fix a case-sensitivity bug that caused all requirements tests to fail silently on Linux/CI.
+- Removed leftover `.gemini` exclusion from `.prettierignore` and `.markdownlintignore`.
+- Removed `git add pnpm-lock.yaml package.json` from the pre-commit hook: the staged snapshot is already computed when the hook runs, making the command ineffective and confusing.
+- Upgraded `@commitlint/cli` and `@commitlint/config-conventional` from v19 to v20 to resolve known ESM config resolution issues.
+
 ## [1.4.15] - 2026-03-05
 
 ### Added

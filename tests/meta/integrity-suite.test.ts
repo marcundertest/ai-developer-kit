@@ -278,13 +278,43 @@ describe('Integrity Suite', () => {
         /^[ \t]*#.*pnpm validate-project/m,
       );
       expect(content, 'Validation command is echoed').not.toMatch(/echo.*pnpm validate-project/m);
+    });
 
-      // Assure git add comes after validate-project to prevent manipulation window
-      const addIndex = content.indexOf('git add');
-      const valIndex = content.indexOf('pnpm validate-project');
-      if (addIndex !== -1 && valIndex !== -1) {
-        expect(valIndex, 'validate-project must happen before git add').toBeLessThan(addIndex);
-      }
+    it('should not attempt to modify the git index from within the pre-commit hook', () => {
+      const hookPath = path.join(rootDir, '.husky', 'pre-commit');
+      const content = fs.readFileSync(hookPath, 'utf8');
+      expect(
+        content,
+        'pre-commit hook must not run git add: staged snapshot is already computed at this point',
+      ).not.toMatch(/\bgit add\b/);
+    });
+
+    it('should forbid arbitrary tool directories in linting ignore files', () => {
+      const ignoreFiles = ['.prettierignore', '.markdownlintignore'];
+      const allowedPatterns = [
+        'node_modules',
+        'dist',
+        'build',
+        'coverage',
+        '.git',
+        'pnpm-lock.yaml',
+      ];
+      ignoreFiles.forEach((ignoreFile) => {
+        const filePath = path.join(rootDir, ignoreFile);
+        if (!fs.existsSync(filePath)) return;
+        const lines = fs
+          .readFileSync(filePath, 'utf8')
+          .split('\n')
+          .map((l) => l.trim())
+          .filter((l) => l && !l.startsWith('#'));
+        lines.forEach((line) => {
+          const isAllowed = allowedPatterns.some((p) => line === p || line.startsWith(p));
+          expect(
+            isAllowed,
+            `Unexpected entry in ${ignoreFile}: "${line}" - possible agent bypass`,
+          ).toBe(true);
+        });
+      });
     });
 
     it('should forbid commits if the latest requirement is not Approved', () => {
