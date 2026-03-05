@@ -150,12 +150,22 @@ describe('Integrity Suite', () => {
     it('should enforce validation in pre-commit hook with no escapes', () => {
       const hookPath = path.join(rootDir, '.husky', 'pre-commit');
       const content = fs.readFileSync(hookPath, 'utf8');
+      expect(content, 'Pre-commit hook is missing lint-staged validation').toContain(
+        'pnpm lint-staged',
+      );
       expect(content, 'Pre-commit hook is missing validation').toContain('pnpm validate-project');
       expect(content, 'Pre-commit hook contains an early exit').not.toMatch(/exit\s+0/);
       expect(content, 'Validation command is commented out or fake').not.toMatch(
         /^[ \t]*#.*pnpm validate-project/m,
       );
       expect(content, 'Validation command is echoed').not.toMatch(/echo.*pnpm validate-project/m);
+
+      // Assure git add comes before validate-project to prevent manipulation window
+      const addIndex = content.indexOf('git add');
+      const valIndex = content.indexOf('pnpm validate-project');
+      if (addIndex !== -1 && valIndex !== -1) {
+        expect(addIndex, 'git add must happen before validate-project').toBeLessThan(valIndex);
+      }
     });
 
     it('should forbid commits if the latest requirement is not Approved', () => {
@@ -296,7 +306,7 @@ describe('Integrity Suite', () => {
         const parts = file.split(path.sep);
         if (parts.includes('.integrity-suite')) return;
         const content = fs.readFileSync(file, 'utf8');
-        const consoleRegex = new RegExp('console\\.(log|debug|info)', 'i');
+        const consoleRegex = new RegExp('console\\.(log|debug|info|error|warn)', 'i');
         expect(content, `Console usage in ${file}`).not.toMatch(consoleRegex);
       });
     });
@@ -350,7 +360,7 @@ describe('Integrity Suite', () => {
         'auth[_-]?key',
       ];
       const patterns = keys.map(
-        (key) => new RegExp(`(['"]?${key}['"]?)\\s*[:=]\\s*['"][\\w\\-/+=]{8,}['"]`, 'i'),
+        (key) => new RegExp(`(['"\`]?${key}['"\`]?)\\s*[:=]\\s*['"\`][\\w\\-/+=]{8,}['"\`]`, 'i'),
       );
 
       allSourceFiles.forEach((file) => {
@@ -368,6 +378,7 @@ describe('Integrity Suite', () => {
       allSourceFiles.forEach((file) => {
         const parts = file.split(path.sep);
         if (!parts.includes('tests')) return;
+        if (path.basename(file) === 'integrity-suite.test.ts') return;
 
         const content = fs
           .readFileSync(file, 'utf8')

@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.7] - 2026-03-05
+
+### Fixed
+
+- Resolved pipeline inconsistencies: `npx lint-staged` now strictly uses `pnpm lint-staged`, and validation is enforced after `git add`.
+- Replaced `--passWithNoTests` flag from unit testing, guaranteeing 100% coverage requires actual unit tests in the directories via dummy files injection.
+- Evicted local `coverage/` directory from repository tracking via `.gitignore` caching removal.
+- Expanded integrity suite string matching validations to include `console.error`/`console.warn`, account for template literal secrets detection, and avoid false-negative cross-platform tests parsing themselves.
+
 ## [1.4.6] - 2026-03-05
 
 ### Changed

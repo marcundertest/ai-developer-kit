@@ -1,13 +1,13 @@
 {
   "name": "project-template",
-  "version": "1.4.6",
+  "version": "1.4.7",
   "type": "module",
   "description": "Strict project template for automated setup and code quality.",
   "main": "index.js",
   "scripts": {
     "test:meta": "vitest run tests/meta",
-    "test:unit": "vitest run tests/unit src --passWithNoTests --coverage",
-    "test:e2e": "vitest run tests/e2e --passWithNoTests",
+    "test:unit": "vitest run tests/unit src --coverage",
+    "test:e2e": "vitest run tests/e2e",
     "test": "pnpm test:meta && pnpm test:unit && pnpm test:e2e",
     "build": "tsc",
     "start": "node dist/index.js || echo 'No entry point configured'",

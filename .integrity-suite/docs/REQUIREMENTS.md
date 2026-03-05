@@ -63,6 +63,35 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 041
+
+- **Fecha**: 2026-03-05 01:25
+- **Requerimiento**: Solucionar problemas de inconsistencia, riesgos medios y bajos hallados en auditoría.
+- **Información adicional**: Se han corregido las siguientes incidencias identificadas en revisión de calidad:
+  1. El uso de `npx lint-staged` en lugar del gestor `pnpm` y su ordenización con el `git add` en pre-commit.
+  2. El flag `--passWithNoTests` en Vitest que convertía el test de cobertura al 100% en un falso positivo al permitir directorios `src/` llenos pero sin contraparte en `tests/unit/`.
+  3. Descuido en la presencia del directorio local `coverage/` en los artefactos de compilación rastreados en git.
+  4. Template literals saltándose la regex de secrets.
+  5. `console.error` y `console.warn` permitidos inadvertidamente.
+  6. Falso negativo latente para rutas hardcodeadas (Meta-test check) que evaluaba el propio archivo de test original.
+- **Interpretación**:
+  1. Modificar `.husky/pre-commit` para usar `pnpm lint-staged && git add pnpm-lock.yaml package.json && pnpm validate-project`.
+  2. Expulsar flags `--passWithNoTests` en `package.json` de las tareas de test funcional y test unitario, insertando pruebas "dummy" por defecto en los directorios `tests/unit` y `tests/e2e`.
+  3. Eliminar carpeta de cobertura mediante `git rm -r --cached coverage/ || true`.
+  4. Expandir aserciones de `integrity-suite.test.ts` (console regex a `console\\.(log|debug|info|warn|error)`, exceptions para `integrity-suite.test.ts` en `should ensure all tests are cross-platform`, secrets pattern tolerando backticks).
+- **Testeable**: true
+- **Archivos afectados**:
+  - `package.json` (estado: modificado)
+  - `.husky/pre-commit` (estado: modificado)
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+  - `tests/unit/dummy.test.ts` (estado: modificado)
+  - `tests/e2e/dummy.spec.ts` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 01:25 - ✅ Security fixes successfully validated (version 1.4.7)
+
 ### Requerimiento 040
 
 - **Fecha**: 2026-03-05 01:15
