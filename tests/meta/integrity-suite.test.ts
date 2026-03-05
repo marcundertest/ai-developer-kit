@@ -141,6 +141,17 @@ describe('Integrity Suite', () => {
 
       expect(currentHash, 'integrity-suite.test.ts has been modified!').toBe(expectedHash);
     });
+
+    it('should have a commit-msg hook that enforces commitlint', () => {
+      const commitMsgPath = path.join(rootDir, '.husky', 'commit-msg');
+      expect(fs.existsSync(commitMsgPath), '.husky/commit-msg hook is missing').toBe(true);
+      const commitMsgContent = fs.readFileSync(commitMsgPath, 'utf8');
+      expect(commitMsgContent, 'commit-msg hook must invoke commitlint').toContain('commitlint');
+      expect(
+        commitMsgContent,
+        'commit-msg hook must reference the integrity-suite commitlint config',
+      ).toContain('.integrity-suite/scripts/commitlint.config.js');
+    });
   });
 
   describe('Level 1: Project Metadata & README @metadata', () => {
@@ -642,6 +653,18 @@ describe('Integrity Suite', () => {
         ).toBe(false);
       });
     });
+
+    it('should have a hash regeneration script for the integrity suite', () => {
+      const scriptPath = path.join(rootDir, '.integrity-suite', 'scripts', 'update-hash.js');
+      expect(
+        fs.existsSync(scriptPath),
+        'update-hash.js is missing: add a script to regenerate the integrity hash after legitimate test changes',
+      ).toBe(true);
+      expect(
+        pkg.scripts['update-integrity-hash'],
+        '"update-integrity-hash" script must be registered in package.json',
+      ).toBeDefined();
+    });
   });
 
   it('should protect core kit files from unauthorized modification @core-protection', async () => {
@@ -750,6 +773,45 @@ describe('Integrity Suite', () => {
           ).toBe(true);
         });
       });
+    });
+
+    it('should forbid non-null assertion operator in src/', () => {
+      const srcDir = path.join(rootDir, 'src') + path.sep;
+      codeFiles
+        .filter((f) => f.startsWith(srcDir))
+        .forEach((file) => {
+          const content = fs.readFileSync(file, 'utf8');
+          expect(
+            content,
+            `Non-null assertion (!.) in ${file}: use null checks or type guards instead`,
+          ).not.toMatch(/\w!\./);
+        });
+    });
+
+    it('should forbid numeric enums in src/', () => {
+      const srcDir = path.join(rootDir, 'src') + path.sep;
+      codeFiles
+        .filter((f) => f.startsWith(srcDir))
+        .forEach((file) => {
+          const content = fs.readFileSync(file, 'utf8');
+          expect(
+            content,
+            `Numeric enum in ${file}: use string enums or const objects for better debuggability`,
+          ).not.toMatch(/enum\s+\w+\s*\{[^}]*=\s*\d/);
+        });
+    });
+
+    it('should forbid double-assertion casting (as unknown as Type) in src/', () => {
+      const srcDir = path.join(rootDir, 'src') + path.sep;
+      codeFiles
+        .filter((f) => f.startsWith(srcDir))
+        .forEach((file) => {
+          const content = fs.readFileSync(file, 'utf8');
+          expect(
+            content,
+            `Double-assertion cast (as unknown as Type) in ${file}: this bypasses type safety entirely`,
+          ).not.toMatch(/\bas\s+unknown\s+as\s+\w/);
+        });
     });
   });
 
@@ -1901,6 +1963,33 @@ describe('Integrity Suite', () => {
         expect(content, `Bypass directive in ${file}`).not.toContain('markdownlint-' + 'disable');
       });
     });
+
+    it('should not have extended hardcoded secret patterns', () => {
+      const extendedKeys = [
+        'bearer',
+        'access[_-]?key',
+        'client[_-]?secret',
+        'passphrase',
+        'api[_-]?token',
+        'refresh[_-]?token',
+        'webhook[_-]?secret',
+      ];
+      const extendedPatterns = extendedKeys.map(
+        (key) =>
+          new RegExp('([\'"`]?' + key + '[\'"`]?)\\s*[:=]\\s*[\'"`][\\w\\-/+=]{8,}[\'"`]', 'i'),
+      );
+      const hexSecretPattern = /['"`][0-9a-fA-F]{40,}['"`]/;
+      codeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        extendedPatterns.forEach((pattern) => {
+          expect(content, `Potential extended hardcoded secret in ${file}`).not.toMatch(pattern);
+        });
+        expect(
+          content,
+          `Potential raw hex secret (40+ chars) in ${file}: use environment variables`,
+        ).not.toMatch(hexSecretPattern);
+      });
+    });
   });
 
   describe('Level 6: Testing & Coverage @testing', () => {
@@ -2013,6 +2102,36 @@ describe('Integrity Suite', () => {
       // the agent can decide to keep it or rename it.
       // But the e2e dummy.spec.ts is the clearest "REMOVEME" marker.
     });
+
+    it('should have at least one unhappy-path assertion per unit test file', () => {
+      const unitDir = path.join(rootDir, 'tests', 'unit') + path.sep;
+      const unitTestFiles = allSourceFiles.filter(
+        (f) => f.startsWith(unitDir) && /\.(test|spec)\.(ts|tsx)$/.test(f),
+      );
+      unitTestFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        const hasUnhappyPath = /\b(toThrow|rejects|toThrowError)\b/.test(content);
+        expect(
+          hasUnhappyPath,
+          `No unhappy-path tests in ${path.relative(rootDir, file)}: add at least one test for error/rejection scenarios`,
+        ).toBe(true);
+      });
+    });
+
+    it('should not have duplicate test names within the same test file', () => {
+      const testFiles = allSourceFiles.filter(
+        (f) => f.startsWith(testsDir) && /\.(test|spec)\.(ts|tsx)$/.test(f),
+      );
+      testFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        const testNames = [...content.matchAll(/\bit\(\s*['"`]([^'"`]+)['"`]/g)].map((m) => m[1]);
+        const uniqueNames = new Set(testNames);
+        expect(
+          uniqueNames.size,
+          `Duplicate test names found in ${path.relative(rootDir, file)}: rename tests to be unique`,
+        ).toBe(testNames.length);
+      });
+    });
   });
 
   describe('Level 7: Dependency Hygiene @dependencies', () => {
@@ -2049,6 +2168,21 @@ describe('Integrity Suite', () => {
       } catch (e) {
         // Skip if pnpm is not in path (likely CI environment without pnpm)
       }
+    });
+
+    it('should not have direct dependencies at major version 0.x (unstable API)', () => {
+      const allowedAt0x = ['markdownlint-cli', 'markdownlint-cli2'];
+      const allDeps = { ...pkg.dependencies, ...pkg.devDependencies };
+      Object.entries(allDeps).forEach(([name, version]) => {
+        if (allowedAt0x.includes(name)) return;
+        const cleaned = (version as string).replace(/^[\^~>=\s]+/, '');
+        const major = parseInt(cleaned.split('.')[0], 10);
+        if (Number.isNaN(major)) return;
+        expect(
+          major,
+          `Dependency "${name}@${version}" is at major version 0: API may be unstable`,
+        ).toBeGreaterThan(0);
+      });
     });
   });
 
@@ -2230,6 +2364,105 @@ describe('Integrity Suite', () => {
             content,
             `innerHTML assignment in ${file}: use textContent or a DOM sanitizer to prevent XSS`,
           ).not.toMatch(/\.innerHTML\s*=/);
+        });
+    });
+
+    it('should not use setTimeout or setInterval in src/', () => {
+      const srcDir = path.join(rootDir, 'src') + path.sep;
+      codeFiles
+        .filter((f) => f.startsWith(srcDir))
+        .forEach((file) => {
+          const content = fs.readFileSync(file, 'utf8');
+          expect(
+            content,
+            `setTimeout in ${file}: prefer event-driven or observable patterns for async control flow`,
+          ).not.toMatch(/\bsetTimeout\s*\(/);
+          expect(
+            content,
+            `setInterval in ${file}: prefer event-driven patterns with explicit cleanup`,
+          ).not.toMatch(/\bsetInterval\s*\(/);
+        });
+    });
+
+    it('should not have top-level floating promises in src/', () => {
+      const srcDir = path.join(rootDir, 'src') + path.sep;
+      codeFiles
+        .filter((f) => f.startsWith(srcDir))
+        .forEach((file) => {
+          const content = fs.readFileSync(file, 'utf8');
+          expect(
+            content,
+            `Floating Promise.all/race in ${file}: unhandled promise may cause silent failures`,
+          ).not.toMatch(/^\s+Promise\.(all|race|allSettled|any)\s*\(/m);
+        });
+    });
+  });
+
+  describe('Level 10: Runtime Performance & Efficiency @performance', () => {
+    it('should not use namespace imports (import * as) in src/', () => {
+      const srcDir = path.join(rootDir, 'src') + path.sep;
+      codeFiles
+        .filter((f) => f.startsWith(srcDir))
+        .forEach((file) => {
+          const content = fs.readFileSync(file, 'utf8');
+          expect(
+            content,
+            `Namespace import (import * as ...) in ${file}: use named imports to enable tree-shaking`,
+          ).not.toMatch(/import\s+\*\s+as\s+\w+\s+from/);
+        });
+    });
+
+    it('should not use JSON.parse(JSON.stringify(...)) as a deep-clone in src/', () => {
+      const srcDir = path.join(rootDir, 'src') + path.sep;
+      codeFiles
+        .filter((f) => f.startsWith(srcDir))
+        .forEach((file) => {
+          const content = fs.readFileSync(file, 'utf8');
+          expect(
+            content,
+            `JSON.parse(JSON.stringify(...)) in ${file}: use structuredClone() for deep cloning`,
+          ).not.toMatch(/JSON\.parse\s*\(\s*JSON\.stringify/);
+        });
+    });
+
+    it('should not have sequential awaits inside for...of loops in src/', () => {
+      const srcDir = path.join(rootDir, 'src') + path.sep;
+      codeFiles
+        .filter((f) => f.startsWith(srcDir))
+        .forEach((file) => {
+          const content = fs.readFileSync(file, 'utf8');
+          expect(
+            content,
+            `Sequential await inside for...of loop in ${file}: use Promise.all() for parallel execution`,
+          ).not.toMatch(/for\s*\([^)]*\bof\b[^)]*\)[^{]*\{[^}]*\bawait\b/s);
+        });
+    });
+
+    it('should not import the entire lodash library in src/', () => {
+      const srcDir = path.join(rootDir, 'src') + path.sep;
+      codeFiles
+        .filter((f) => f.startsWith(srcDir))
+        .forEach((file) => {
+          const content = fs.readFileSync(file, 'utf8');
+          expect(
+            content,
+            `Full lodash import in ${file}: use individual method imports (e.g. import debounce from 'lodash/debounce')`,
+          ).not.toMatch(/from\s+['"]lodash['"]/);
+        });
+    });
+
+    it('should not use synchronous fs methods inside async functions in src/', () => {
+      const srcDir = path.join(rootDir, 'src') + path.sep;
+      codeFiles
+        .filter((f) => f.startsWith(srcDir))
+        .forEach((file) => {
+          const content = fs.readFileSync(file, 'utf8');
+          expect(
+            content,
+            `Synchronous fs call inside async function in ${file}: use fs.promises equivalents`,
+          ).not.toMatch(
+            /async\s+(?:function\s+\w+|\(\s*[^)]*\)\s*=>)[\s\S]{0,500}?fs\.\w+Sync\s*\(/,
+          );
         });
     });
   });

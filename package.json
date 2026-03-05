@@ -1,6 +1,6 @@
 {
   "name": "integrity-suite",
-  "version": "1.4.53",
+  "version": "1.4.54",
   "type": "module",
   "description": "Strict project template for automated setup and code quality.",
   "main": "index.js",
@@ -17,6 +17,8 @@
     "test:meta:deps": "vitest run tests/meta --reporter=verbose -t @dependencies",
     "test:meta:audit": "vitest run tests/meta --reporter=verbose -t @security-audit",
     "test:meta:consistency": "vitest run tests/meta --reporter=verbose -t @consistency",
+    "test:meta:performance": "vitest run tests/meta --reporter=verbose -t @performance",
+    "update-integrity-hash": "node .integrity-suite/scripts/update-hash.js",
     "test:unit": "vitest run tests/unit --coverage --reporter=verbose",
     "test:e2e": "vitest run tests/e2e --reporter=verbose",
     "test": "pnpm test:meta && pnpm test:unit && pnpm test:e2e",

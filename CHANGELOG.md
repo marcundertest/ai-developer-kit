@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.54] - 2026-03-05
+
+### Added
+
+- Level 10: Runtime Performance and Efficiency meta-tests (`@performance`): namespace imports,
+  `JSON.parse(JSON.stringify)`, sequential awaits in loops, full lodash import, sync fs in async.
+- `@typescript`: non-null assertion (`!.`), numeric enum, double-assertion (`as unknown as`) checks.
+- `@consistency`: `setTimeout`/`setInterval` and floating `Promise.all` prohibition in `src/`.
+- `@security`: Extended hardcoded secret detection (bearer, access key, webhook secret, hex tokens).
+- `@testing`: Unhappy-path assertion requirement per unit test file; duplicate test name detection.
+- `@dependencies`: Major version 0.x detection (with allowlist for known stable 0.x tools).
+- `@base`: Commit-msg hook existence and commitlint config reference validation.
+- `@workflow`: Hash regeneration script (`update-hash.js`) and `update-integrity-hash` script check.
+- `divide()` utility function to `src/index.ts` as canonical example of error-throwing code.
+- Unit test coverage for `divide()` including unhappy-path (division by zero).
+- New `pnpm test:meta:performance` and `pnpm update-integrity-hash` scripts.
+
 ## [1.4.53] - 2026-03-05
 
 ### Changed

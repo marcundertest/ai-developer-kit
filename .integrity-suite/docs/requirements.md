@@ -63,6 +63,28 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 137
+
+- **Fecha**: 2026-03-05 18:20
+- **Requerimiento**: Implementa todo esto, actualizando requirements.md y changelog.md, versión, ejecutando tests y siguiendo el workflow.md (yo commiteo). A. @typescript: Cobertura de tipos más estricta. B. @consistency: Normas de async más estrictas. C. @security: Detección de secretos mejorada. D. @workflow: Verificar que el hash SHA256 está actualizado. E. @testing: Tests no deben ser todos del mismo tipo. F. @dependencies: Verificar versiones major desactualizadas. G. @base: Verificar que commit-msg existe y valida. H. Nuevo nivel propuesto: @performance (Level 10).
+- **Información adicional**: N/A
+- **Interpretación**: Ampliar la Integrity Suite con 16 nuevos meta-tests distribuidos en los niveles existentes y un nuevo Level 10 (@performance). Incluye: (A) 3 tests TypeScript (non-null assertion, numeric enum, double-assertion); (B) 2 tests async en @consistency (setTimeout/setInterval, floating Promise.all); (C) 1 test extendido de secretos con mas palabras clave y deteccion de hex; (D) 1 test en @workflow que verifica que existe el script update-hash.js; (E) 2 tests en @testing (unhappy-path obligatorio, nombres unicos); (F) 1 test en @dependencies (major version 0.x); (G) 1 test en @base (commit-msg hook existe y valida); (H) 5 tests en Level 10 @performance (namespace imports, JSON.parse/stringify, await en loops, lodash entero, fs.xSync en async). Adicionalmente: crear update-hash.js, añadir divide() a src/index.ts, actualizar unit test, bump version 1.4.53->1.4.54.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+  - `tests/unit/index.test.ts` (estado: modificado)
+  - `src/index.ts` (estado: modificado)
+  - `package.json` (estado: modificado)
+  - `.integrity-suite/scripts/update-hash.js` (estado: creado)
+  - `.integrity-suite/integrity-suite.sha256` (estado: modificado)
+  - `CHANGELOG.md` (estado: modificado)
+- **Tests**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Completado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 18:35 - ❌ Hash desactualizado (2 fallos) + errores no-useless-escape en ESLint (5 errores).
+  - **Iteración 02**: 2026-03-05 18:38 - ✅ 162/162 meta-tests + 4/4 unit tests + 1/1 e2e. Cobertura 100%. ESLint limpio. validate-project completo OK (con INTEGRITY_SKIP_PROTECTION=true; @core-protection pasara al 100% tras commit).
+
 ### Requerimiento 136
 
 - **Fecha**: 2026-03-05 17:35
