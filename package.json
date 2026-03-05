@@ -1,6 +1,6 @@
 {
   "name": "ai-developer-kit",
-  "version": "1.4.43",
+  "version": "1.4.44",
   "type": "module",
   "description": "Strict project template for automated setup and code quality.",
   "main": "index.js",

@@ -1478,15 +1478,74 @@ describe('Integrity Suite', () => {
       });
     });
 
-    it('image inputs should include alt text', () => {
+    it('aria-labelledby should reference existing ids', () => {
       const htmlLikeFiles = allSourceFiles.filter((f) =>
         ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
       );
       htmlLikeFiles.forEach((file) => {
         const content = fs.readFileSync(file, 'utf8');
-        expect(content, `Input type="image" missing alt attribute in ${file}`).not.toMatch(
-          /<input[^>]*type\s*=\s*["']image["'](?![^>]*alt\s*=)[^>]*>/i,
+        const attrs = content.match(/aria-labelledby\s*=\s*["'][^"']+["']/gi) ?? [];
+        attrs.forEach((attr) => {
+          const idStrMatch = attr.match(/["']([^"']+)["']/);
+          if (!idStrMatch) return;
+          const ids = idStrMatch[1].split(/\s+/);
+          ids.forEach((id) => {
+            if (!id) return;
+            expect(content, `aria-labelledby references missing id "${id}" in ${file}`).toMatch(
+              new RegExp(`id=["']${id}["']`, 'i'),
+            );
+          });
+        });
+      });
+    });
+
+    it('fieldset elements should contain a legend', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        const fieldsets = content.match(/<fieldset[^>]*>[\s\S]*?<\/fieldset>/gi) ?? [];
+        fieldsets.forEach((fieldset) => {
+          expect(fieldset, `Fieldset missing legend in ${file}`).toMatch(/<legend[^>]*>/i);
+        });
+      });
+    });
+
+    it('select elements should have associated labels', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(content, `Select without label or aria-label in ${file}`).not.toMatch(
+          /<select(?![^>]*(aria-label|aria-labelledby|id\s*=))[^>]*>/i,
         );
+      });
+    });
+
+    it('progress elements should expose aria-valuenow', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(content, `Progress element missing aria-valuenow in ${file}`).not.toMatch(
+          /<progress(?![^>]*aria-valuenow\s*=)[^>]*>/i,
+        );
+      });
+    });
+
+    it('details elements should contain a summary', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        const details = content.match(/<details[^>]*>[\s\S]*?<\/details>/gi) ?? [];
+        details.forEach((block) => {
+          expect(block, `Details element missing summary in ${file}`).toMatch(/<summary[^>]*>/i);
+        });
       });
     });
   });

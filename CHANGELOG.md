@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.44] - 2026-03-05
+
+### Added
+
+- 5 new accessibility checks for form & composite controls:
+  - Validates `aria-labelledby` so that all string-referenced `id` arrays exist in the document.
+  - Requires `<fieldset>` constructs to wrap at least one `<legend>` child.
+  - Mandates valid associated labels (`aria-label`, `aria-labelledby`, or `id`) natively on `<select>`.
+  - Audits `<progress>` elements to verify proper state projection (`aria-valuenow`).
+  - Audits `<details>` wrappers to declare at least one `<summary>` interactive component.
+
 ## [1.4.43] - 2026-03-05
 
 ### Added

@@ -63,6 +63,76 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 110
+
+- **Fecha**: 2026-03-05 14:55
+- **Requerimiento**: Exigencia estructural `<details>` vinculada a `<summary>`.
+- **Información adicional**: Validar para los bloques expansibles nativos la correlación descriptiva indispensable para screen readers.
+- **Interpretación**:
+  1. Detectar componente details, validar existencia child tipo summary en su regex de interior.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:56 - ✅ Tests passing.
+
+### Requerimiento 109
+
+- **Fecha**: 2026-03-05 14:55
+- **Requerimiento**: Progreso ARIA validado para la etiqueta nativa `<progress>`.
+- **Información adicional**: Detectar si la carga del componente es puramente decorativa o proyecta valor mediante `aria-valuenow`.
+- **Interpretación**:
+  1. Detectar `<progress>` y forzar búsqueda concurrente de etiqueta `aria-valuenow`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:56 - ✅ Tests passing.
+
+### Requerimiento 108
+
+- **Fecha**: 2026-03-05 14:55
+- **Requerimiento**: Controlar selectores (`<select>`) mediante accesibilidad explícita.
+- **Información adicional**: Validación semejante al `textarea`/`input` exigiendo `id`, `aria-label` o `aria-labelledby`.
+- **Interpretación**:
+  1. Matchear regex negativos que no detecten atributos semánticos.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:56 - ✅ Tests passing.
+
+### Requerimiento 107
+
+- **Fecha**: 2026-03-05 14:55
+- **Requerimiento**: Obligatoriedad semántica en el binomio `<fieldset>` / `<legend>`.
+- **Información adicional**: Evitar wrappers puramente decorativos de grupos checkbox. Un grupo encapsulado debe requerir explicación legendaria.
+- **Interpretación**:
+  1. Rastrear bloque fieldset y forzar búsqueda de elemento legend.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:56 - ✅ Tests passing.
+
+### Requerimiento 106
+
+- **Fecha**: 2026-03-05 14:55
+- **Requerimiento**: Comprobar persistencia del vector `(s) id` vinculado a una llamada `aria-labelledby` (DOM).
+- **Información adicional**: Evitar refactorizaciones corrompidas donde un array de string separados por espacio (`"title sub"`), carezcan al menos de uno de los id dentro del bloque actual.
+- **Interpretación**:
+  1. Obtener la cadena, trocear por separador espacio en blanco (`\s+`), y validar en bucle frente a existencias de regex DOM `id=...`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:56 - ✅ Tests passing.
+
 ### Requerimiento 105
 
 - **Fecha**: 2026-03-05 14:39
