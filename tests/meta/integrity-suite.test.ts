@@ -788,6 +788,19 @@ describe('Integrity Suite', () => {
         });
       });
     });
+
+    it('should not have images without alt attribute in HTML/JSX/TSX files', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        // <img without alt= anywhere after it before closing >
+        expect(content, `Image without alt attribute in ${file}`).not.toMatch(
+          /<img(?![^>]*\balt\s*=)[^>]*>/i,
+        );
+      });
+    });
   });
 
   describe('Level 5: Architecture & Security', () => {

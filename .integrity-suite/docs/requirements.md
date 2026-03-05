@@ -63,6 +63,23 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 062
+
+- **Fecha**: 2026-03-05 12:35
+- **Requerimiento**: Prohibir imágenes sin atributo `alt` en archivos HTML/JSX/TSX.
+- **Información adicional**: Mejora la accesibilidad (a11y) del proyecto.
+- **Interpretación**:
+  1. Nuevo meta-test en el Nivel 4 que escanea archivos con extensión `.html`, `.jsx` o `.tsx` en busca de etiquetas `<img>` que carezcan del atributo `alt`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+  - `package.json` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 12:36 - ✅ Accessibility check for img alt enforced (81 tests)
+
 ### Requerimiento 061
 
 - **Fecha**: 2026-03-05 12:30
