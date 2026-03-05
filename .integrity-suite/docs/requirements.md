@@ -63,6 +63,23 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 060
+
+- **Fecha**: 2026-03-05 12:25
+- **Requerimiento**: Prohibir la instanciación directa de dependencias externas (clases concretas) dentro de funciones de negocio de `src/`.
+- **Información adicional**: Fomenta el principio de Inversión de Dependencias y la testeabilidad sin mocks.
+- **Interpretación**:
+  1. Nuevo meta-test en el Nivel 5 que detecta el uso de `new` para tipos no integrados (built-ins) dentro del cuerpo de funciones en `src/`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+  - `package.json` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 12:26 - ✅ Dependency Inversion enforced (79 tests)
+
 ### Requerimiento 059
 
 - **Fecha**: 2026-03-05 11:20

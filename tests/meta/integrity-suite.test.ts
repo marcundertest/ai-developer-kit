@@ -922,6 +922,43 @@ describe('Integrity Suite', () => {
       });
     });
 
+    it('should not instantiate concrete classes inside business logic functions in src/', () => {
+      const srcDir = path.join(rootDir, 'src') + path.sep;
+      // Pattern: new Something() inside a function body (not at module level)
+      // We look for function bodies containing "new" for non-built-in types
+      const builtIns = [
+        'Date',
+        'Map',
+        'Set',
+        'Array',
+        'Error',
+        'URL',
+        'URLSearchParams',
+        'Promise',
+        'RegExp',
+        'Headers',
+        'Request',
+        'Response',
+        'Blob',
+        'File',
+      ];
+      const builtInPattern = builtIns.join('|');
+      const pattern = new RegExp(
+        `(?:=>|\\{)[\\s\\S]{0,500}?\\bnew\\s+(?!(?:${builtInPattern})\\b)(\\w+)\\s*\\(`,
+        'g',
+      );
+      codeFiles
+        .filter((f) => f.startsWith(srcDir))
+        .forEach((file) => {
+          const content = fs.readFileSync(file, 'utf8');
+          const matches = [...content.matchAll(pattern)];
+          expect(
+            matches.length,
+            `Direct instantiation of "${matches[0]?.[1]}" inside function body in ${file}: prefer dependency injection`,
+          ).toBe(0);
+        });
+    });
+
     it('should ensure all tests are cross-platform (Meta-test)', () => {
       allSourceFiles.forEach((file) => {
         const parts = file.split(path.sep);
