@@ -801,6 +801,20 @@ describe('Integrity Suite', () => {
         );
       });
     });
+
+    it('should not have buttons without accessible text in HTML/JSX/TSX files', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        // <button> with no content AND no aria-label
+        const emptyButtons = content.match(/<button(?![^>]*aria-label)[^>]*>\s*<\/button>/gi) ?? [];
+        expect(emptyButtons.length, `Button without accessible text or aria-label in ${file}`).toBe(
+          0,
+        );
+      });
+    });
   });
 
   describe('Level 5: Architecture & Security', () => {

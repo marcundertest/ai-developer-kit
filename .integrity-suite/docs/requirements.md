@@ -63,6 +63,23 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 063
+
+- **Fecha**: 2026-03-05 12:48
+- **Requerimiento**: Prohibir botones sin texto accesible (ni texto visible ni `aria-label`) en archivos HTML/JSX/TSX.
+- **Información adicional**: Mejora la accesibilidad (a11y) asegurando que todos los botones tengan un propósito identificable.
+- **Interpretación**:
+  1. Nuevo meta-test en el Nivel 4 que escanea archivos `.html`, `.jsx` o `.tsx` en busca de etiquetas `<button>` vacías que no tengan atributo `aria-label`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+  - `package.json` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 12:49 - ✅ Accessibility check for button text enforced (82 tests)
+
 ### Requerimiento 062
 
 - **Fecha**: 2026-03-05 12:35
