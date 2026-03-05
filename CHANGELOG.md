@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.17] - 2026-03-05
+
+### Added
+
+- Meta-test blocking ESLint overrides that weaken critical AI-safety rules (`no-explicit-any`, `ban-ts-comment`, `no-console`, `no-warning-comments`) for `src/` or `tests/` paths.
+- Meta-test auditing `.gitignore` against an allowlist of known-legitimate patterns to detect agent-hidden files.
+- Per-file `allowedPatterns` in the linting ignore files test: `pnpm-lock.yaml` is now only permitted in `.prettierignore`, not in `.markdownlintignore`.
+
 ## [1.4.16] - 2026-03-05
 
 ### Added

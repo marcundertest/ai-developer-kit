@@ -290,16 +290,11 @@ describe('Integrity Suite', () => {
     });
 
     it('should forbid arbitrary tool directories in linting ignore files', () => {
-      const ignoreFiles = ['.prettierignore', '.markdownlintignore'];
-      const allowedPatterns = [
-        'node_modules',
-        'dist',
-        'build',
-        'coverage',
-        '.git',
-        'pnpm-lock.yaml',
-      ];
-      ignoreFiles.forEach((ignoreFile) => {
+      const allowedPatternsByFile: Record<string, string[]> = {
+        '.prettierignore': ['node_modules', 'dist', 'build', 'coverage', 'pnpm-lock.yaml'],
+        '.markdownlintignore': ['node_modules', 'dist', 'build', 'coverage'],
+      };
+      Object.entries(allowedPatternsByFile).forEach(([ignoreFile, allowedPatterns]) => {
         const filePath = path.join(rootDir, ignoreFile);
         if (!fs.existsSync(filePath)) return;
         const lines = fs
@@ -314,6 +309,69 @@ describe('Integrity Suite', () => {
             `Unexpected entry in ${ignoreFile}: "${line}" - possible agent bypass`,
           ).toBe(true);
         });
+      });
+    });
+
+    it('should not have unexpected entries in .gitignore beyond build artifacts', () => {
+      const content = fs.readFileSync(path.join(rootDir, '.gitignore'), 'utf8');
+      const lines = content
+        .split('\n')
+        .map((l) => l.trim())
+        .filter((l) => l && !l.startsWith('#'));
+      // Normalize by stripping trailing slashes and wildcard suffixes for comparison
+      const normalize = (s: string) => s.replace(/\/+$/, '').replace(/\*$/, '');
+      const allowedRoots = [
+        'node_modules',
+        '.pnp',
+        '.pnp.js',
+        'coverage',
+        'dist',
+        'build',
+        '.next',
+        '.nuxt',
+        'out',
+        '.cache',
+        '.parcel-cache',
+        '.turbo',
+        '.vuepress',
+        '.env',
+        '.env.local',
+        '.env.development.local',
+        '.env.test.local',
+        '.env.production.local',
+        '*.env',
+        'npm-debug.log',
+        'yarn-debug.log',
+        'yarn-error.log',
+        'pnpm-debug.log',
+        'lerna-debug.log',
+        '.idea',
+        '.vscode',
+        '*.swp',
+        '*.swo',
+        '.DS_Store',
+        '.husky/_',
+        '.husky/.huskycache',
+        '.vercel',
+        '.netlify',
+        '.serverless',
+        'ts-node-config-',
+        'junit.xml',
+        'test-results',
+        'playwright-report',
+        'blob-report',
+        'src/__tests__',
+        '.vitest-results',
+      ];
+      lines.forEach((line) => {
+        const norm = normalize(line);
+        const isAllowed = allowedRoots.some(
+          (r) => norm === r || norm.startsWith(r) || r.startsWith(norm),
+        );
+        expect(
+          isAllowed,
+          `Unexpected entry in .gitignore: "${line}" - possible agent hiding files`,
+        ).toBe(true);
       });
     });
 
@@ -448,6 +506,32 @@ describe('Integrity Suite', () => {
       );
       expect(rules['no-console'], 'no-console must be error').toBe('error');
       expect(rules['no-warning-comments'], 'no-warning-comments must be configured').toBeDefined();
+    });
+
+    it('should not have ESLint overrides that weaken rules on src/ or tests/', () => {
+      const eslint = JSON.parse(fs.readFileSync(path.join(rootDir, '.eslintrc.json'), 'utf8'));
+      const overrides: Array<{ files: string | string[]; rules?: Record<string, unknown> }> =
+        eslint.overrides ?? [];
+      const criticalRules = [
+        '@typescript-eslint/no-explicit-any',
+        '@typescript-eslint/ban-ts-comment',
+        'no-console',
+        'no-warning-comments',
+      ];
+      const forbiddenGlobs = ['src/', 'tests/', 'src/**', 'tests/**'];
+      overrides.forEach((override) => {
+        const files = Array.isArray(override.files) ? override.files : [override.files];
+        const targetsSrc = files.some((f) => forbiddenGlobs.some((g) => f.includes(g)));
+        if (!targetsSrc) return;
+        criticalRules.forEach((rule) => {
+          const value = override.rules?.[rule];
+          if (value === undefined) return;
+          expect(
+            String(value),
+            `ESLint override weakens "${rule}" for "${files.join(', ')}"`,
+          ).not.toMatch(/^(off|warn)$/);
+        });
+      });
     });
   });
 

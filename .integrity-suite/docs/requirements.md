@@ -63,6 +63,25 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 051
+
+- **Fecha**: 2026-03-05 03:01
+- **Requerimiento**: Blindar los overrides de ESLint, auditar .gitignore y hacer granulares los patrones de los archivos de ignore.
+- **Información adicional**: N/A
+- **Interpretación**:
+  1. Nuevo meta-test en Level 2 que verifica que ningún override de `.eslintrc.json` debilita las reglas críticas (`no-explicit-any`, `ban-ts-comment`, `no-console`, `no-warning-comments`) para los globs `src/` o `tests/`.
+  2. Nuevo meta-test en Level 2 que audita `.gitignore` contra una lista blanca de patrones legítimos para detectar entradas de herramientas o agentes que oculten archivos del rastreo de git.
+  3. El test de archivos de ignore ahora usa listas de patrones independientes por archivo: `pnpm-lock.yaml` solo es válido en `.prettierignore`, no en `.markdownlintignore`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+  - `package.json` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 03:01 - ✅ All tests pass with ESLint overrides protection and gitignore audit (version 1.4.17)
+
 ### Requerimiento 050
 
 - **Fecha**: 2026-03-05 02:52
