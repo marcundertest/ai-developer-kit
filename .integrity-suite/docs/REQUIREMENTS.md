@@ -63,6 +63,27 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 043
+
+- **Fecha**: 2026-03-05 01:35
+- **Requerimiento**: Eliminar bypasses de TypeScript indocumentados y optimizar directivas vitest.
+- **Información adicional**: En la auditoría del anterior sprint, quedaron cabos sueltos detectados, concretamente un `@ts-expect-error` parasitario que saltó las reglas del compilador por inercia del agente anterior, al tiempo que demostró que el Level 3 no lo bloqueaba a pesar de ser equivalente funcinalmente a `@ts-ignore`. A su vez, el script `test:unit` conservaba la directriz de búsqueda `src` sin aplicar de facto la semántica dictaminada.
+- **Interpretación**:
+  1. Bloquear estrictamente todos los `@ts-expect-error` a través del Nivel 3 de la `Integrity Suite` ampliando la matriz defensiva de metadatos.
+  2. Suprimir `@ts-expect-error` y sus comentarios parasitarios remanentes en `vitest.config.ts` (ya mitigados por directivas globales y alias contextual `/// <reference types="vitest" />`). Adicionalmente añadir `"node"` al array `"types"` introducido en `tsconfig.json` para no perder la inferencia de tipos base.
+  3. Aplicar y confirmar la extirpación de la ruta `src` en el package.json script `test:unit`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `package.json` (estado: modificado)
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+  - `vitest.config.ts` (estado: modificado)
+  - `tsconfig.json` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 01:35 - ✅ L3 TypeScript safety rules hardened (version 1.4.9)
+
 ### Requerimiento 042
 
 - **Fecha**: 2026-03-05 01:30

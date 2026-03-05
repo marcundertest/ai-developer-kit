@@ -3,6 +3,7 @@
     "target": "ESNext",
     "module": "NodeNext",
     "lib": ["ESNext"],
+    "types": ["vitest/config", "node"],
     "moduleResolution": "NodeNext",
     "strict": true,
     "noImplicitAny": true,

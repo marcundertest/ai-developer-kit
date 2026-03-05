@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.9] - 2026-03-05
+
+### Fixed
+
+- Eliminated `@ts-expect-error` coverage masking from `vitest.config.ts`, ensuring it strictly conforms to standard compilation without silencing typescript. (Inclusion of `vitest/config` and `node` types in `tsconfig` enforces typing correctness.)
+- Hardened Level 3 in the Integrity Suite to comprehensively reject `@ts-expect-error` occurrences alongside its existing `@ts-ignore` prohibition.
+- Stripped remaining erroneous `src` argument from the `"test:unit"` script natively in `package.json`.
+
 ## [1.4.8] - 2026-03-05
 
 ### Fixed

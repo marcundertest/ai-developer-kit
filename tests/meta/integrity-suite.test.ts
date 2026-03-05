@@ -282,6 +282,7 @@ describe('Integrity Suite', () => {
         expect(content, `File ${file} contains explicit "any" type`).not.toMatch(/:\s*any/);
         expect(content, `File ${file} contains explicit "any" cast`).not.toMatch(/<any>/);
         expect(content, `File ${file} contains explicit "any" cast`).not.toMatch(/as\s+any/);
+        expect(content, `File ${file} contains @ts-expect-error`).not.toContain('@ts-expect-error');
       });
     });
   });
