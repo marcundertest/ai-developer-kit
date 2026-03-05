@@ -63,6 +63,23 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 061
+
+- **Fecha**: 2026-03-05 12:30
+- **Requerimiento**: Prohibir re-exports de tipo wildcard (`export * from './module'`) en `src/`.
+- **Información adicional**: Viola el Principio de Segregación de Interfaces (ISP) porque obliga al consumidor a depender de todo lo exportado por el módulo subyacente.
+- **Interpretación**:
+  1. Nuevo meta-test en el Nivel 5 que detecta el uso de `export * from` en cualquier archivo de código.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+  - `package.json` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 12:31 - ✅ No wildcard re-exports enforced (80 tests)
+
 ### Requerimiento 060
 
 - **Fecha**: 2026-03-05 12:25

@@ -959,6 +959,16 @@ describe('Integrity Suite', () => {
         });
     });
 
+    it('should not use wildcard re-exports (export * from) in src/', () => {
+      codeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(
+          content,
+          `Wildcard re-export in ${file}: use named exports to respect Interface Segregation`,
+        ).not.toMatch(/^export\s+\*\s+from/m);
+      });
+    });
+
     it('should ensure all tests are cross-platform (Meta-test)', () => {
       allSourceFiles.forEach((file) => {
         const parts = file.split(path.sep);
