@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.25] - 2026-03-05
+
+### Added
+
+- Meta-test to enforce Single Responsibility Principle (SRP) by limiting the number of public methods in a class to a maximum of 10.
+
 ## [1.4.24] - 2026-03-05
 
 ### Added

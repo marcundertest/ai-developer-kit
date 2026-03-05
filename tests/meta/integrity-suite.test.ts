@@ -905,6 +905,23 @@ describe('Integrity Suite', () => {
       });
     });
 
+    it('should not have classes with more than 10 public methods (SRP violation)', () => {
+      codeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        const classBlocks = content.match(/class\s+\w+[\s\S]*?(?=\nclass\s|\n*$)/g) ?? [];
+        classBlocks.forEach((block) => {
+          const publicMethods = (
+            block.match(/^\s+(?:public\s+)?(?:async\s+)?\w+\s*\(/gm) ?? []
+          ).filter((m) => !m.includes('private') && !m.includes('protected'));
+          const className = block.match(/class\s+(\w+)/)?.[1] ?? 'unknown';
+          expect(
+            publicMethods.length,
+            `Class "${className}" in ${file} has ${publicMethods.length} public methods (SRP concern)`,
+          ).toBeLessThanOrEqual(10);
+        });
+      });
+    });
+
     it('should ensure all tests are cross-platform (Meta-test)', () => {
       allSourceFiles.forEach((file) => {
         const parts = file.split(path.sep);

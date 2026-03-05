@@ -63,6 +63,23 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 059
+
+- **Fecha**: 2026-03-05 11:20
+- **Requerimiento**: Cumplir con SRP limitando el número de métodos públicos en una clase.
+- **Información adicional**: Una clase con 10 o más métodos públicos suele tener más de una responsabilidad.
+- **Interpretación**:
+  1. Nuevo meta-test en el Nivel 5 que escanea códigos en busca de clases con más de 10 métodos públicos.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+  - `package.json` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 11:21 - ✅ SRP enforcement through public method limit (78 tests)
+
 ### Requerimiento 058
 
 - **Fecha**: 2026-03-05 11:15
