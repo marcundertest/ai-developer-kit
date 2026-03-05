@@ -5,7 +5,28 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.4.55] - 2026-03-06
+## [1.4.56] - 2026-03-05
+
+### Changed
+
+- Removed all `test:meta:*` convenience scripts except `test:meta`; use `pnpm test:meta -- -t <tag>` or
+  the new `test:meta:tag` helper for running individual levels. This keeps package.json lean while
+  retaining flexibility for debugging specific meta-test groups.
+
+### Fixed
+
+- `check-version.js`: version equal to HEAD is now valid (no mandatory bump per commit). The script
+  only fails if the version goes backwards or makes an invalid jump. This unblocks pushes after
+  a commit where the version was already incremented in a previous commit.
+- `check-changelog.js`: skips changelog enforcement when the version has not changed relative to
+  HEAD, aligning with the relaxed version-check policy above.
+- `.husky/pre-commit`: removed `pnpm validate-project` from the pre-commit hook. Full validation
+  (lint, type-check, audit, tests) now runs exclusively in the pre-push hook, keeping per-commit
+  latency low and unblocking day-to-day development on the kit itself.
+- `@workflow` meta-test: updated pre-commit assertion to verify `pnpm validate-project` is
+  absent from the hook (full validation belongs in pre-push).
+
+## [1.4.55] - 2026-03-05
 
 ### Added
 

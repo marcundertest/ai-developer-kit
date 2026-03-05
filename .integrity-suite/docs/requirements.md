@@ -63,6 +63,45 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 140
+
+- **Fecha**: 2026-03-05 20:45
+- **Requerimiento**: Definir una política explícita de versionado y tests. En commit: versión DEBE incrementar, CHANGELOG/requirements DEBEN actualizarse, TODOS los tests (incluyendo version check estricto) DEBEN pasar. En push: versión >= remoto (puede ser igual), TODOS los tests pasan excepto el de version (relajado).
+- **Información adicional**: Dos modos de operación: pre-commit estricto, pre-push relajado. Métrica: commits fallan si hay problemas; patchs desde commits anteriores pueden pushearse sin bump adicional.
+- **Interpretación**: (1) check-version.js: agregar `--relaxed` que permita version==HEAD. (2) package.json: dos scripts `validate-project` (strict, para pre-commit) y `validate-project:push` (con `check-version:relaxed`, para pre-push). (3) .husky/pre-commit: ejecute TODOS los tests incluyendo full validate (version bump OBLIGATORIO). (4) .husky/pre-push: ejecute validate-project:push (version puede ser igual a remoto). (5) Meta-tests: actualizar aserciones en pre-commit y pre-push.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `.integrity-suite/scripts/check-version.js` (estado: modificado)
+  - `package.json` (estado: modificado)
+  - `.husky/pre-commit` (estado: modificado)
+  - `.husky/pre-push` (estado: modificado)
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+  - `.integrity-suite/integrity-suite.sha256` (estado: modificado)
+- **Tests**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Completado
+- **Resultados de los tests**: 192 tests passed (187 meta + 4 unit + 1 e2e), 0 failed. validate-project OK en v1.4.56.
+
+### Requerimiento 139
+
+- **Fecha**: 2026-03-05 19:50
+- **Requerimiento**: Push bloqueado por check-version que obliga a subir version en cada push. Pre-commit ejecutaba validate-project completo en cada commit, autosaboteando el desarrollo del propio kit.
+- **Información adicional**: El pre-commit hook ya no tenia validate-project (se habia eliminado en sesion anterior), pero los scripts check-version y check-changelog seguian impidiendo el push al comparar version actual con HEAD (siempre identica tras un commit). El meta-test de pre-commit exigia validate-project en el hook, lo que reforzaba el problema.
+- **Interpretación**: (1) check-version.js: version igual a HEAD es valida; solo falla si va hacia atras o salta mas de un incremento. (2) check-changelog.js: omite la verificacion si la version no cambio respecto a HEAD. (3) Meta-test pre-commit: cambia de exigir validate-project a prohibirlo (la validacion completa pertenece al pre-push). (4) Bump version 1.4.55 -> 1.4.56.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `.integrity-suite/scripts/check-version.js` (estado: modificado)
+  - `.integrity-suite/scripts/check-changelog.js` (estado: modificado)
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+  - `package.json` (estado: modificado)
+  - `src/index.ts` (estado: modificado)
+  - `CHANGELOG.md` (estado: modificado)
+  - `.integrity-suite/integrity-suite.sha256` (estado: modificado)
+- **Tests**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Completado
+- **Resultados de los tests**: 192 tests passed (187 meta + 4 unit + 1 e2e), 0 failed. validate-project OK en v1.4.56.
+
 ### Requerimiento 138
 
 - **Fecha**: 2026-03-05 19:00

@@ -25,9 +25,16 @@ try {
   }
 
   if (currentVersion === oldVersion) {
-    console.error(`Error: Version in package.json (${currentVersion}) has not been incremented.`);
-    console.error('Please update the version field before committing.');
-    process.exit(1);
+    if (process.argv.includes('--relaxed')) {
+      console.log(
+        `Version check passed: ${currentVersion} (relaxed mode: equal to HEAD is OK for push).`,
+      );
+      process.exit(0);
+    } else {
+      console.error(`Error: Version in package.json (${currentVersion}) has not been incremented.`);
+      console.error('Please update the version field before committing.');
+      process.exit(1);
+    }
   }
 
   const parse = (v) => v.split('.').map(Number);

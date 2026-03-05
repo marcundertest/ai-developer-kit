@@ -23,13 +23,28 @@ try {
     process.exit(0);
   }
 
-  if (currentContent === lastContent) {
-    console.error('Error: CHANGELOG.md has not been updated in this commit.');
-    console.error('Please document your changes in CHANGELOG.md before committing.');
-    process.exit(1);
+  const pkg = JSON.parse(readFileSync('./package.json', 'utf8'));
+
+  // If version didn't change, skip changelog enforcement
+  let oldVersion = pkg.version;
+  try {
+    const oldPkgContent = execSync('git show HEAD:package.json', {
+      stdio: ['pipe', 'pipe', 'ignore'],
+    }).toString();
+    oldVersion = JSON.parse(oldPkgContent).version;
+  } catch {
+    // No HEAD yet — skip
   }
 
-  const pkg = JSON.parse(readFileSync('./package.json', 'utf8'));
+  if (currentContent === lastContent) {
+    if (pkg.version === oldVersion) {
+      console.log('CHANGELOG.md check skipped: version unchanged, no release entry required.');
+      process.exit(0);
+    }
+    console.error('Error: version was bumped but CHANGELOG.md has not been updated.');
+    console.error(`Please add a "## [${pkg.version}]" section to CHANGELOG.md.`);
+    process.exit(1);
+  }
   const versionPattern = new RegExp(`## \\[${pkg.version.replace(/\./g, '\\.')}\\]`, 'g');
   if (!versionPattern.test(currentContent)) {
     console.error(`Error: No entry found for current version [${pkg.version}] in CHANGELOG.md`);

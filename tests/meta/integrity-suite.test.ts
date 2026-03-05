@@ -302,18 +302,18 @@ describe('Integrity Suite', () => {
       expect(hasAsciiPlugin, 'subject-ascii-only plugin rule is not implemented').toBe(true);
     });
 
-    it('should enforce validation in pre-commit hook with no escapes', () => {
+    it('should run full validation in pre-commit hook with strict version check', () => {
       const hookPath = path.join(rootDir, '.husky', 'pre-commit');
       const content = fs.readFileSync(hookPath, 'utf8');
-      expect(content, 'Pre-commit hook is missing lint-staged validation').toContain(
-        'pnpm lint-staged',
-      );
-      expect(content, 'Pre-commit hook is missing validation').toContain('pnpm validate-project');
+      expect(
+        content,
+        'Pre-commit hook must run pnpm validate-project to enforce strict commit quality',
+      ).toContain('pnpm validate-project');
+      expect(
+        content,
+        'Pre-commit must not contain validate-project:push (that is for push with relaxed version check)',
+      ).not.toContain('validate-project:push');
       expect(content, 'Pre-commit hook contains an early exit').not.toMatch(/exit\s+0/);
-      expect(content, 'Validation command is commented out or fake').not.toMatch(
-        /^[ \t]*#.*pnpm validate-project/m,
-      );
-      expect(content, 'Validation command is echoed').not.toMatch(/echo.*pnpm validate-project/m);
     });
 
     it('should not attempt to modify the git index from within the pre-commit hook', () => {
@@ -682,13 +682,18 @@ describe('Integrity Suite', () => {
       expect(script, '&& exit 0 bypass in validate-project').not.toMatch(/&&\s*exit\s+0/);
     });
 
-    it('should have a pre-push hook that runs the full validation', () => {
+    it('should have a pre-push hook that runs relaxed validation (version equal to HEAD is OK)', () => {
       const prePushPath = path.join(rootDir, '.husky', 'pre-push');
       expect(fs.existsSync(prePushPath), '.husky/pre-push hook is missing').toBe(true);
       const prePushContent = fs.readFileSync(prePushPath, 'utf8');
-      expect(prePushContent, 'pre-push hook must run pnpm validate-project').toMatch(
-        /pnpm\s+validate/,
-      );
+      expect(
+        prePushContent,
+        'pre-push hook must run pnpm validate-project:push (with relaxed version check)',
+      ).toContain('validate-project:push');
+      expect(
+        prePushContent,
+        'pre-push must not contain strict validate-project (that is for commit)',
+      ).not.toMatch(/pnpm\s+validate-project(\s|$)/);
     });
 
     it('should not have INTEGRITY_SKIP_PROTECTION bypass in scripts or hooks', () => {

@@ -1,5 +1,5 @@
 /** The current version of the package, kept in sync with package.json. */
-export const version = '1.4.55';
+export const version = '1.4.56';
 
 /** Returns the string 'pong'. Used as a liveness probe. */
 export const ping = () => 'pong';
