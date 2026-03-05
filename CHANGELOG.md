@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.40] - 2026-03-05
+
+### Added
+
+- A robust suite of 12 new Accessibility & Semantic HTML meta-tests to Level 4 Hygiene:
+  - Match `<label for>` with explicit target `<input id>`.
+  - Forbid redundant `role="button"` on literal `<button>` elements.
+  - Require keyboard handlers (`onKeyDown`, etc.) for clickable `<div>`/`<span>`/`<img>`.
+  - Enforce `title` on `<iframe>`.
+  - Require `<th>` within `<table>` elements.
+  - Enforce `aria-required="true"` on inputs marked `required`.
+  - Forbid empty `aria-label=""`.
+  - Forbid negative `tabIndex` on standard interactive form elements & anchors.
+  - Validate against commonly misspelled or invalid ARIA `role` values.
+  - Require focusability (`tabIndex="0"`) on implicit ARIA `role="button"` components.
+  - Enfore `<textarea>` includes standard labels/identifiers (`id`, `aria-label`, or `aria-labelledby`).
+  - Forbid `href` assignment on `<div>` or `<span>`.
+
 ## [1.4.39] - 2026-03-05
 
 ### Added

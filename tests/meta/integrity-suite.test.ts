@@ -1092,6 +1092,228 @@ describe('Integrity Suite', () => {
         });
       });
     });
+
+    it('labels with for attribute should reference an existing input id', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        const labels = content.match(/<label[^>]*for\s*=\s*["'][^"']+["'][^>]*>/gi) ?? [];
+        labels.forEach((label) => {
+          const match = label.match(/for\s*=\s*["']([^"']+)["']/i);
+          if (!match) return;
+          const id = match[1];
+          expect(content, `Label for="${id}" without matching input id in ${file}`).toMatch(
+            new RegExp(`<input[^>]*id=["']${id}["']`, 'i'),
+          );
+        });
+      });
+    });
+
+    it('button elements should not redundantly declare role="button"', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(content, `Button with redundant role="button" in ${file}`).not.toMatch(
+          /<button[^>]*role\s*=\s*["']button["'][^>]*>/i,
+        );
+      });
+    });
+
+    it('clickable elements should support keyboard interaction', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        const clickable = content.match(/<(div|span|img)[^>]*onClick\s*=\s*[^>]+>/gi) ?? [];
+        clickable.forEach((el) => {
+          expect(el, `Clickable element without keyboard handler in ${file}`).toMatch(
+            /onKey(Down|Up|Press)\s*=/i,
+          );
+        });
+      });
+    });
+
+    it('iframes should have title attribute for accessibility', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(content, `Iframe without title attribute in ${file}`).not.toMatch(
+          /<iframe(?![^>]*\btitle\s*=)[^>]*>/i,
+        );
+      });
+    });
+
+    it('tables should include table headers (th)', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        const tables = content.match(/<table[^>]*>[\s\S]*?<\/table>/gi) ?? [];
+        tables.forEach((table) => {
+          expect(table, `Table without <th> headers in ${file}`).toMatch(/<th[^>]*>/i);
+        });
+      });
+    });
+
+    it('required inputs should include aria-required', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(content, `Required input missing aria-required in ${file}`).not.toMatch(
+          /<input[^>]*required(?![^>]*aria-required\s*=\s*["']true["'])[^>]*>/i,
+        );
+      });
+    });
+
+    it('aria-label attributes should not be empty', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(content, `Empty aria-label found in ${file}`).not.toMatch(
+          /aria-label\s*=\s*["']\s*["']/i,
+        );
+      });
+    });
+
+    it('interactive elements should not have negative tabIndex', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(content, `Interactive element with negative tabIndex in ${file}`).not.toMatch(
+          /<(button|a|input|select|textarea)[^>]*tabIndex\s*=\s*["']?-1["']?/i,
+        );
+      });
+    });
+
+    it('elements should not use invalid aria roles', () => {
+      const validRoles = [
+        'button',
+        'navigation',
+        'main',
+        'banner',
+        'contentinfo',
+        'dialog',
+        'alert',
+        'tab',
+        'tabpanel',
+        'menu',
+        'menuitem',
+        'link',
+        'presentation',
+        'list',
+        'listitem',
+        'heading',
+        'checkbox',
+        'radio',
+        'switch',
+        'slider',
+        'progressbar',
+        'spinbutton',
+        'combobox',
+        'option',
+        'grid',
+        'gridcell',
+        'row',
+        'rowgroup',
+        'columnheader',
+        'rowheader',
+        'tree',
+        'treegrid',
+        'treeitem',
+        'tooltip',
+        'toolbar',
+        'status',
+        'log',
+        'math',
+        'feed',
+        'article',
+        'figure',
+        'document',
+        'application',
+        'separator',
+        'scrollbar',
+        'none',
+        'cell',
+        'table',
+        'alertdialog',
+        'menubar',
+        'menuitemcheckbox',
+        'menuitemradio',
+        'tablist',
+        'img',
+        'search',
+        'form',
+        'region',
+        'group',
+        'complementary',
+      ];
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        const roles = content.match(/role\s*=\s*["'][^"']+["']/gi) ?? [];
+        roles.forEach((roleAttr) => {
+          const role = roleAttr.match(/["']([^"']+)["']/)?.[1];
+          if (!role) return;
+          const isValidRole = validRoles.includes(role);
+          expect(isValidRole, `Possibly invalid aria role "${role}" in ${file}`).toBe(true);
+        });
+      });
+    });
+
+    it('elements with role="button" must be focusable', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        const roleButtons = content.match(/<[^>]*role\s*=\s*["']button["'][^>]*>/gi) ?? [];
+        roleButtons.forEach((el) => {
+          expect(el, `role="button" element not focusable in ${file}`).toMatch(
+            /tabIndex\s*=\s*["']?0["']?/i,
+          );
+        });
+      });
+    });
+
+    it('non-anchor elements should not have href attributes', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(content, `Non-anchor element with href found in ${file}`).not.toMatch(
+          /<(div|span)[^>]*href\s*=/i,
+        );
+      });
+    });
+
+    it('textarea elements should have accessible labels', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(content, `Textarea without label or aria-label in ${file}`).not.toMatch(
+          /<textarea(?![^>]*(aria-label|aria-labelledby|id\s*=))[^>]*>/i,
+        );
+      });
+    });
   });
 
   describe('Level 5: Architecture & Security', () => {

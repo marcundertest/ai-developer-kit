@@ -63,6 +63,174 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 094
+
+- **Fecha**: 2026-03-05 14:14
+- **Requerimiento**: Elementos `<textarea>` deben poseer etiquetas accesibles.
+- **Información adicional**: Validar que haya `id`, `aria-label` o `aria-labelledby` para mantener un DOM interactivo puramente accesible.
+- **Interpretación**:
+  1. Identificar todo `<textarea>` y asegurarse de que cuenta con descripciones vinculadas nativas.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:15 - ✅ 113 tests passing.
+
+### Requerimiento 093
+
+- **Fecha**: 2026-03-05 14:14
+- **Requerimiento**: Prohibir el uso del atributo `href` en `<div>` o `<span>`.
+- **Información adicional**: Evita falsos hipervínculos; los elementos genéricos en bloque o línea no deberían instanciar comportamientos análogos al `<a>`.
+- **Interpretación**:
+  1. Detectar `<div href="` o `<span href="` y rechazarlo.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Pendiente
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:15 - ✅ 113 tests passing.
+
+### Requerimiento 092
+
+- **Fecha**: 2026-03-05 14:14
+- **Requerimiento**: Cualquier elemento con `role="button"` debe tener foco de teclado.
+- **Información adicional**: Requerir que declaren explícitamente `tabIndex` si se les aplica rol estructural forzado.
+- **Interpretación**:
+  1. Identificar `<div role="button">` o similares validando el atributo focusable.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Pendiente
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:15 - ✅ 113 tests passing.
+
+### Requerimiento 091
+
+- **Fecha**: 2026-03-05 14:14
+- **Requerimiento**: El atributo `role=""` no debe usar roles WAI-ARIA inválidos.
+- **Información adicional**: Asegura la estandarización correcta frente a errores tipográficos.
+- **Interpretación**:
+  1. Meta-test validando los valores `role` contra un diccionario base.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Pendiente
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:15 - ✅ 113 tests passing.
+
+### Requerimiento 090
+
+- **Fecha**: 2026-03-05 14:14
+- **Requerimiento**: Los elementos interactivos nativos (`button`, `a`, `input`, `select`, `textarea`) no deben tener `tabIndex` negativo.
+- **Información adicional**: Un valor negativo extrae esos elementos de la progresión de foco del sistema, corrompiendo formas y barras de navegación.
+- **Interpretación**:
+  1. Meta-test rastreando `tabIndex="-1"` sobre tags nativos interactivos.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Pendiente
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:15 - ✅ 113 tests passing.
+
+### Requerimiento 089
+
+- **Fecha**: 2026-03-05 14:14
+- **Requerimiento**: El atributo `aria-label` no puede encontrarse vacío.
+- **Información adicional**: De existir, el `aria-label` debe inyectar contexto válido a screen-readers o suprimirse a favor de alternativas.
+- **Interpretación**:
+  1. Meta text excluyendo sintaxis `aria-label=""`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Pendiente
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:15 - ✅ 113 tests passing.
+
+### Requerimiento 088
+
+- **Fecha**: 2026-03-05 14:14
+- **Requerimiento**: Exigencia del atributo semántico `aria-required="true"` en aquellos campos interactivos del DOM con bandera `required`.
+- **Información adicional**: Mejor puente semántico con asistentes robóticos de input predictivos y de asistencia motriz.
+- **Interpretación**:
+  1. Meta-test confirmando que si un markup especifica `required` agregue además el `aria-required`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Pendiente
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:15 - ✅ 113 tests passing.
+
+### Requerimiento 087
+
+- **Fecha**: 2026-03-05 14:14
+- **Requerimiento**: Se obliga a la integración de encabezados de tabla explícitos (`<th>`) para cualquier `<table>`.
+- **Información adicional**: Una tabla base sin header contextual no es un componente UI estándar.
+- **Interpretación**:
+  1. Meta test buscando `<table>` carentes de etiquetas header de celdas.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Pendiente
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:15 - ✅ 113 tests passing.
+
+### Requerimiento 086
+
+- **Fecha**: 2026-03-05 14:14
+- **Requerimiento**: Documento externo `<iframe>` deben tener atributo referencial de título (`title`).
+- **Información adicional**: Necesario para que navegabilidad auditiva indique la fuente encapsulada.
+- **Interpretación**:
+  1. Validar iframes sin `title`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Pendiente
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:15 - ✅ 113 tests passing.
+
+### Requerimiento 085
+
+- **Fecha**: 2026-03-05 14:14
+- **Requerimiento**: Elementos con `onClick` (`<div>`, `<span>`, `<img>`) precisan `onKeyDown`, `onKeyUp` u `onKeyPress`.
+- **Información adicional**: Todo control de mouse debe comportar un handler análogo a lo sumo para control de teclado.
+- **Interpretación**:
+  1. En caso de detectarse un evento de click se debe buscar una referencia explícita a funciones JS por key.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Pendiente
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:15 - ✅ 113 tests passing.
+
+### Requerimiento 084
+
+- **Fecha**: 2026-03-05 14:14
+- **Requerimiento**: Botones nativos `<button>` no deben declarar redundantemente `role="button"`.
+- **Información adicional**: Se omite duplicidad que provoca problemas en los screen readers modernos.
+- **Interpretación**:
+  1. Prohibir la expresión `role="button"` explícitamente en una etiqueta tipo button.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Pendiente
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:15 - ✅ 113 tests passing.
+
+### Requerimiento 083
+
+- **Fecha**: 2026-03-05 14:14
+- **Requerimiento**: Atributos `for` de sentencias `<label>` deben converger hacia un `<input id="x">` explícito válido.
+- **Información adicional**: Previene componentes label rotos tras copy+paste.
+- **Interpretación**:
+  1. Test buscando correspondencia Regex de `<label for="target">` hacia `id="target"`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Pendiente
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:15 - ✅ 113 tests passing.
+
 ### Requerimiento 082
 
 - **Fecha**: 2026-03-05 14:04
