@@ -63,6 +63,20 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 100
+
+- **Fecha**: 2026-03-05 14:30
+- **Requerimiento**: Prohibir activamente ignorar archivos núcleo en `.gitignore`.
+- **Información adicional**: Para que el meta-test de inmutabilidad del kit de desarrollo funcione, debemos evitar el edge-case de que `tests/meta` o `.integrity-suite` sean introducidos en el archivo `.gitignore`, lo cual cegaría a Git frente a su manipulación.
+- **Interpretación**:
+  1. Meta-test evaluando las sentencias puras en `.gitignore` para bloquear strings como `tests`, `.integrity-suite` o sus subdirectorios.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:31 - ✅ Passing successfully.
+
 ### Requerimiento 099
 
 - **Fecha**: 2026-03-05 14:18

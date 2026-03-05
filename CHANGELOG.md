@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.42] - 2026-03-05
+
+### Added
+
+- Added explicit testing to `.gitignore` to forbid ignoring components of `.integrity-suite` or the `tests/meta` directory, cementing the core protection rules from bypass edge-cases.
+
 ## [1.4.41] - 2026-03-05
 
 ### Added

@@ -595,36 +595,74 @@ describe('Integrity Suite', () => {
       });
     });
 
-    it('should protect core kit files from unauthorized modification', async () => {
-      if (pkg.name === 'ai-developer-kit') return;
+    it('should explicitly forbid ignoring core kit files in .gitignore', () => {
+      const gitignorePath = path.join(rootDir, '.gitignore');
+      if (!fs.existsSync(gitignorePath)) return;
 
-      const { execSync } = await import('node:child_process');
-      let changedFiles = '';
-      try {
-        changedFiles = execSync('git status --porcelain', { encoding: 'utf8', stdio: 'pipe' });
-      } catch (e) {
-        return;
-      }
-
-      const paths = changedFiles
+      const content = fs.readFileSync(gitignorePath, 'utf8');
+      const lines = content
         .split('\n')
-        .filter(Boolean)
-        .map((line) => line.trim().slice(2).trim());
+        .map((l) => l.trim().replace(/\/+$/, ''))
+        .filter((l) => l && !l.startsWith('#'));
 
-      const protectedPaths = [
+      const coreKitPatterns = [
+        '.integrity-suite',
+        '.integrity-suite/docs',
         '.integrity-suite/docs/prompt.md',
         '.integrity-suite/docs/workflow.md',
-        '.integrity-suite/scripts/',
+        '.integrity-suite/scripts',
+        'tests/meta',
         'tests/meta/integrity-suite.test.ts',
       ];
 
-      paths.forEach((p) => {
-        const isProtected = protectedPaths.some((prot) => p === prot || p.startsWith(prot));
+      lines.forEach((line) => {
+        const targetsCoreKit = coreKitPatterns.some(
+          (p) => line === p || line.startsWith(p) || p.startsWith(line),
+        );
+
+        if (line === 'tests') {
+          expect(line, `Kit vulnerability: .gitignore must not hide the tests directory`).not.toBe(
+            'tests',
+          );
+        }
+
         expect(
-          isProtected,
-          `Kit protection: unauthorized modification attempt on protected core file: ${p}`,
+          targetsCoreKit,
+          `Kit vulnerability: .gitignore must not hide core kit files: ${line}`,
         ).toBe(false);
       });
+    });
+  });
+
+  it('should protect core kit files from unauthorized modification', async () => {
+    if (pkg.name === 'ai-developer-kit') return;
+
+    const { execSync } = await import('node:child_process');
+    let changedFiles = '';
+    try {
+      changedFiles = execSync('git status --porcelain', { encoding: 'utf8', stdio: 'pipe' });
+    } catch (e) {
+      return;
+    }
+
+    const paths = changedFiles
+      .split('\n')
+      .filter(Boolean)
+      .map((line) => line.trim().slice(2).trim());
+
+    const protectedPaths = [
+      '.integrity-suite/docs/prompt.md',
+      '.integrity-suite/docs/workflow.md',
+      '.integrity-suite/scripts/',
+      'tests/meta/integrity-suite.test.ts',
+    ];
+
+    paths.forEach((p) => {
+      const isProtected = protectedPaths.some((prot) => p === prot || p.startsWith(prot));
+      expect(
+        isProtected,
+        `Kit protection: unauthorized modification attempt on protected core file: ${p}`,
+      ).toBe(false);
     });
   });
 
