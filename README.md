@@ -33,7 +33,7 @@ pnpm test
 To run all quality checks:
 
 ```bash
-pnpm validate-project
+pnpm test:full
 ```
 
 ## Contribution

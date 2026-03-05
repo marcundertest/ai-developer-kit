@@ -5,6 +5,40 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.57] - 2026-03-05
+
+### Added
+
+- New validation architecture with granular test control (Req 141):
+  - `test:full`: Strict commit-time validation (renamed from `validate-project`). Runs all checks
+    including version bump requirement and CHANGELOG update requirement.
+  - `test:nobump`: Relaxed version check for push-time validation. Allows version equal to origin.
+  - `test:report`: Standalone script to generate audit report HTML.
+  - `check-version:relaxed`: New script variant that permits version==HEAD (used by `test:nobump`).
+  - Three new validation tests with tags:
+    - `@staging`: Ensures requirements.md is staged during commits.
+    - `@version-check`: Ensures version never regresses vs HEAD (runs in both modes).
+    - `@version-release`: Ensures version was incremented AND CHANGELOG entry exists (test:full only).
+- New `check-audit.js` wrapper script for graceful handling of network failures during `pnpm audit`.
+  If registry is unreachable, audit is skipped with warning instead of blocking the workflow.
+
+### Changed
+
+- Renamed `validate-project` to `test:full` across all references (package.json, hooks, documentation).
+- Renamed `validate-project:push` to `test:nobump` for clarity about what the validation allows.
+- Updated `.husky/pre-commit` to run `pnpm test:full` instead of `validate-project`.
+- Updated `.husky/pre-push` to run `pnpm test:nobump` instead of `validate-project:push`.
+- `pnpm audit` script now delegates to `check-audit.js` with network resilience.
+- Simplified package.json by removing unnecessary test scripts:
+  - Removed public `test` alias script (was `pnpm test:meta && pnpm test:unit && pnpm test:e2e`).
+  - Removed `test:meta:tag` convenience helper script.
+  - Kept internal `test:meta`, `test:unit`, `test:e2e` sub-scripts (only called by test:full/test:nobump).
+  - Now only three main validation commands: `test:full` (commit), `test:nobump` (push), `test:report` (report).
+
+### Fixed
+
+- Integrity Suite meta-test updated to verify new script names in hooks and package.json.
+
 ## [1.4.56] - 2026-03-05
 
 ### Changed

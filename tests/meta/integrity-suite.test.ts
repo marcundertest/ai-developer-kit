@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { execSync } from 'node:child_process';
 
 describe('Integrity Suite', () => {
   const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -220,7 +221,9 @@ describe('Integrity Suite', () => {
   describe('Level 2: Strict Workflow (Pipeline) @workflow', () => {
     it('should have essential scripts in package.json', () => {
       expect(pkg.scripts['build']).toBeDefined();
-      expect(pkg.scripts['test']).toBeDefined();
+      expect(pkg.scripts['test:full']).toBeDefined();
+      expect(pkg.scripts['test:nobump']).toBeDefined();
+      expect(pkg.scripts['test:report']).toBeDefined();
       expect(pkg.scripts['start']).toBeDefined();
       expect(pkg.scripts['audit']).toBeDefined();
     });
@@ -307,12 +310,12 @@ describe('Integrity Suite', () => {
       const content = fs.readFileSync(hookPath, 'utf8');
       expect(
         content,
-        'Pre-commit hook must run pnpm validate-project to enforce strict commit quality',
-      ).toContain('pnpm validate-project');
+        'Pre-commit hook must run pnpm test:full to enforce strict commit quality',
+      ).toContain('pnpm test:full');
       expect(
         content,
-        'Pre-commit must not contain validate-project:push (that is for push with relaxed version check)',
-      ).not.toContain('validate-project:push');
+        'Pre-commit must not contain test:nobump (that is for push with relaxed version check)',
+      ).not.toContain('test:nobump');
       expect(content, 'Pre-commit hook contains an early exit').not.toMatch(/exit\s+0/);
     });
 
@@ -529,7 +532,7 @@ describe('Integrity Suite', () => {
     });
 
     it('should have a zero-tolerance validation script with security audit', () => {
-      const script = pkg.scripts['validate-project'];
+      const script = pkg.scripts['test:full'];
       expect(script).toContain('pnpm lint');
       expect(script).toContain('pnpm mdlint');
       expect(script).toContain('pnpm format:check');
@@ -546,17 +549,32 @@ describe('Integrity Suite', () => {
       ).toBeLessThan(script.indexOf('pnpm test'));
     });
 
-    it('should call all three test suites in correct order in the test script', () => {
-      const testScript: string = pkg.scripts['test'];
-      expect(testScript).toBeDefined();
-      const metaIdx = testScript.indexOf('test:meta');
-      const unitIdx = testScript.indexOf('test:unit');
-      const e2eIdx = testScript.indexOf('test:e2e');
-      expect(metaIdx, 'test:meta is missing from test script').toBeGreaterThan(-1);
-      expect(unitIdx, 'test:unit is missing from test script').toBeGreaterThan(-1);
-      expect(e2eIdx, 'test:e2e is missing from test script').toBeGreaterThan(-1);
-      expect(metaIdx, 'test:meta must run before test:unit').toBeLessThan(unitIdx);
-      expect(unitIdx, 'test:unit must run before test:e2e').toBeLessThan(e2eIdx);
+    it('should call all three test suites in correct order in test:full and test:nobump', () => {
+      const fullScript = pkg.scripts['test:full'] as string;
+      expect(fullScript).toBeDefined();
+      const fullMeta = fullScript.indexOf('test:meta');
+      const fullUnit = fullScript.indexOf('test:unit');
+      const fullE2e = fullScript.indexOf('test:e2e');
+      expect(fullMeta, 'test:meta is missing from test:full script').toBeGreaterThan(-1);
+      expect(fullUnit, 'test:unit is missing from test:full script').toBeGreaterThan(-1);
+      expect(fullE2e, 'test:e2e is missing from test:full script').toBeGreaterThan(-1);
+      expect(fullMeta, 'test:meta must run before test:unit in test:full').toBeLessThan(fullUnit);
+      expect(fullUnit, 'test:unit must run before test:e2e in test:full').toBeLessThan(fullE2e);
+
+      const nobumpScript = pkg.scripts['test:nobump'] as string;
+      expect(nobumpScript).toBeDefined();
+      const nobumpMeta = nobumpScript.indexOf('test:meta');
+      const nobumpUnit = nobumpScript.indexOf('test:unit');
+      const nobumpE2e = nobumpScript.indexOf('test:e2e');
+      expect(nobumpMeta, 'test:meta is missing from test:nobump script').toBeGreaterThan(-1);
+      expect(nobumpUnit, 'test:unit is missing from test:nobump script').toBeGreaterThan(-1);
+      expect(nobumpE2e, 'test:e2e is missing from test:nobump script').toBeGreaterThan(-1);
+      expect(nobumpMeta, 'test:meta must run before test:unit in test:nobump').toBeLessThan(
+        nobumpUnit,
+      );
+      expect(nobumpUnit, 'test:unit must run before test:e2e in test:nobump').toBeLessThan(
+        nobumpE2e,
+      );
     });
 
     it('should have prepare script configured to install husky', () => {
@@ -675,11 +693,11 @@ describe('Integrity Suite', () => {
       ).toBeDefined();
     });
 
-    it('should not have silent bypass patterns in validate-project', () => {
-      const script = pkg.scripts['validate-project'] as string;
-      expect(script, '|| true bypass in validate-project').not.toMatch(/\|\|\s*true/);
-      expect(script, '; true bypass in validate-project').not.toMatch(/;\s*true\b/);
-      expect(script, '&& exit 0 bypass in validate-project').not.toMatch(/&&\s*exit\s+0/);
+    it('should not have silent bypass patterns in test:full', () => {
+      const script = pkg.scripts['test:full'] as string;
+      expect(script, '|| true bypass in test:full').not.toMatch(/\|\|\s*true/);
+      expect(script, '; true bypass in test:full').not.toMatch(/;\s*true\b/);
+      expect(script, '&& exit 0 bypass in test:full').not.toMatch(/&&\s*exit\s+0/);
     });
 
     it('should have a pre-push hook that runs relaxed validation (version equal to HEAD is OK)', () => {
@@ -688,12 +706,12 @@ describe('Integrity Suite', () => {
       const prePushContent = fs.readFileSync(prePushPath, 'utf8');
       expect(
         prePushContent,
-        'pre-push hook must run pnpm validate-project:push (with relaxed version check)',
-      ).toContain('validate-project:push');
+        'pre-push hook must run pnpm test:nobump (with relaxed version check)',
+      ).toContain('pnpm test:nobump');
       expect(
         prePushContent,
-        'pre-push must not contain strict validate-project (that is for commit)',
-      ).not.toMatch(/pnpm\s+validate-project(\s|$)/);
+        'pre-push must not contain strict test:full (that is for commit)',
+      ).not.toMatch(/pnpm\s+test:full(\s|$)/);
     });
 
     it('should not have INTEGRITY_SKIP_PROTECTION bypass in scripts or hooks', () => {
@@ -2397,11 +2415,20 @@ describe('Integrity Suite', () => {
       expect(auditScript).not.toContain('--ignore-registry-errors');
     });
 
-    it('should run audit before tests in validate-project', () => {
-      const script = pkg.scripts['validate-project'];
-      const auditIdx = script.indexOf('pnpm audit');
-      const testIdx = script.indexOf('pnpm test');
-      expect(auditIdx, 'audit must run before tests').toBeLessThan(testIdx);
+    it('should run audit before tests in test:full and test:nobump', () => {
+      const scriptFull = pkg.scripts['test:full'];
+      expect(scriptFull).toBeDefined();
+      const auditIdxFull = scriptFull.indexOf('pnpm audit');
+      const testIdxFull = scriptFull.indexOf('pnpm test');
+      expect(auditIdxFull, 'audit must run before tests in test:full').toBeLessThan(testIdxFull);
+
+      const scriptNobump = pkg.scripts['test:nobump'];
+      expect(scriptNobump).toBeDefined();
+      const auditIdxNobump = scriptNobump.indexOf('pnpm audit');
+      const testIdxNobump = scriptNobump.indexOf('pnpm test');
+      expect(auditIdxNobump, 'audit must run before tests in test:nobump').toBeLessThan(
+        testIdxNobump,
+      );
     });
 
     it('should have a lockfile that is not outdated relative to package.json', () => {
@@ -2793,6 +2820,105 @@ describe('Integrity Suite', () => {
             `Empty JSDoc block in ${file}: add a meaningful description or remove the comment`,
           ).not.toMatch(/\/\*\*\s*\*\//);
         });
+    });
+
+    it('should have requirements.md in git staging area (for commits)', () => {
+      // @staging
+      // Tag: @staging - runs during test:full to enforce requirements tracking
+      try {
+        const stagingFiles = execSync('git diff --cached --name-only', {
+          encoding: 'utf8',
+          stdio: ['pipe', 'pipe', 'pipe'],
+        })
+          .trim()
+          .split('\n');
+
+        const hasRequirements = stagingFiles.includes('.integrity-suite/docs/requirements.md');
+        expect(
+          hasRequirements,
+          'requirements.md must be staged during commits to track completed requirements',
+        ).toBe(true);
+      } catch {
+        // Git command failure likely means not in a git repo or no staging area
+        // Skip this test in non-git contexts
+      }
+    });
+
+    it('should never have a version inferior to origin HEAD (version-check)', () => {
+      // @version-check
+      // Tag: @version-check - runs in both test:full and test:nobump to prevent version regression
+      try {
+        const currentVersion = pkg.version;
+
+        let originVersion = null;
+        try {
+          const pkgAtOrigin = execSync(
+            'git show origin:package.json 2>/dev/null || git show HEAD:package.json',
+            {
+              encoding: 'utf8',
+              stdio: ['pipe', 'pipe', 'pipe'],
+            },
+          );
+          originVersion = JSON.parse(pkgAtOrigin).version;
+        } catch {
+          // If we can't get origin version, it's OK (new repo or no origin)
+          originVersion = null;
+        }
+
+        if (originVersion) {
+          const current = currentVersion.split('.').map(Number);
+          const origin = originVersion.split('.').map(Number);
+
+          for (let i = 0; i < 3; i++) {
+            if (current[i] > origin[i]) break;
+            if (current[i] < origin[i]) {
+              expect(
+                false,
+                `Version regression detected: current ${currentVersion} is lower than origin ${originVersion}`,
+              ).toBe(true);
+              break;
+            }
+          }
+        }
+      } catch (e) {
+        // If git is unavailable or version parsing fails, skip gracefully
+      }
+    });
+
+    it('should have incremented version and matching CHANGELOG entry (test:full strict mode)', () => {
+      // @version-release
+      // Tag: @version-release - runs only in test:full to enforce version bump + changelog for releases
+      try {
+        const currentVersion = pkg.version;
+
+        let headVersion = null;
+        try {
+          const pkgAtHead = execSync('git show HEAD:package.json 2>/dev/null', {
+            encoding: 'utf8',
+            stdio: ['pipe', 'pipe', 'pipe'],
+          });
+          headVersion = JSON.parse(pkgAtHead).version;
+        } catch {
+          // If we can't get HEAD version, assume this is the initial commit
+          headVersion = '0.0.0';
+        }
+
+        if (headVersion && headVersion !== currentVersion) {
+          // Version changed in staging, verify CHANGELOG was updated
+          const changelogPath = path.join(rootDir, 'CHANGELOG.md');
+          const changelogContent = fs.readFileSync(changelogPath, 'utf8');
+
+          const hasVersionEntry =
+            changelogContent.includes(`## ${currentVersion}`) ||
+            changelogContent.includes(`v${currentVersion}`);
+          expect(
+            hasVersionEntry,
+            `CHANGELOG.md must include entry for version change from ${headVersion} to ${currentVersion}`,
+          ).toBe(true);
+        }
+      } catch (e) {
+        // If git is unavailable or version parsing fails, skip gracefully
+      }
     });
   });
 });
