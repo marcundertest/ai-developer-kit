@@ -36,6 +36,15 @@ if (!reqMatch) {
 }
 
 const id = reqMatch[1];
+
+// Verificar si el requerimiento ya está aprobado
+const reqBlock = historySection.split('### Requerimiento')[1];
+if (reqBlock.includes('- **Estado**: Aprobado')) {
+  console.log(`\nℹ️  El Requerimiento #${id} ya está marcado como "Aprobado".`);
+  console.log(`No hay requerimientos pendientes de firma.\n`);
+  process.exit(0);
+}
+
 const status = 'Aprobado';
 const hash = createHash('sha256').update(`${id}${status}${secret}`).digest('hex');
 
@@ -43,4 +52,4 @@ console.log(`\n✅ Sello generado para el Requerimiento #${id}:`);
 console.log(`---------------------------------------------------------`);
 console.log(hash);
 console.log(`---------------------------------------------------------`);
-console.log(`Copia este hash en el campo "**Sello de Usuario**" de tu archivo requirements.md\n`);
+console.log(`Copia este hash en el campo "**Sello de usuario**" de tu archivo requirements.md\n`);

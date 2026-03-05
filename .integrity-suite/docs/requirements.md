@@ -65,6 +65,23 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 130
+
+- **Fecha**: 2026-03-05 15:44
+- **Requerimiento**: Mejorar el script de firma para evitar firmas duplicadas y cerrar el loophole de "reuso de aprobación".
+- **Información adicional**: El agente detectó que puede commitear cambios si no crea un nuevo requerimiento, ya que el anterior sigue marcado como aprobado. Se requiere que el script de firma solo actúe sobre estados "Pendiente" y que el agente sea auditado para crear siempre un nuevo requerimiento ante cualquier cambio.
+- **Interpretación**:
+  1. Modificar `sign-requirement.js` para que falle si el último requerimiento ya está aprobado.
+  2. Registrar este mismo requerimiento (#130) para forzar el uso del sello.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `.integrity-suite/scripts/sign-requirement.js` (estado: modificado)
+  - `.integrity-suite/docs/requirements.md` (estado: modificado)
+- **Estado**: Aprobado
+- **Sello de Usuario**: 24614e3bbc1e569c463b587389cd2e5f5d65cea0d31a1097933e6d8161963584
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 15:45 - ✅ Loophole closed: sign-req now detects duplicates.
+
 ### Requerimiento 129
 
 - **Fecha**: 2026-03-05 15:24

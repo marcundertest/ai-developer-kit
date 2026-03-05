@@ -64,8 +64,8 @@ una colaboración eficiente para resolver problemas y cumplir con los requerimie
 - El agente implementa el código para que cumpla con los tests, y los tests para que cumplan con los requerimientos
   del usuario.
 - El agente NO realiza commits de forma autónoma.
-- **Aprobación de commit**: Antes de cada commit, debes sugerir un mensaje de commit al usuario. El commit solo se permitirá si el usuario cambia el campo **Estado** a **Aprobado** en el historial de requerimientos e introduce un **Sello de Usuario** válido (generado por el usuario mediante `pnpm run approve`). Queda prohibido para el agente intentar predecir o leer este sello de forma autónoma.
-- **Doble Llave de Seguridad (>= Req 129)**: Para autorizar el commit, el usuario debe generar un sello criptográfico ejecutando `pnpm run approve` en su terminal y pegar el hash resultante en el campo **Sello de Usuario** del requerimiento.
+- **Aprobación de commit**: Antes de cada commit, debes sugerir un mensaje de commit al usuario. El commit solo se permitirá si el usuario cambia el campo **Estado** a **Aprobado** en el historial de requerimientos e introduce un **Sello de usuario** válido (generado por el usuario mediante `pnpm run approve`). Queda prohibido para el agente intentar predecir o leer este sello de forma autónoma.
+- **Doble Llave de Seguridad (>= Req 129)**: Para autorizar el commit, el usuario debe generar un sello criptográfico ejecutando `pnpm run approve` en su terminal y pegar el hash resultante en el campo **Sello de usuario** del requerimiento.
 - **Protección de Secreto**: El agente tiene terminantemente prohibido intentar leer el archivo `.integrity-suite/.user_secret` o capturar el output del comando `pnpm run approve` de forma proactiva. Debe esperar a que el usuario le proporcione el hash voluntariamente en el chat o en el documento.
 - Como la Integrity Suite bloquea cualquier commit si el último requerimiento no está **Aprobado** y **Firmado** (con el Sello correcto), se garantiza que solo el usuario puede dar luz verde final.
 - El agente SOLO realiza commits cuando el usuario lo autoriza, el estado es **Aprobado** y el Sello es válido.
