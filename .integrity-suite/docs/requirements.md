@@ -4,7 +4,7 @@ Este archivo contiene el historial de requerimientos del usuario, incluyendo su 
 
 ## Plantillas
 
-Cada registro de requerimiento ahora incluye un campo **Versión** que indica la versión del proyecto en la que se implementó el cambio. Esto permite que un test automático valide que cada bump de versión tenga su contraparte en el historial de requerimientos.
+Cada registro de requerimiento incluye un campo **Versión** que indica la versión del proyecto en la que se implementó el cambio. Esto permite que un test automático valide que cada bump de versión tenga su contraparte en el historial de requerimientos.
 
 Utilizar la siguiente plantilla para cada requerimiento que sea testeable:
 
@@ -12,6 +12,7 @@ Utilizar la siguiente plantilla para cada requerimiento que sea testeable:
 ### Requerimiento [ID]
 
 - **Fecha**: yyyy-MM-dd HH:mm
+- **Versión**: X.Y.Z
 - **Requerimiento**: [Requerimiento en las mismas palabras del usuario]
 - **Información adicional**: [Información adicional proporcionada por el usuario, si existe, sino indicar N/A]
 - **Interpretación**: [Interpretación detallada del requerimiento por parte del agente]
@@ -31,6 +32,7 @@ Y la siguiente para cada requerimiento que no sea testeable:
 ### Requerimiento [ID]
 
 - **Fecha**: yyyy-MM-dd HH:mm
+- **Versión**: X.Y.Z
 - **Requerimiento**: [Requerimiento en las mismas palabras del usuario]
 - **Información adicional**: [Información adicional proporcionada por el usuario, si existe, sino indicar N/A]
 - **Interpretación**: [Interpretación detallada del requerimiento por parte del agente]
@@ -47,6 +49,7 @@ Este es un ejemplo:
 ### Requerimiento 001
 
 - **Fecha**: 2026-03-04 10:30
+- **Versión**: 1.2.3
 - **Requerimiento**: quiero que el usuario pueda registrarse con email y contraseña
 - **Información adicional**: N/A
 - **Interpretación**: Crear endpoint `POST /auth/register` que acepte email y password...
@@ -64,6 +67,23 @@ Este es un ejemplo:
 Los requerimientos deben estar ordenados cronológicamente (del más reciente al más antiguo).
 
 ## Historial de requerimientos
+
+### Requerimiento 141
+
+- **Fecha**: 2026-03-06 15:00
+- **Versión**: 1.4.59
+- **Requerimiento**: añadir campo **Versión** en todos los registros de requirements.md y crear test que verifique su existencia para la versión actual.
+- **Información adicional**: se busca evitar olvidos al documentar nuevos requisitos con cada bump.
+- **Interpretación**: modificar plantilla y todos los registros previos para incluir la línea de versión; actualizar tests/meta para comprobar presencia del campo en la entrada correspondiente a la versión activa.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `.integrity-suite/docs/requirements.md` (modificado)
+  - `tests/meta/integrity-suite.test.ts` (modificado)
+- **Tests**:
+  - `tests/meta/integrity-suite.test.ts` (modificado)
+- **Estado**: Completado
+- **Resultados de los tests**:
+  - **Iteración 1**: 2026-03-06 15:05 - ✅ 192 meta tests passed
 
 ### Requerimiento 140
 
@@ -131,6 +151,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 137
 
 - **Fecha**: 2026-03-05 18:20
+- **Versión**: N/A
 - **Requerimiento**: Implementa todo esto, actualizando requirements.md y changelog.md, versión, ejecutando tests y siguiendo el workflow.md (yo commiteo). A. @typescript: Cobertura de tipos más estricta. B. @consistency: Normas de async más estrictas. C. @security: Detección de secretos mejorada. D. @workflow: Verificar que el hash SHA256 está actualizado. E. @testing: Tests no deben ser todos del mismo tipo. F. @dependencies: Verificar versiones major desactualizadas. G. @base: Verificar que commit-msg existe y valida. H. Nuevo nivel propuesto: @performance (Level 10).
 - **Información adicional**: N/A
 - **Interpretación**: Ampliar la Integrity Suite con 16 nuevos meta-tests distribuidos en los niveles existentes y un nuevo Level 10 (@performance). Incluye: (A) 3 tests TypeScript (non-null assertion, numeric enum, double-assertion); (B) 2 tests async en @consistency (setTimeout/setInterval, floating Promise.all); (C) 1 test extendido de secretos con mas palabras clave y deteccion de hex; (D) 1 test en @workflow que verifica que existe el script update-hash.js; (E) 2 tests en @testing (unhappy-path obligatorio, nombres unicos); (F) 1 test en @dependencies (major version 0.x); (G) 1 test en @base (commit-msg hook existe y valida); (H) 5 tests en Level 10 @performance (namespace imports, JSON.parse/stringify, await en loops, lodash entero, fs.xSync en async). Adicionalmente: crear update-hash.js, añadir divide() a src/index.ts, actualizar unit test, bump version 1.4.53->1.4.54.
@@ -153,6 +174,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 136
 
 - **Fecha**: 2026-03-05 17:35
+- **Versión**: N/A
 - **Requerimiento**: Añadir filtrado interactivo al reporte de auditoría y unificar su estética.
 - **Información adicional**: Se busca que al pulsar en "Passed" o "Failed" el listado se filtre automáticamente, y que la estética de todas las tarjetas de resumen sea idéntica.
 - **Interpretación**:
@@ -170,6 +192,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 135
 
 - **Fecha**: 2026-03-05 16:40
+- **Versión**: N/A
 - **Requerimiento**: Generar un reporte HTML de auditoría basado en los meta-tests.
 - **Información adicional**: Se busca facilitar la auditoría de proyectos externos mediante un informe visual y profesional que resuma los hallazgos de la Integrity Suite.
 - **Interpretación**:
@@ -188,6 +211,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 134
 
 - **Fecha**: 2026-03-05 16:35
+- **Versión**: N/A
 - **Requerimiento**: Categorizar los meta-tests y crear scripts de ejecución granular.
 - **Información adicional**: Se desea poder ejecutar subconjuntos de la Integrity Suite (estilo Playwright tags) para mayor agilidad.
 - **Interpretación**:
@@ -204,6 +228,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 133
 
 - **Fecha**: 2026-03-05 16:25
+- **Versión**: N/A
 - **Requerimiento**: Eliminar la dependencia del nombre del proyecto en los tests de integridad.
 - **Información adicional**: Forzar que el proyecto se llame "integrity-suite" impide usar el kit como base para otros proyectos con nombres distintos.
 - **Interpretación**:
@@ -219,6 +244,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 132
 
 - **Fecha**: 2026-03-05 16:18
+- **Versión**: N/A
 - **Requerimiento**: Renombrar el proyecto a "Integrity Suite" e implementar bloqueo físico de commit.
 - **Información adicional**: El usuario prefiere el nombre "Integrity Suite" (kebab: integrity-suite) al anterior. Se requiere además que el pre-commit hook solicite confirmación manual (Enter) para asegurar la intervención humana.
 - **Interpretación**:
@@ -238,6 +264,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 131
 
 - **Fecha**: 2026-03-05 15:55
+- **Versión**: N/A
 - **Requerimiento**: Simplificar el flujo de trabajo, eliminando la firma manual y el commit autónomo del agente.
 - **Información adicional**: El usuario considera el sistema de sellos absurdo. Se prefiere un flujo donde el agente completa la tarea (Estado: Completado), sugiere el mensaje de commit y el usuario realiza el commit/push manualmente.
 - **Interpretación**:
@@ -258,6 +285,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 130
 
 - **Fecha**: 2026-03-05 15:44
+- **Versión**: N/A
 - **Requerimiento**: Mejorar el script de firma para evitar firmas duplicadas y cerrar el loophole de "reuso de aprobación".
 - **Información adicional**: El agente detectó que puede commitear cambios si no crea un nuevo requerimiento, ya que el anterior sigue marcado como aprobado. Se requiere que el script de firma solo actúe sobre estados "Pendiente" y que el agente sea auditado para crear siempre un nuevo requerimiento ante cualquier cambio.
 - **Interpretación**:
@@ -274,6 +302,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 129
 
 - **Fecha**: 2026-03-05 15:24
+- **Versión**: N/A
 - **Requerimiento**: Blindar el sistema de aprobación para evitar que el agente apruebe en nombre del usuario.
 - **Información adicional**: El sistema actual de marcar como "Aprobado" es vulnerable a que el agente edite el archivo `requirements.md`. Se requiere un mecanismo de "Firma de Usuario" (Sello) basado en un secreto que el agente no conozca.
 - **Interpretación**:
@@ -292,6 +321,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 128
 
 - **Fecha**: 2026-03-05 15:18
+- **Versión**: N/A
 - **Requerimiento**: Prohibición de asignaciones directas a `innerHTML` en el directorio `src/`.
 - **Información adicional**: Prevenir vulnerabilidades de Cross-Site Scripting (XSS) obligando al uso de `textContent` o herramientas de sanitización.
 - **Interpretación**:
@@ -306,6 +336,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 127
 
 - **Fecha**: 2026-03-05 15:18
+- **Versión**: N/A
 - **Requerimiento**: Prohibición de `Math.random()` en contextos sensibles a la seguridad.
 - **Información adicional**: `Math.random()` no es criptográficamente seguro. Se debe usar `crypto.randomUUID()` o `crypto.getRandomValues()`.
 - **Interpretación**:
@@ -320,6 +351,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 126
 
 - **Fecha**: 2026-03-05 15:18
+- **Versión**: N/A
 - **Requerimiento**: Prevención de inyección SQL en literales de plantilla.
 - **Información adicional**: Detectar patrones de consulta SQL (`SELECT`, `INSERT`, etc.) que interpolan variables directamente.
 - **Interpretación**:
@@ -334,6 +366,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 125
 
 - **Fecha**: 2026-03-05 15:18
+- **Versión**: N/A
 - **Requerimiento**: Tipado obligatorio de errores en bloques `catch` como `unknown`.
 - **Información adicional**: Evitar el uso de `any` para errores capturados para fomentar una gestión de errores más robusta y segura.
 - **Interpretación**:
@@ -348,6 +381,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 124
 
 - **Fecha**: 2026-03-05 15:18
+- **Versión**: N/A
 - **Requerimiento**: Prohibición de parámetros implícitos (any) en callbacks de arrays.
 - **Información adicional**: Forzar el tipado explícito en `.map()`, `.filter()`, etc., para evitar la pérdida de seguridad de tipos.
 - **Interpretación**:
@@ -362,6 +396,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 123
 
 - **Fecha**: 2026-03-05 15:18
+- **Versión**: N/A
 - **Requerimiento**: Límite de anidamiento (nesting) máximo de 4 niveles.
 - **Información adicional**: El código con excesiva profundidad de indentación es difícil de leer y mantener. Fomenta la extracción de funciones.
 - **Interpretación**:
@@ -376,6 +411,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 122
 
 - **Fecha**: 2026-03-05 15:18
+- **Versión**: N/A
 - **Requerimiento**: Uso obligatorio de spread operator en lugar de `Object.assign()`.
 - **Información adicional**: Mejorar la legibilidad y consistencia del código favoreciendo la sintaxis moderna de ES2018+.
 - **Interpretación**:
@@ -390,6 +426,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 121
 
 - **Fecha**: 2026-03-05 15:18
+- **Versión**: N/A
 - **Requerimiento**: Uso obligatorio de igualdad estricta (`===` / `!==`).
 - **Información adicional**: Evitar errores de coerción de tipos mediante la prohibición de `==` y `!=`.
 - **Interpretación**:
@@ -404,6 +441,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 120
 
 - **Fecha**: 2026-03-05 15:18
+- **Versión**: N/A
 - **Requerimiento**: Prohibición de mezclar estilos de asincronía (`async/await` con `.then()/.catch()`) en el mismo archivo.
 - **Información adicional**: Mantener la consistencia del código y evitar la confusión de estilos asíncronos.
 - **Interpretación**:
@@ -418,6 +456,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 119
 
 - **Fecha**: 2026-03-05 15:08
+- **Versión**: N/A
 - **Requerimiento**: Prohibir la encapsulación de variables de interacción anidando controles visuales dentro de etiquetas de `label`.
 - **Información adicional**: Validar que componentes directos (`<button>`, `<a>`, `<input>`) no estén erróneamente arropados como un texto explicativo pervirtiendo su capacidad interactiva.
 - **Interpretación**:
@@ -432,6 +471,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 118
 
 - **Fecha**: 2026-03-05 15:08
+- **Versión**: N/A
 - **Requerimiento**: Proscribir el uso natural de `tabIndex` mayor a 0 explícito en el DOM.
 - **Información adicional**: Este control manual desvirtúa las lógicas adaptativas del motor y los atajos del explorador empobreciendo la navegación guiada.
 - **Interpretación**:
@@ -446,6 +486,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 117
 
 - **Fecha**: 2026-03-05 15:08
+- **Versión**: N/A
 - **Requerimiento**: Prohibición de redundancia literal en los textos descriptivos: El `alt` del componente img no debe mimetizar textos contextuales expuestos adjacentemente.
 - **Información adicional**: Limpiar redundancias verbales que entorpecen los locutores automáticos repitiendo el mismo concepto.
 - **Interpretación**:
@@ -460,6 +501,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 116
 
 - **Fecha**: 2026-03-05 15:08
+- **Versión**: N/A
 - **Requerimiento**: Enlace nativo `<a>` se asocia funcionalmente con atributo `href`.
 - **Información adicional**: Todo link no semántico que omita ruta, debería por convención estructurarse mediante tag button, proscribiendo su uso como enlace ciego.
 - **Interpretación**:
@@ -474,6 +516,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 115
 
 - **Fecha**: 2026-03-05 15:08
+- **Versión**: N/A
 - **Requerimiento**: Todo `<button>` visual debe contener texto accesible implícito o declaración `aria-label`.
 - **Información adicional**: Evitar de forma tajante botones silenciosos para las API y motores de accesibilidad.
 - **Interpretación**:
@@ -488,6 +531,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 114
 
 - **Fecha**: 2026-03-05 15:08
+- **Versión**: N/A
 - **Requerimiento**: Figuras HTML (`<figure>`) visuales necesitan explicitar título vinculante mediante `<figcaption>`.
 - **Información adicional**: Exigir coherencia sintáctica para no mermar indexación SEO de las representaciones fotográficas.
 - **Interpretación**:
@@ -502,6 +546,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 113
 
 - **Fecha**: 2026-03-05 15:08
+- **Versión**: N/A
 - **Requerimiento**: Imponer atributo funcional `controls` a nivel tag `<audio>`.
 - **Información adicional**: Carencia de controls oculta elementos multimedias para ciegos o usuarios con navegación exclusiva de tab.
 - **Interpretación**:
@@ -516,6 +561,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 112
 
 - **Fecha**: 2026-03-05 15:08
+- **Versión**: N/A
 - **Requerimiento**: Imponer atributo funcional `controls` a nivel tag `<video>`.
 - **Información adicional**: Prevendrá en UI los auto-play hostiles y bloquear la interactividad multimedia si carece de focus state visual accesible.
 - **Interpretación**:
@@ -530,6 +576,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 111
 
 - **Fecha**: 2026-03-05 15:08
+- **Versión**: N/A
 - **Requerimiento**: Elemento nativo HTML `<meter>` requiere declarar límites operacionales funcionales (`min` & `max`).
 - **Información adicional**: Las unidades de medida del componente necesitan acotar su capacidad de interpretación porcentual dictada de forma semántica.
 - **Interpretación**:
@@ -544,6 +591,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 110
 
 - **Fecha**: 2026-03-05 14:55
+- **Versión**: N/A
 - **Requerimiento**: Exigencia estructural `<details>` vinculada a `<summary>`.
 - **Información adicional**: Validar para los bloques expansibles nativos la correlación descriptiva indispensable para screen readers.
 - **Interpretación**:
@@ -558,6 +606,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 109
 
 - **Fecha**: 2026-03-05 14:55
+- **Versión**: N/A
 - **Requerimiento**: Progreso ARIA validado para la etiqueta nativa `<progress>`.
 - **Información adicional**: Detectar si la carga del componente es puramente decorativa o proyecta valor mediante `aria-valuenow`.
 - **Interpretación**:
@@ -572,6 +621,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 108
 
 - **Fecha**: 2026-03-05 14:55
+- **Versión**: N/A
 - **Requerimiento**: Controlar selectores (`<select>`) mediante accesibilidad explícita.
 - **Información adicional**: Validación semejante al `textarea`/`input` exigiendo `id`, `aria-label` o `aria-labelledby`.
 - **Interpretación**:
@@ -586,6 +636,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 107
 
 - **Fecha**: 2026-03-05 14:55
+- **Versión**: N/A
 - **Requerimiento**: Obligatoriedad semántica en el binomio `<fieldset>` / `<legend>`.
 - **Información adicional**: Evitar wrappers puramente decorativos de grupos checkbox. Un grupo encapsulado debe requerir explicación legendaria.
 - **Interpretación**:
@@ -600,6 +651,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 106
 
 - **Fecha**: 2026-03-05 14:55
+- **Versión**: N/A
 - **Requerimiento**: Comprobar persistencia del vector `(s) id` vinculado a una llamada `aria-labelledby` (DOM).
 - **Información adicional**: Evitar refactorizaciones corrompidas donde un array de string separados por espacio (`"title sub"`), carezcan al menos de uno de los id dentro del bloque actual.
 - **Interpretación**:
@@ -614,6 +666,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 105
 
 - **Fecha**: 2026-03-05 14:39
+- **Versión**: N/A
 - **Requerimiento**: Prohibir `input type="image"` carentes de atributo textual equivalente (`alt`).
 - **Información adicional**: Validar que implementaciones de imagen integradas en forma nativa provean referencias accesorias.
 - **Interpretación**:
@@ -628,6 +681,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 104
 
 - **Fecha**: 2026-03-05 14:39
+- **Versión**: N/A
 - **Requerimiento**: Prohibir componentes de etiqueta textual sin contenido accesible o vacío.
 - **Información adicional**: Expresa invalidación visual a tags `<label></label>` que carezcan de string child.
 - **Interpretación**:
@@ -642,6 +696,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 103
 
 - **Fecha**: 2026-03-05 14:39
+- **Versión**: N/A
 - **Requerimiento**: Prohibir uso de atributos WAI-ARIA `aria-controls` que apuntan en su referencia a `id` que no constan dentro del DOM del archivo analizado.
 - **Información adicional**: Garantía de sanidad de vínculos ARIA pre y post-refactorizaciones. Deshecha conexiones obsoletas o estáticas corrompidas.
 - **Interpretación**:
@@ -656,6 +711,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 102
 
 - **Fecha**: 2026-03-05 14:39
+- **Versión**: N/A
 - **Requerimiento**: Restringir componentes con declaración explícita de `role="dialog"` a integrar mandato `aria-modal="true"`.
 - **Información adicional**: Previene fuga de enfoque natural sobre modales nativos donde lectores de pantalla puedan interpretar que existe foco periférico pasable.
 - **Interpretación**:
@@ -670,6 +726,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 101
 
 - **Fecha**: 2026-03-05 14:39
+- **Versión**: N/A
 - **Requerimiento**: Restringir el uso de la propiedad booleana abstracta WAI-ARIA `aria-checked` para ser de acceso exclusivo ante roles con capacidad estatus compatibles (e.g. checkbox, radio, switch).
 - **Información adicional**: Fomenta el uso taxonómico válido con base a la compatibilidad del componente, evitando su uso anómalo en roles standard (div nativo).
 - **Interpretación**:
@@ -684,6 +741,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 100
 
 - **Fecha**: 2026-03-05 14:30
+- **Versión**: N/A
 - **Requerimiento**: Prohibir activamente ignorar archivos núcleo en `.gitignore`.
 - **Información adicional**: Para que el meta-test de inmutabilidad del kit de desarrollo funcione, debemos evitar el edge-case de que `tests/meta` o `.integrity-suite` sean introducidos en el archivo `.gitignore`, lo cual cegaría a Git frente a su manipulación.
 - **Interpretación**:
@@ -698,6 +756,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 099
 
 - **Fecha**: 2026-03-05 14:18
+- **Versión**: N/A
 - **Requerimiento**: Prohibir `<button>` dentro de `<a>`.
 - **Información adicional**: Este es un anti-patrón de anidamiento interactivo que hace ilegible el DOM para tecnologías asistivas y rompe la navegación por teclado.
 - **Interpretación**:
@@ -712,6 +771,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 098
 
 - **Fecha**: 2026-03-05 14:18
+- **Versión**: N/A
 - **Requerimiento**: Prohibir imágenes con `role="button"`.
 - **Información adicional**: Una imagen usada como botón indica la falta de usar el componente semántico correcto `<button>`.
 - **Interpretación**:
@@ -726,6 +786,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 097
 
 - **Fecha**: 2026-03-05 14:18
+- **Versión**: N/A
 - **Requerimiento**: Prohibir uso de `aria-hidden="true"` en elementos interactivos.
 - **Información adicional**: Hacer interactivo un componente (focusable) pero esconderlo a nivel ARIA provoca colapsos serios al lector de pantalla.
 - **Interpretación**:
@@ -740,6 +801,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 096
 
 - **Fecha**: 2026-03-05 14:18
+- **Versión**: N/A
 - **Requerimiento**: Prohibir existencia de múltiples `<h1>` en el mismo archivo.
 - **Información adicional**: Mantener una estructura de encabezados limpia donde hay un único origen visual y jerárquico por página, facilitando la accesibilidad y el SEO.
 - **Interpretación**:
@@ -754,6 +816,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 095
 
 - **Fecha**: 2026-03-05 14:18
+- **Versión**: N/A
 - **Requerimiento**: Evitar saltos de nivel jerárquico en las sentencias de encabezados SEO (e.g., `h1` directamente a `h3`).
 - **Información adicional**: La integridad documental semántica estipula descender correlativamente.
 - **Interpretación**:
@@ -768,6 +831,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 094
 
 - **Fecha**: 2026-03-05 14:14
+- **Versión**: N/A
 - **Requerimiento**: Elementos `<textarea>` deben poseer etiquetas accesibles.
 - **Información adicional**: Validar que haya `id`, `aria-label` o `aria-labelledby` para mantener un DOM interactivo puramente accesible.
 - **Interpretación**:
@@ -782,6 +846,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 093
 
 - **Fecha**: 2026-03-05 14:14
+- **Versión**: N/A
 - **Requerimiento**: Prohibir el uso del atributo `href` en `<div>` o `<span>`.
 - **Información adicional**: Evita falsos hipervínculos; los elementos genéricos en bloque o línea no deberían instanciar comportamientos análogos al `<a>`.
 - **Interpretación**:
@@ -796,6 +861,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 092
 
 - **Fecha**: 2026-03-05 14:14
+- **Versión**: N/A
 - **Requerimiento**: Cualquier elemento con `role="button"` debe tener foco de teclado.
 - **Información adicional**: Requerir que declaren explícitamente `tabIndex` si se les aplica rol estructural forzado.
 - **Interpretación**:
@@ -810,6 +876,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 091
 
 - **Fecha**: 2026-03-05 14:14
+- **Versión**: N/A
 - **Requerimiento**: El atributo `role=""` no debe usar roles WAI-ARIA inválidos.
 - **Información adicional**: Asegura la estandarización correcta frente a errores tipográficos.
 - **Interpretación**:
@@ -824,6 +891,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 090
 
 - **Fecha**: 2026-03-05 14:14
+- **Versión**: N/A
 - **Requerimiento**: Los elementos interactivos nativos (`button`, `a`, `input`, `select`, `textarea`) no deben tener `tabIndex` negativo.
 - **Información adicional**: Un valor negativo extrae esos elementos de la progresión de foco del sistema, corrompiendo formas y barras de navegación.
 - **Interpretación**:
@@ -838,6 +906,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 089
 
 - **Fecha**: 2026-03-05 14:14
+- **Versión**: N/A
 - **Requerimiento**: El atributo `aria-label` no puede encontrarse vacío.
 - **Información adicional**: De existir, el `aria-label` debe inyectar contexto válido a screen-readers o suprimirse a favor de alternativas.
 - **Interpretación**:
@@ -852,6 +921,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 088
 
 - **Fecha**: 2026-03-05 14:14
+- **Versión**: N/A
 - **Requerimiento**: Exigencia del atributo semántico `aria-required="true"` en aquellos campos interactivos del DOM con bandera `required`.
 - **Información adicional**: Mejor puente semántico con asistentes robóticos de input predictivos y de asistencia motriz.
 - **Interpretación**:
@@ -866,6 +936,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 087
 
 - **Fecha**: 2026-03-05 14:14
+- **Versión**: N/A
 - **Requerimiento**: Se obliga a la integración de encabezados de tabla explícitos (`<th>`) para cualquier `<table>`.
 - **Información adicional**: Una tabla base sin header contextual no es un componente UI estándar.
 - **Interpretación**:
@@ -880,6 +951,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 086
 
 - **Fecha**: 2026-03-05 14:14
+- **Versión**: N/A
 - **Requerimiento**: Documento externo `<iframe>` deben tener atributo referencial de título (`title`).
 - **Información adicional**: Necesario para que navegabilidad auditiva indique la fuente encapsulada.
 - **Interpretación**:
@@ -894,6 +966,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 085
 
 - **Fecha**: 2026-03-05 14:14
+- **Versión**: N/A
 - **Requerimiento**: Elementos con `onClick` (`<div>`, `<span>`, `<img>`) precisan `onKeyDown`, `onKeyUp` u `onKeyPress`.
 - **Información adicional**: Todo control de mouse debe comportar un handler análogo a lo sumo para control de teclado.
 - **Interpretación**:
@@ -908,6 +981,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 084
 
 - **Fecha**: 2026-03-05 14:14
+- **Versión**: N/A
 - **Requerimiento**: Botones nativos `<button>` no deben declarar redundantemente `role="button"`.
 - **Información adicional**: Se omite duplicidad que provoca problemas en los screen readers modernos.
 - **Interpretación**:
@@ -922,6 +996,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 083
 
 - **Fecha**: 2026-03-05 14:14
+- **Versión**: N/A
 - **Requerimiento**: Atributos `for` de sentencias `<label>` deben converger hacia un `<input id="x">` explícito válido.
 - **Información adicional**: Previene componentes label rotos tras copy+paste.
 - **Interpretación**:
@@ -936,6 +1011,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 082
 
 - **Fecha**: 2026-03-05 14:04
+- **Versión**: N/A
 - **Requerimiento**: Imponer `tabIndex` explícito en `<img>` o `<button>` con atributos `onClick`.
 - **Información adicional**: Garantiza la semántica y accesibilidad al asegurar que cualquier elemento base que se configure como interactivo vía código JS/TS sea activamente indexable por teclado.
 - **Interpretación**:
@@ -950,6 +1026,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 081
 
 - **Fecha**: 2026-03-05 13:58
+- **Versión**: N/A
 - **Requerimiento**: Imponer `role="presentation"` en imágenes decorativas (`alt=""`).
 - **Información adicional**: Mejora la accesibilidad (a11y) asegurando que los lectores de pantalla descarten correctamente elementes puramente visuales sin descripción.
 - **Interpretación**:
@@ -964,6 +1041,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 080
 
 - **Fecha**: 2026-03-05 13:58
+- **Versión**: N/A
 - **Requerimiento**: Atributo `name` obligatorio en `inputs` dentro de `form`.
 - **Información adicional**: Evita bugs de formularios donde datos ingresados no se envían por carecer de nombre identitario.
 - **Interpretación**:
@@ -978,6 +1056,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 079
 
 - **Fecha**: 2026-03-05 13:58
+- **Versión**: N/A
 - **Requerimiento**: Atributos `width` y `height` en imágenes.
 - **Información adicional**: Previene el Cumulative Layout Shift (CLS), un problema de performance esencial en métricas Core Web Vitals.
 - **Interpretación**:
@@ -992,6 +1071,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 078
 
 - **Fecha**: 2026-03-05 13:58
+- **Versión**: N/A
 - **Requerimiento**: Prohibir enlaces `<a>` anidados en botones `<button>`.
 - **Información adicional**: Este es un anti-patrón de accesibilidad y HTML semántico que confunde herramientas interactivas.
 - **Interpretación**:
@@ -1006,6 +1086,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 077
 
 - **Fecha**: 2026-03-05 13:58
+- **Versión**: N/A
 - **Requerimiento**: Prohibir enlaces `<a>` con `href="#"`.
 - **Información adicional**: Evita placeholders inútiles que provocan top-scrolling indeseados y empeoran la experiencia de navegación para lectores de pantalla.
 - **Interpretación**:
@@ -1020,6 +1101,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 076
 
 - **Fecha**: 2026-03-05 13:58
+- **Versión**: N/A
 - **Requerimiento**: Imponer atributo `autocomplete` en `<input type="text">`.
 - **Información adicional**: Facilita la finalización de formularios mediante el relleno automático del navegador. Beneficioso a niveles de experiencia de usuario y accesibilidad (WCAG autocompletado).
 - **Interpretación**:
@@ -1034,6 +1116,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 075
 
 - **Fecha**: 2026-03-05 13:58
+- **Versión**: N/A
 - **Requerimiento**: Atributo `type` obligatorio en `<button>`.
 - **Información adicional**: Corrijo el default-submission behavior de Chrome que trata cualquier botón dentro de un formulario como `submit`.
 - **Interpretación**:
@@ -1048,6 +1131,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 074
 
 - **Fecha**: 2026-03-05 13:58
+- **Versión**: N/A
 - **Requerimiento**: Atributo optimizado `loading="lazy"` en `<img>`.
 - **Información adicional**: Asegura la optimización de activos y deferral para imágenes fuera del viewport, exigida constantemente por Lighthouse/Web Vitals.
 - **Interpretación**:
@@ -1062,6 +1146,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 073
 
 - **Fecha**: 2026-03-05 13:45
+- **Versión**: N/A
 - **Requerimiento**: Proteger los archivos core del kit cuando el nombre del proyecto no sea "ai-developer-kit".
 - **Información adicional**: Evita que los agentes modifiquen por error o intención las reglas fundamentales del kit (`prompt.md`, `workflow.md`, `scripts/`, `integrity-suite.test.ts`) una vez el kit se está usando en un proyecto real.
 - **Interpretación**:
@@ -1076,6 +1161,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 072
 
 - **Fecha**: 2026-03-05 13:40
+- **Versión**: N/A
 - **Requerimiento**: Enlaces externos con `target="_blank"` y `rel="noopener noreferrer"`.
 - **Información adicional**: Previene ataques de _reverse tabnabbing_ y mejora la seguridad al abrir enlaces externos.
 - **Interpretación**:
@@ -1090,6 +1176,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 071
 
 - **Fecha**: 2026-03-05 13:40
+- **Versión**: N/A
 - **Requerimiento**: Contenido de botones no seleccionable (`user-select: none`).
 - **Información adicional**: Mejora la UX evitando glitches visuales donde el texto del botón se selecciona al hacer click rápidamente.
 - **Interpretación**:
@@ -1104,6 +1191,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 070
 
 - **Fecha**: 2026-03-05 13:40
+- **Versión**: N/A
 - **Requerimiento**: Cursor pointer en botones y enlaces.
 - **Información adicional**: Mejora el feedback visual indicando que un elemento es interactivo.
 - **Interpretación**:
@@ -1118,6 +1206,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 069
 
 - **Fecha**: 2026-03-05 13:34
+- **Versión**: N/A
 - **Requerimiento**: Obligar al uso del atributo `lang` en la etiqueta `<html>`.
 - **Información adicional**: Mejora la accesibilidad (a11y) permitiendo que los lectores de pantalla identifiquen el idioma del documento y que los motores de búsqueda lo indexen correctamente.
 - **Interpretación**:
@@ -1135,6 +1224,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 068
 
 - **Fecha**: 2026-03-05 13:32
+- **Versión**: N/A
 - **Requerimiento**: Prohibir el uso de elementos no semánticos (`<div>`, `<span>`) como controles interactivos con `onClick`.
 - **Información adicional**: Mejora la accesibilidad (a11y) garantizando que los elementos interactivos sean detectables y operables por herramientas de asistencia. Se recomienda usar `<button>` o `<a>`.
 - **Interpretación**:
@@ -1152,6 +1242,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 067
 
 - **Fecha**: 2026-03-05 13:29
+- **Versión**: N/A
 - **Requerimiento**: Prohibir el uso de valores de `tabIndex` positivos en HTML/JSX/TSX.
 - **Información adicional**: Mejora la accesibilidad (a11y) evitando que se rompa el orden natural de navegación por teclado. Se permiten `tabIndex="0"` y `tabIndex="-1"`.
 - **Interpretación**:
@@ -1169,6 +1260,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 066
 
 - **Fecha**: 2026-03-05 13:25
+- **Versión**: N/A
 - **Requerimiento**: Prohibir el uso de pares de colores de bajo contraste conocidos (hardcodeados) en CSS/HTML.
 - **Información adicional**: Mejora la accesibilidad (a11y) detectando grises claros que suelen ser ilegibles sobre fondo blanco.
 - **Interpretación**:
@@ -1186,6 +1278,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 065
 
 - **Fecha**: 2026-03-05 13:05
+- **Versión**: N/A
 - **Requerimiento**: Prohibir archivos HTML sin la etiqueta `<main>`.
 - **Información adicional**: Mejora la accesibilidad (a11y) proporcionando un punto de referencia (landmark) claro para el contenido principal.
 - **Interpretación**:
@@ -1203,6 +1296,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 064
 
 - **Fecha**: 2026-03-05 12:53
+- **Versión**: N/A
 - **Requerimiento**: Prohibir inputs de formulario sin label asociado.
 - **Información adicional**: Mejora la accesibilidad (a11y) asegurando que todos los inputs tengan una etiqueta descriptiva vinculada.
 - **Interpretación**:
@@ -1220,6 +1314,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 063
 
 - **Fecha**: 2026-03-05 12:48
+- **Versión**: N/A
 - **Requerimiento**: Prohibir botones sin texto accesible (ni texto visible ni `aria-label`) en archivos HTML/JSX/TSX.
 - **Información adicional**: Mejora la accesibilidad (a11y) asegurando que todos los botones tengan un propósito identificable.
 - **Interpretación**:
@@ -1237,6 +1332,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 062
 
 - **Fecha**: 2026-03-05 12:35
+- **Versión**: N/A
 - **Requerimiento**: Prohibir imágenes sin atributo `alt` en archivos HTML/JSX/TSX.
 - **Información adicional**: Mejora la accesibilidad (a11y) del proyecto.
 - **Interpretación**:
@@ -1254,6 +1350,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 061
 
 - **Fecha**: 2026-03-05 12:30
+- **Versión**: N/A
 - **Requerimiento**: Prohibir re-exports de tipo wildcard (`export * from './module'`) en `src/`.
 - **Información adicional**: Viola el Principio de Segregación de Interfaces (ISP) porque obliga al consumidor a depender de todo lo exportado por el módulo subyacente.
 - **Interpretación**:
@@ -1271,6 +1368,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 060
 
 - **Fecha**: 2026-03-05 12:25
+- **Versión**: N/A
 - **Requerimiento**: Prohibir la instanciación directa de dependencias externas (clases concretas) dentro de funciones de negocio de `src/`.
 - **Información adicional**: Fomenta el principio de Inversión de Dependencias y la testeabilidad sin mocks.
 - **Interpretación**:
@@ -1288,6 +1386,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 059
 
 - **Fecha**: 2026-03-05 11:20
+- **Versión**: N/A
 - **Requerimiento**: Cumplir con SRP limitando el número de métodos públicos en una clase.
 - **Información adicional**: Una clase con 10 o más métodos públicos suele tener más de una responsabilidad.
 - **Interpretación**:
@@ -1305,6 +1404,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 058
 
 - **Fecha**: 2026-03-05 11:15
+- **Versión**: N/A
 - **Requerimiento**: Detectar y prohibir "código muerto" (exports en `src/` que nadie importa).
 - **Información adicional**: Se busca que cada miembro exportado sea usado al menos en un test o por otro módulo, evitando restos de refactorizaciones fallidas.
 - **Interpretación**:
@@ -1322,6 +1422,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 057
 
 - **Fecha**: 2026-03-05 11:14
+- **Versión**: N/A
 - **Requerimiento**: Limitar el número de parámetros en funciones de `src/`.
 - **Información adicional**: Funciones con más de 4 parámetros suelen indicar una violación del principio de responsabilidad única. Se deben usar objetos de configuración.
 - **Interpretación**:
@@ -1339,6 +1440,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 056
 
 - **Fecha**: 2026-03-05 11:08
+- **Versión**: N/A
 - **Requerimiento**: Prohibir aserciones triviales o "dummy" en los archivos de test.
 - **Información adicional**: Se busca evitar que el agente use aserciones como `expect(true).toBe(true)` para cumplir formalmente con la cobertura pero sin testear realmente nada.
 - **Interpretación**:
@@ -1358,6 +1460,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 055
 
 - **Fecha**: 2026-03-05 11:04
+- **Versión**: N/A
 - **Requerimiento**: Forzar la limpieza de variables e imports no utilizados mediante tsconfig.
 - **Información adicional**: Se busca evitar que el agente deje "objetos olvidados" tras refactorizaciones que el compilador puede detectar automáticamente.
 - **Interpretación**:
@@ -1377,6 +1480,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 054
 
 - **Fecha**: 2026-03-05 11:02
+- **Versión**: N/A
 - **Requerimiento**: Detectar trazas de razonamiento de IA en comentarios de código.
 - **Información adicional**: Se busca evitar que el agente deje comentarios de duda o logs de proceso (ej: "// This should work", "// Not sure").
 - **Interpretación**:
@@ -1395,6 +1499,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 053
 
 - **Fecha**: 2026-03-05 10:45
+- **Versión**: N/A
 - **Requerimiento**: Refinar la suite de integridad: mejorar detección de secretos, validación robusta de fechas y changelog, y asegurar tests con output detallado.
 - **Información adicional**: Se han corregido las debilidades en la detección de secretos (JWT, etc.), la fragilidad de la regex de cobertura y los falsos positivos en tests cross-platform.
 - **Interpretación**:
@@ -1424,6 +1529,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 052
 
 - **Fecha**: 2026-03-05 03:12
+- **Versión**: N/A
 - **Requerimiento**: Corregir falso positivo en la allowlist de .gitignore y ampliar la cobertura de checks a scripts, husky, lint-staged, docs internas y cobertura.
 - **Información adicional**: N/A
 - **Interpretación**:
@@ -1446,6 +1552,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 051
 
 - **Fecha**: 2026-03-05 03:01
+- **Versión**: N/A
 - **Requerimiento**: Blindar los overrides de ESLint, auditar .gitignore y hacer granulares los patrones de los archivos de ignore.
 - **Información adicional**: N/A
 - **Interpretación**:
@@ -1465,6 +1572,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 050
 
 - **Fecha**: 2026-03-05 02:52
+- **Versión**: N/A
 - **Requerimiento**: Corregir cuatro bugs y riesgos detectados: case sensitivity en REQUIREMENTS.md, rastro de Gemini en archivos de ignore, `git add` incorrecto en pre-commit, y compatibilidad ESM de commitlint.
 - **Información adicional**: N/A
 - **Interpretación**:
@@ -1489,6 +1597,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 049
 
 - **Fecha**: 2026-03-05 02:43
+- **Versión**: N/A
 - **Requerimiento**: Reforzar la validación del mensaje de commit: solo ASCII e inglés, sin scopes.
 - **Información adicional**: Se añaden dos meta-tests que escanean el historial de Git y un tercer test que verifica la configuración de `commitlint`. Además se crea `commitlint.config.js` con un plugin personalizado que rechaza mensajes no ASCII en tiempo real durante el commit.
 - **Interpretación**:
@@ -1511,6 +1620,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 048
 
 - **Fecha**: 2026-03-05 02:30
+- **Versión**: N/A
 - **Requerimiento**: Prohibir el uso anglosajón de la raya em en textos en castellano y comentarios.
 - **Información adicional**: Se han introducido tests para evitar emplear el `em dash` (raya larga) de forma inapropiada como conector dentro de la misma oración.
 - **Interpretación**:
@@ -1529,6 +1639,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 047
 
 - **Fecha**: 2026-03-05 02:26
+- **Versión**: N/A
 - **Requerimiento**: Auditar versiones vulnerables conocidas y protección de bloqueos a _pnpm audit_ (Dependency Security).
 - **Información adicional**: Se han implementado nuevos checks en el Level 8 (`Dependency Security`) para mitigar vulnerabilidades y asegurar un entorno de bloqueo sólido.
 - **Interpretación**:
@@ -1550,6 +1661,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 046
 
 - **Fecha**: 2026-03-05 02:10
+- **Versión**: N/A
 - **Requerimiento**: Auditar dependencias, configuración TS y reglas base (Integrity hash) mas corrección de fallos y riesgos de pipeline detectados en validación.
 - **Información adicional**: Se identificaron falsos positivos y lagunas mitigando riesgos integrales además de tests críticos basados en revisiones de higiene, protección estricta contra manipulaciones (Integrity hash), y revisión de dependencias puras (Nivel 7).
 - **Interpretación**:
@@ -1583,6 +1695,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 045
 
 - **Fecha**: 2026-03-05 01:45
+- **Versión**: N/A
 - **Requerimiento**: Blindaje integral de arquitectura, existencias, tiempos y dependencias.
 - **Información adicional**: Se han implementado mecanismos de defensa robustos en la Integrity Suite, cubriendo existencia de lockfiles, límites de tamaño para cualquier tipo de código (no solo components), consistencia de requerimientos, reglas ESLint estrictas, tiempos de test y existencia de directorio base de cobertura.
 - **Interpretación**:
@@ -1607,6 +1720,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 044
 
 - **Fecha**: 2026-03-05 01:40
+- **Versión**: N/A
 - **Requerimiento**: Corrección de inconsistencias menores en ESLint y typo en test.
 - **Información adicional**: Identificados defectos menores en la última revisión:
   1. El test de Level 4 contenía un typo en su nombre: "statments" en lugar de "statements".
@@ -1627,6 +1741,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 043
 
 - **Fecha**: 2026-03-05 01:35
+- **Versión**: N/A
 - **Requerimiento**: Eliminar bypasses de TypeScript indocumentados y optimizar directivas vitest.
 - **Información adicional**: En la auditoría del anterior sprint, quedaron cabos sueltos detectados, concretamente un `@ts-expect-error` parasitario que saltó las reglas del compilador por inercia del agente anterior, al tiempo que demostró que el Level 3 no lo bloqueaba a pesar de ser equivalente funcinalmente a `@ts-ignore`. A su vez, el script `test:unit` conservaba la directriz de búsqueda `src` sin aplicar de facto la semántica dictaminada.
 - **Interpretación**:
@@ -1648,6 +1763,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 042
 
 - **Fecha**: 2026-03-05 01:30
+- **Versión**: N/A
 - **Requerimiento**: Tapar brechas de falsos positivos en cobertura y fisuras estructurales.
 - **Información adicional**: Se han detectado los siguientes detalles:
   1. La cobertura reportaba 100% sobre cero archivos porque `vitest` requiere de forma explícita `all: true` y una directiva `include` para medir todo el código aunque no haya sido importado por un test que falla o inexistente.
@@ -1672,6 +1788,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 041
 
 - **Fecha**: 2026-03-05 01:25
+- **Versión**: N/A
 - **Requerimiento**: Solucionar problemas de inconsistencia, riesgos medios y bajos hallados en auditoría.
 - **Información adicional**: Se han corregido las siguientes incidencias identificadas en revisión de calidad:
   1. El uso de `npx lint-staged` en lugar del gestor `pnpm` y su ordenización con el `git add` en pre-commit.
@@ -1701,6 +1818,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 040
 
 - **Fecha**: 2026-03-05 01:15
+- **Versión**: N/A
 - **Requerimiento**: Garantizar soporte multi-plataforma (macOS/Windows) y estándar puro ESM.
 - **Información adicional**: Con la configuración `"type": "module"` en `package.json` es recomendado por el estándar Node el uso de prefijos `node:` para paquetes nativos (`node:fs`, `node:path`). Además, el ejecutable genérico `ts-node` no funciona _out-of-the-box_ sin flags muy crudas frente a ESM en entornos modernos; fue sustituido estratégicamente por el instalador `tsx`. Finalmente se ha auditado la paridad de rutas (posix/windows) para confirmar que no causarán fricciones en ejecución.
 - **Interpretación**:
@@ -1722,6 +1840,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 039
 
 - **Fecha**: 2026-03-05 01:10
+- **Versión**: N/A
 - **Requerimiento**: Clarificar en `prompt.md` que el código fuente debe estar estrictamente en inglés/ASCII.
 - **Información adicional**: Hay una instrucción que indica al agente que responda en castellano. Para evitar confusiones, el agente podría empezar a nombrar variables o poner comentarios de código en castellano causando fallos en los tests del _Level 4: Hygiene_ de la _Integrity Suite_.
 - **Interpretación**:
@@ -1738,6 +1857,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 038
 
 - **Fecha**: 2026-03-05 01:00
+- **Versión**: N/A
 - **Requerimiento**: Ejecutar comprobaciones de metadatos antes de la suite de tests en `validate-project`.
 - **Información adicional**: Actualmente, `check-changelog` y `check-version` se ejecutan al final del comando de validación. Como los tests (`pnpm test`) pueden ser la parte más lenta o pueden fallar, la sanidad de los metadatos y del changelog no se evaluaría a menos que el test pase. Validarlos primero optimiza el fail-fast y asegura siempre un estado íntegro de changelog/versión.
 - **Interpretación**:
@@ -1756,6 +1876,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 037
 
 - **Fecha**: 2026-03-05 00:50
+- **Versión**: N/A
 - **Requerimiento**: Proteger la estructura e integridad semántica del documento `requirements.md`.
 - **Información adicional**: Un despiste humano o divergencia de la IA podría eliminar una cabecera `### Requerimiento <num>` y fusionar dos requerimientos distintos bajo el mismo ID, pasando todos los controles subyacentes. Se debe testear que los bloques se mantengan separados (máximo un `Estado` o `Fecha` por bloque) y que además los identificadores numéricos decrezcan de forma estrictamente secuencial y ordenada.
 - **Interpretación**:
@@ -1774,6 +1895,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 036
 
 - **Fecha**: 2026-03-05 00:45
+- **Versión**: N/A
 - **Requerimiento**: Imponer una barrera de 100% test coverage para todo nuevo código en el proyecto.
 - **Información adicional**: Se debe configurar vitest con `@vitest/coverage-v8` para obligar a que cualquier nueva función/fichero añadido al proyecto (sobre todo en `src/`) esté testeado. Si se añade código funcional pero sin testearlo, Vitest (y con él, validate-project) debe fallar, bloqueando el pre-commit.
 - **Interpretación**:
@@ -1794,6 +1916,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 035
 
 - **Fecha**: 2026-03-05 00:40
+- **Versión**: N/A
 - **Requerimiento**: Bloquear posibles bypasses del hook `pre-commit`. Evaluando escapes ocultos en el código del script shell.
 - **Información adicional**: Un agente o desarrollador podría hacer un script que simplemente imprima (`echo pnpm validate-project`) o añadir un `exit 0` al archivo `.husky/pre-commit` para saltárselo pasando las comprobaciones de _string_.
 - **Interpretación**:
@@ -1811,6 +1934,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 034
 
 - **Fecha**: 2026-03-05 00:30
+- **Versión**: N/A
 - **Requerimiento**: Limpiar el proyecto eliminando `src/index.ts` y preparar los scripts de los tests para soportar la suite completa.
 - **Información adicional**: El archivo `index.ts` de ejemplo debe ser eliminado para dejar la plantilla limpia y vacía. Además, `package.json` debe definir scripts específicos: `test:meta`, `test:unit` y `test:e2e` que se ejecuten secuencialmente antes de cada commit.
 - **Interpretación**:
@@ -1830,6 +1954,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 033
 
 - **Fecha**: 2026-03-05 00:25
+- **Versión**: N/A
 - **Requerimiento**: Mover `tests/integrity-suite.test.ts` a `tests/meta/` para organizar mejor la carpeta de tests.
 - **Información adicional**: Se debe permitir que la carpeta `tests/` albergue tests unitarios y e2e. El Integrity Suite ahora se considera un meta-test. Se deben actualizar todas las referencias de rutas en el proyecto (`prompt.md`, `requirements.md`, `workflow.md`).
 - **Interpretación**:
@@ -1851,6 +1976,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 032
 
 - **Fecha**: 2026-03-05 01:15
+- **Versión**: N/A
 - **Requerimiento**: Eliminar las excepciones `integrity-suite.test.ts` de las propias validaciones del Integrity Suite.
 - **Información adicional**: Se deben construir las sentencias (como el escaneo de _bypass directives_ o mensajes TODO/Console) usando cadenas fraccionadas / lógicas dinámicas para que el archivo del test pueda pasar sus propias reglas de higiene.
 - **Interpretación**:
@@ -1868,6 +1994,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 031
 
 - **Fecha**: 2026-03-05 01:00
+- **Versión**: N/A
 - **Requerimiento**: Modificar `getFiles` para que garantice el escaneo de configuraciones en la raíz del proyecto.
 - **Información adicional**: Archivos en la raíz como `.eslintrc.json`, `tsconfig.json` o un hipotético `config.ts` deben ser incluidos y analizados.
 - **Interpretación**:
@@ -1885,6 +2012,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 030
 
 - **Fecha**: 2026-03-05 00:45
+- **Versión**: N/A
 - **Requerimiento**: Mejorar la detección de secretos hardcodeados: incluir archivos `.json` y `.env*`, y ampliar el patrón de escaneo para detectar objetos, arrays y Base64.
 - **Información adicional**: N/A
 - **Interpretación**:
@@ -1902,6 +2030,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 029
 
 - **Fecha**: 2026-03-05 00:35
+- **Versión**: N/A
 - **Requerimiento**: Blindar el test de "Commit Lockdown" para evitar bypasses por errores de formato o secciones vacías.
 - **Información adicional**: El test debe fallar si no encuentra la sección de historial o si no hay requerimientos registrados.
 - **Interpretación**:
@@ -1919,6 +2048,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 028
 
 - **Fecha**: 2026-03-05 00:25
+- **Versión**: N/A
 - **Requerimiento**: Cambia el nombre de `WORKFLOW.md` y `REQUIREMENTS.md` a lowercase. Revisa todo el proyecto para que las referencias se actualicen.
 - **Información adicional**: N/A
 - **Interpretación**:
@@ -1940,6 +2070,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 027
 
 - **Fecha**: 2026-03-05 00:15
+- **Versión**: N/A
 - **Requerimiento**: Evitar que el agente commitee sin aprobación expresa.
 - **Información adicional**: El usuario debe marcar el requerimiento como "Aprobado" para permitir el commit. El agente debe sugerir el mensaje de commit.
 - **Interpretación**:
@@ -1960,6 +2091,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 026
 
 - **Fecha**: 2026-03-05 00:05
+- **Versión**: N/A
 - **Requerimiento**: Reforzar política de idiomas. Indicar inglés en `CHANGELOG.md` y castellano en `requirements.md`. Añadir tests de validación.
 - **Información adicional**: N/A
 - **Interpretación**:
@@ -1979,6 +2111,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 025
 
 - **Fecha**: 2026-03-04 23:55
+- **Versión**: N/A
 - **Requerimiento**: Refinar `prompt.md` con prohibiciones explícitas sobre la Integrity Suite y obligación de mantenimiento del Changelog.
 - **Información adicional**: Cambios realizados directamente por el usuario.
 - **Interpretación**:
@@ -1995,6 +2128,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 024
 
 - **Fecha**: 2026-03-04 23:45
+- **Versión**: N/A
 - **Requerimiento**: Traducir `prompt.md` al castellano.
 - **Información adicional**: N/A
 - **Interpretación**:
@@ -2011,6 +2145,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 023
 
 - **Fecha**: 2026-03-04 23:35
+- **Versión**: N/A
 - **Requerimiento**: Actualizar `prompt.md` para introducir la Integrity Suite y establecer restricciones de modificación para agentes.
 - **Información adicional**: N/A
 - **Interpretación**:
@@ -2027,6 +2162,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 022
 
 - **Fecha**: 2026-03-04 23:28
+- **Versión**: N/A
 - **Requerimiento**: Renombrar el directorio `.project-integrity` y el test `project-integrity.test.ts` a `integrity-suite`.
 - **Información adicional**: N/A
 - **Interpretación**:
@@ -2046,6 +2182,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 021
 
 - **Fecha**: 2026-03-04 23:20
+- **Versión**: N/A
 - **Requerimiento**: Renombrar el directorio de infraestructura de `.guardian` a `.project-integrity` (ahora `integrity-suite`) para consistencia con la suite de tests.
 - **Información adicional**: N/A
 - **Interpretación**:
@@ -2065,6 +2202,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 020
 
 - **Fecha**: 2026-03-04 23:10
+- **Versión**: N/A
 - **Requerimiento**: Reorganizar el proyecto para ocultar infraestructura. Limpiar `developer-kit`. Mover `docs` y `scripts` a `.integrity-suite`.
 - **Información adicional**: N/A
 - **Interpretación**:
@@ -2084,6 +2222,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 019
 
 - **Fecha**: 2026-03-04 22:55
+- **Versión**: N/A
 - **Requerimiento**: Mover `CHANGELOG.md` a la raíz, usar plantilla "Keep a Changelog" en inglés y sin emojis, y asegurar que cambie en cada commit.
 - **Información adicional**: N/A
 - **Interpretación**:
@@ -2106,6 +2245,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 018
 
 - **Fecha**: 2026-03-04 22:45
+- **Versión**: N/A
 - **Requerimiento**: Ampliar la suite de integridad con veritificaciones de README, TSConfig (target), scripts obligatorios, limpieza de archivos obsoletos y auditoría de seguridad.
 - **Información adicional**: N/A
 - **Interpretación**:
@@ -2128,6 +2268,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 017
 
 - **Fecha**: 2026-03-04 22:40
+- **Versión**: N/A
 - **Requerimiento**: Consolidación final de todos los tests en `project-integrity.test.ts` y flexibilización de metadatos para uso como plantilla.
 - **Información adicional**: N/A
 - **Interpretación**: Crear una suite única organizada por "Niveles de Integridad" (0-5). Flexibilizar las pruebas de `package.json` para que solo verifiquen que los campos existen y no están vacíos, permitiendo la personalización de la plantilla. Eliminar todos los demás archivos de tests redundantes.
@@ -2144,6 +2285,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 016
 
 - **Fecha**: 2026-03-04 22:35
+- **Versión**: N/A
 - **Requerimiento**: Unificar `strict-commits.test.ts` y `strict-quality.test.ts` en un solo archivo organizado por bloques temáticos.
 - **Información adicional**: N/A
 - **Interpretación**: Crear `tests/strict-validation.test.ts` que agrupe todas las validaciones de infraestructura y calidad de código bajo una estructura clara de `describe` blocks. Eliminar los archivos antiguos.
@@ -2160,6 +2302,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 015
 
 - **Fecha**: 2026-03-04 22:28
+- **Versión**: N/A
 - **Requerimiento**: Remover los tests de LICENSE ya que el repositorio es una plantilla y el usuario final podría querer cambiarla.
 - **Información adicional**: N/A
 - **Interpretación**: Eliminar todas las pruebas automatizadas que verifican la existencia y contenido del archivo `LICENSE` en `tests/initial-setup.test.ts` y `tests/strict-commits.test.ts`.
@@ -2175,6 +2318,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 014
 
 - **Fecha**: 2026-03-04 22:25
+- **Versión**: N/A
 - **Requerimiento**: Garantizar que no haya ningún error ni advertencia de Markdownlint, ESLint o Prettier antes de commitear.
 - **Información adicional**: N/A
 - **Interpretación**:
@@ -2194,6 +2338,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 013
 
 - **Fecha**: 2026-03-04 22:20
+- **Versión**: N/A
 - **Requerimiento**: Garantizar que todos los tests sean cross-platform (macOS/Windows) y añadir un test que detecte si se introducen tests en el futuro que no cumplan esto.
 - **Información adicional**: N/A
 - **Interpretación**:
@@ -2212,6 +2357,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 012
 
 - **Fecha**: 2026-03-04 22:15
+- **Versión**: N/A
 - **Requerimiento**: Implementar una batería de reglas de calidad estrictas (inglés, no console.log, no TODOs, TS strict, no secretos, aislamiento de capas, tamaño de componentes, etc.) con tests individuales para cada una.
 - **Información adicional**: N/A
 - **Interpretación**: Crear una suite de pruebas completa en `tests/strict-quality.test.ts` que valide de forma individual:
@@ -2238,6 +2384,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 011
 
 - **Fecha**: 2026-03-04 22:00
+- **Versión**: N/A
 - **Requerimiento**: El proyecto debe tener un nombre genérico. Este repositorio será una plantilla inicial para cualquier otro proyecto.
 - **Información adicional**: N/A
 - **Interpretación**: Renombrar todas las referencias de `ai-developer-kit` a un nombre más genérico (`project-template`) en `package.json`, `LICENSE` y los tests correspondientes, ya que el repositorio servirá como base para otros proyectos.
@@ -2255,6 +2402,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 010
 
 - **Fecha**: 2026-03-04 21:35
+- **Versión**: N/A
 - **Requerimiento**: No emojis en comentarios, solo inglés, no comentarios didácticos/obvios, estrictamente necesarios. Testeable.
 - **Información adicional**: N/A
 - **Interpretación**: Establecer reglas de calidad para comentarios en el código: prohibir emojis, restringir el idioma al inglés y eliminar redundancias. Implementar un test automatizado que verifique estas condiciones en archivos de código (.ts, .js, .tsx, .jsx, .html, .css) detectando todos los estilos de comentarios (`//`, `/* */`, `<!-- -->`) e implementar la corrección en los archivos actuales.
@@ -2272,6 +2420,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 009
 
 - **Fecha**: 2026-03-04 21:25
+- **Versión**: N/A
 - **Requerimiento**: que los incrementos de versión estén controlados sin saltos. Por ejemplo, que no pasemos de 1.2.0 a 1.4.0, o de 1.0.5 a 1.0.14, pero sí se pueda pasar de 1.0.1 a 1.1.0
 - **Información adicional**: N/A
 - **Interpretación**: Modificar `scripts/check-version.js` para validar que el incremento sea estrictamente el siguiente paso semántico (patch+1, minor+1 con patch=0, o major+1 con minor/patch=0).
@@ -2286,6 +2435,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 008
 
 - **Fecha**: 2026-03-04 21:18
+- **Versión**: N/A
 - **Requerimiento**: crear directorios prompts y utils dentro de tools; archivos prompts/00-backlog-generation.md, 01-start.md, 02-resume.md, 03-health-check.md y utils/CHANGELOG.md
 - **Información adicional**: N/A
 - **Interpretación**: Completar la estructura de carpetas de herramientas (`tools`) incluyendo prompts base y utilidades: `developer-kit/tools/prompts/` y `developer-kit/tools/utils/CHANGELOG.md`.
@@ -2304,6 +2454,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 007
 
 - **Fecha**: 2026-03-04 21:15
+- **Versión**: N/A
 - **Requerimiento**: dentro de developer-kit crea los archivos vacíos agent-rules.md y README.md; dentro de setup crea install.js, uninstall.js y backup.js; dentro de developer-kit crea el directorio docs y dentro backlog.md y style-guide.md
 - **Información adicional**: N/A
 - **Interpretación**: Poblar el kit con archivos base y estructura de documentación: `developer-kit/{agent-rules.md,README.md,docs/{backlog.md,style-guide.md}}` y `developer-kit/setup/{install.js,uninstall.js,backup.js}`.
@@ -2324,6 +2475,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 006
 
 - **Fecha**: 2026-03-04 21:10
+- **Versión**: N/A
 - **Requerimiento**: crear un directorio llamado "developer-kit" y dentro de él los directorios "tools", "scripts" y "setup"
 - **Información adicional**: N/A
 - **Interpretación**: Crear una estructura de directorios en la raíz del proyecto para organizar los componentes del kit: `developer-kit/{tools,scripts,setup}`.
@@ -2340,6 +2492,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 005
 
 - **Fecha**: 2026-03-04 21:15
+- **Versión**: N/A
 - **Requerimiento**: que todos los tests se ejecuten antes de cada commit (sin excepción) y que si no pasa alguno, se interrumpa el commit
 - **Información adicional**: N/A
 - **Interpretación**: Asegurar que el flujo de pre-commit siempre ejecute la suite completa de tests (`vitest run`) y no solo los tests relacionados, abortando el commit si falla cualquier test.
@@ -2354,6 +2507,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 004
 
 - **Fecha**: 2026-03-04 21:05
+- **Versión**: N/A
 - **Requerimiento**: Quitar la regla de "line_length" en .markdownlint y reformatear todo el proyecto.
 - **Información adicional**: N/A
 - **Interpretación**: Desactivar la regla `MD013` en `.markdownlint.json` y ejecutar `npx prettier --write .` para normalizar el formato de todos los archivos del repositorio una única vez.
@@ -2369,6 +2523,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 003
 
 - **Fecha**: 2026-03-04 21:00
+- **Versión**: N/A
 - **Requerimiento**: Mejorar el flujo de pre-commit para evitar archivos modificados (como pnpm-lock.yaml) fuera del commit.
 - **Información adicional**: N/A
 - **Interpretación**: Optimizar `.husky/pre-commit` eliminando redundancias (prettier global),
@@ -2385,6 +2540,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 002
 
 - **Fecha**: 2026-03-04 20:40
+- **Versión**: N/A
 - **Requerimiento**: Configurar reglas estrictas para el rechazo de commits:
   1. No se ha incrementado la versión del proyecto en `package.json`.
   2. Existen errores o warnings de ESLint.
@@ -2408,6 +2564,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 ### Requerimiento 001
 
 - **Fecha**: 2026-03-04 20:35
+- **Versión**: N/A
 - **Requerimiento**: Inicialización y configuración base del proyecto: Git, Node.js, PNPM, Vitest, ESLint, Prettier,
   Markdownlint, Husky, lint-staged, Commitlint, Semantic Versioning, .gitignore y Licencia (no comercial, atribución).
   Restricciones de commit (formateo, linting, tests, sin `any`).

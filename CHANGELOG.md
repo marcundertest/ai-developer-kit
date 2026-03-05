@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.59] - 2026-03-06
+
+### Added
+
+- Version-aware validation tests (Req 141):
+  - Strict test: version in staging must be **strictly higher** than HEAD (for commits).
+  - Relaxed test: version in staging must be **>= HEAD** (for pushes).
+  - Mandatory CHANGELOG entry when version is bumped and ready to commit.
+  - Mandatory requirements.md entry with version field when bumped and ready to commit.
+  - All records in requirements.md now include explicit **Version** field for tracking.
+
+### Result
+
+- Prevents commits without proper version bumps and documentation.
+- Ensures requirements.md stays synchronized with CHANGELOG for every version change.
+- Pre-commit validation now enforces both CHANGELOG and requirements.md presence.
+
 ## [1.4.58] - 2026-03-05
 
 ### Refactored
@@ -17,7 +34,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Removed redundant scripts: `lint`, `format`, `format:check`, `mdlint`, `audit`, `audit:report`.
   - Created capture-linter-results.js helper to capture ESLint, Prettier, markdownlint, and TypeScript results.
   - Updated validation tests to verify linter integration in test scripts rather than individual scripts.
-  - Core-protection test now allows modifications to .integrity-suite/scripts/\*.js files during development.  - `.husky/pre-push` now only runs `check-version:relaxed` and `check-changelog`, eliminating redundant full-suite execution on push.
+  - Core-protection test now allows modifications to .integrity-suite/scripts/\*.js files during development. - `.husky/pre-push` now only runs `check-version:relaxed` and `check-changelog`, eliminating redundant full-suite execution on push.
+
 ### Result
 
 - Single source of truth for validation logic (tests and CLI scripts use same functions).

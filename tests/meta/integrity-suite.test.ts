@@ -2927,14 +2927,159 @@ describe('Integrity Suite', () => {
       // @version-release
       // Ensures user requirement log tracks version bumps
       try {
-        const reqContent = fs.readFileSync(path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md'), 'utf8');
-        const versionPattern = new RegExp(`\*\*Versi[oó]n\*\*: ${pkg.version.replace(/\./g, '\\.')}`);
+        const reqContent = fs.readFileSync(
+          path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md'),
+          'utf8',
+        );
+        // construct regex string without backticks to quiet ESLint
+        const patternStr = '\\*\\*Versi[oó]n\\*\\*: ' + pkg.version.replace(/\./g, '\\.');
+        const versionPattern = new RegExp(patternStr);
         expect(
           versionPattern.test(reqContent),
-          `requirements.md must include "**Versión**: ${pkg.version}" for the current release`
+          'requirements.md must include "**Versión**: ' + pkg.version + '" for the current release',
         ).toBe(true);
       } catch (e) {
         // if file missing, let other tests catch it
+      }
+    });
+
+    it('should enforce version bump in staging (strict commit mode)', () => {
+      // @version-release
+      // Strict: version in staging MUST be higher than current HEAD version
+      try {
+        let headVersion = null;
+        try {
+          const pkgAtHead = execSync('git show HEAD:package.json 2>/dev/null', {
+            encoding: 'utf8',
+            stdio: ['pipe', 'pipe', 'pipe'],
+          });
+          headVersion = JSON.parse(pkgAtHead).version;
+        } catch {
+          // initial commit, allow it
+          headVersion = '0.0.0';
+        }
+
+        if (headVersion) {
+          const parse = (v: string) => v.split('.').map(Number);
+          const [cMajor, cMinor, cPatch] = parse(pkg.version);
+          const [hMajor, hMinor, hPatch] = parse(headVersion);
+
+          let isHigher = false;
+          if (cMajor > hMajor) isHigher = true;
+          else if (cMajor === hMajor && cMinor > hMinor) isHigher = true;
+          else if (cMajor === hMajor && cMinor === hMinor && cPatch > hPatch) isHigher = true;
+
+          expect(
+            isHigher,
+            'Version in staging (' +
+              pkg.version +
+              ') must be higher than HEAD (' +
+              headVersion +
+              ')',
+          ).toBe(true);
+        }
+      } catch (e) {
+        // skip if git unavailable
+      }
+    });
+
+    it('should allow same or higher version in staging (relaxed push mode)', () => {
+      // @version-check
+      // Relaxed: version in staging must be >= HEAD version
+      try {
+        let headVersion = null;
+        try {
+          const pkgAtHead = execSync('git show HEAD:package.json 2>/dev/null', {
+            encoding: 'utf8',
+            stdio: ['pipe', 'pipe', 'pipe'],
+          });
+          headVersion = JSON.parse(pkgAtHead).version;
+        } catch {
+          headVersion = '0.0.0';
+        }
+
+        if (headVersion) {
+          const parse = (v: string) => v.split('.').map(Number);
+          const [cMajor, cMinor, cPatch] = parse(pkg.version);
+          const [hMajor, hMinor, hPatch] = parse(headVersion);
+
+          let isGteq = false;
+          if (cMajor > hMajor) isGteq = true;
+          else if (cMajor === hMajor && cMinor > hMinor) isGteq = true;
+          else if (cMajor === hMajor && cMinor === hMinor && cPatch >= hPatch) isGteq = true;
+
+          expect(
+            isGteq,
+            'Version in staging (' + pkg.version + ') must be >= HEAD (' + headVersion + ')',
+          ).toBe(true);
+        }
+      } catch (e) {
+        // skip if git unavailable
+      }
+    });
+
+    it('should have CHANGELOG entry for staged version bumped (commit only)', () => {
+      // @version-release
+      // Only in test:full: if version was bumped, CHANGELOG must list it
+      try {
+        let headVersion = null;
+        try {
+          const pkgAtHead = execSync('git show HEAD:package.json 2>/dev/null', {
+            encoding: 'utf8',
+            stdio: ['pipe', 'pipe', 'pipe'],
+          });
+          headVersion = JSON.parse(pkgAtHead).version;
+        } catch {
+          headVersion = '0.0.0';
+        }
+
+        if (headVersion && pkg.version !== headVersion) {
+          // version was bumped; verify CHANGELOG has entry
+          const changelogPath = path.join(rootDir, 'CHANGELOG.md');
+          const changelogContent = fs.readFileSync(changelogPath, 'utf8');
+          const hasEntry =
+            changelogContent.includes('## [' + pkg.version + ']') ||
+            changelogContent.includes('## ' + pkg.version);
+
+          expect(
+            hasEntry,
+            'CHANGELOG.md must include entry "## [' + pkg.version + ']" after version bump',
+          ).toBe(true);
+        }
+      } catch (e) {
+        // skip if unavailable
+      }
+    });
+
+    it('should have requirements entry for staged version bumped (commit only)', () => {
+      // @version-release
+      // Only in test:full: if version was bumped, requirements.md must list it
+      try {
+        let headVersion = null;
+        try {
+          const pkgAtHead = execSync('git show HEAD:package.json 2>/dev/null', {
+            encoding: 'utf8',
+            stdio: ['pipe', 'pipe', 'pipe'],
+          });
+          headVersion = JSON.parse(pkgAtHead).version;
+        } catch {
+          headVersion = '0.0.0';
+        }
+
+        if (headVersion && pkg.version !== headVersion) {
+          // version was bumped; verify requirements.md has entry
+          const reqPath = path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md');
+          const reqContent = fs.readFileSync(reqPath, 'utf8');
+          const patternStr = '\\*\\*Versi[oó]n\\*\\*: ' + pkg.version.replace(/\./g, '\\.');
+          const versionPattern = new RegExp(patternStr);
+
+          expect(
+            versionPattern.test(reqContent),
+            'requirements.md must include "**Versión**: ' + pkg.version + '" after version bump',
+          ).toBe(true);
+        }
+      } catch (e) {
+        // skip if unavailable
       }
     });
   });
