@@ -63,6 +63,23 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 057
+
+- **Fecha**: 2026-03-05 11:14
+- **Requerimiento**: Limitar el número de parámetros en funciones de `src/`.
+- **Información adicional**: Funciones con más de 4 parámetros suelen indicar una violación del principio de responsabilidad única. Se deben usar objetos de configuración.
+- **Interpretación**:
+  1. Nuevo meta-test en Level 5 que escanea archivos en `src/` en busca de funciones (declaraciones o flecha) con 5 o más parámetros.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+  - `package.json` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 11:15 - ✅ Parameter count limit enforced (76 tests)
+
 ### Requerimiento 056
 
 - **Fecha**: 2026-03-05 11:08

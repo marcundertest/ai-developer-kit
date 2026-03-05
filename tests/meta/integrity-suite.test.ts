@@ -812,6 +812,22 @@ describe('Integrity Suite', () => {
       }
     });
 
+    it('should not have functions with more than 4 parameters in src/', () => {
+      const srcDir = path.join(rootDir, 'src') + path.sep;
+      codeFiles
+        .filter((f) => f.startsWith(srcDir))
+        .forEach((file) => {
+          const content = fs.readFileSync(file, 'utf8');
+          // Matches function declarations and arrow functions with 5+ params
+          const manyParamsPattern =
+            /(?:function\s+\w+|(?:const|let)\s+\w+\s*=\s*(?:async\s*)?\()\s*[^)]*,[^)]*,[^)]*,[^)]*,[^)]/;
+          expect(
+            content,
+            `Function with 5+ parameters in ${file}: consider a config object`,
+          ).not.toMatch(manyParamsPattern);
+        });
+    });
+
     it('should ignore .env files in git', () => {
       const gitignorePath = path.join(rootDir, '.gitignore');
       expect(fs.existsSync(gitignorePath), '.gitignore is missing').toBe(true);
