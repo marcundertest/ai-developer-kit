@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.41] - 2026-03-05
+
+### Added
+
+- 5 new strict Accessibility HTML tests:
+  - Enforce continuous hierarchy for `h1`-`h6` headers to prevent skipping levels.
+  - Forbid multiple `<h1>` elements in a single file per standard SEO/Accessibiilty guidelines.
+  - Prohibit `aria-hidden="true"` on interactive elements (e.g. `button`, `input`).
+  - Prohibit `role="button"` on `<img />` tags.
+  - Prohibit `<button>` elements nested inside `<a>` tags.
+
 ## [1.4.40] - 2026-03-05
 
 ### Added

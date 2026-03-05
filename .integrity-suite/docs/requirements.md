@@ -63,6 +63,76 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 099
+
+- **Fecha**: 2026-03-05 14:18
+- **Requerimiento**: Prohibir `<button>` dentro de `<a>`.
+- **Información adicional**: Este es un anti-patrón de anidamiento interactivo que hace ilegible el DOM para tecnologías asistivas y rompe la navegación por teclado.
+- **Interpretación**:
+  1. Detectar si un elemento `<a>` incluye dentro de su estructura a elementos `<button>`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:20 - ✅ All passing (118 tests).
+
+### Requerimiento 098
+
+- **Fecha**: 2026-03-05 14:18
+- **Requerimiento**: Prohibir imágenes con `role="button"`.
+- **Información adicional**: Una imagen usada como botón indica la falta de usar el componente semántico correcto `<button>`.
+- **Interpretación**:
+  1. Detectar `<img>` que tengan estipulado `role="button"`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:20 - ✅ All passing (118 tests).
+
+### Requerimiento 097
+
+- **Fecha**: 2026-03-05 14:18
+- **Requerimiento**: Prohibir uso de `aria-hidden="true"` en elementos interactivos.
+- **Información adicional**: Hacer interactivo un componente (focusable) pero esconderlo a nivel ARIA provoca colapsos serios al lector de pantalla.
+- **Interpretación**:
+  1. Rastrear elementos botón, input, select, textarea o link que incluyan `aria-hidden="true"`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:20 - ✅ All passing (118 tests).
+
+### Requerimiento 096
+
+- **Fecha**: 2026-03-05 14:18
+- **Requerimiento**: Prohibir existencia de múltiples `<h1>` en el mismo archivo.
+- **Información adicional**: Mantener una estructura de encabezados limpia donde hay un único origen visual y jerárquico por página, facilitando la accesibilidad y el SEO.
+- **Interpretación**:
+  1. Rastrear todos los regex de la etiqueta de apertura h1 y asegurarse que <= 1.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:20 - ✅ All passing (118 tests).
+
+### Requerimiento 095
+
+- **Fecha**: 2026-03-05 14:18
+- **Requerimiento**: Evitar saltos de nivel jerárquico en las sentencias de encabezados SEO (e.g., `h1` directamente a `h3`).
+- **Información adicional**: La integridad documental semántica estipula descender correlativamente.
+- **Interpretación**:
+  1. Parsear los niveles `hx` de manera posicional secuencial y verificar que el nivel entre los contiguos no salte > 1.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:20 - ✅ All passing (118 tests).
+
 ### Requerimiento 094
 
 - **Fecha**: 2026-03-05 14:14

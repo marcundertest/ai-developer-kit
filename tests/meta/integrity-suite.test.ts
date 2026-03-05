@@ -1314,6 +1314,70 @@ describe('Integrity Suite', () => {
         );
       });
     });
+
+    it('headings should not skip levels (e.g., h1 to h3)', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        const headings = [...content.matchAll(/<h([1-6])[^>]*>/gi)].map((m) => Number(m[1]));
+        for (let i = 1; i < headings.length; i++) {
+          const prev = headings[i - 1];
+          const curr = headings[i];
+          expect(curr - prev <= 1, `Heading level skipped in ${file}: h${prev} → h${curr}`).toBe(
+            true,
+          );
+        }
+      });
+    });
+
+    it('pages should not contain multiple h1 elements', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        const h1s = content.match(/<h1[^>]*>/gi) ?? [];
+        expect(h1s.length, `Multiple h1 elements found in ${file}`).toBeLessThanOrEqual(1);
+      });
+    });
+
+    it('interactive elements should not have aria-hidden="true"', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(content, `Interactive element hidden from screen readers in ${file}`).not.toMatch(
+          /<(button|a|input|select|textarea)[^>]*aria-hidden\s*=\s*["']true["'][^>]*>/i,
+        );
+      });
+    });
+
+    it('images should not use role="button"', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(content, `Image incorrectly using role="button" in ${file}`).not.toMatch(
+          /<img[^>]*role\s*=\s*["']button["'][^>]*>/i,
+        );
+      });
+    });
+
+    it('anchors should not contain buttons', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(content, `Button nested inside anchor in ${file}`).not.toMatch(
+          /<a[^>]*>[\s\S]*?<button[^>]*>[\s\S]*?<\/button>[\s\S]*?<\/a>/i,
+        );
+      });
+    });
   });
 
   describe('Level 5: Architecture & Security', () => {
