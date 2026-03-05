@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.43] - 2026-03-05
+
+### Added
+
+- 5 additional ARIA and semantic form-control meta tests:
+  - Restrict `aria-checked` valid context roles (`checkbox`, `radio`, `switch`, `menuitemcheckbox`).
+  - Require explicit `aria-modal="true"` declaration within structural `role="dialog"` elements.
+  - Assert that references declared in `aria-controls` target a DOM element `id` that exists within the same file.
+  - Enforce content availability in label components (block empty `<label></label>`).
+  - Restrict explicit implementations of `<input type="image">` to strictly declare accompanying `alt` text.
+
 ## [1.4.42] - 2026-03-05
 
 ### Added

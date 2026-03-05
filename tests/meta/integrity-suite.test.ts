@@ -1416,6 +1416,79 @@ describe('Integrity Suite', () => {
         );
       });
     });
+
+    it('aria-checked should only be used on appropriate roles', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      const validRoles = ['checkbox', 'menuitemcheckbox', 'radio', 'switch'];
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        const elements = content.match(/<[^>]*aria-checked\s*=\s*["'][^"']+["'][^>]*>/gi) ?? [];
+        elements.forEach((el) => {
+          const roleMatch = el.match(/role\s*=\s*["']([^"']+)["']/i);
+          const role = roleMatch?.[1];
+          expect(
+            role !== undefined && validRoles.includes(role),
+            `aria-checked used on incompatible role in ${file}: ${el}`,
+          ).toBe(true);
+        });
+      });
+    });
+
+    it('dialog roles should include aria-modal', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(content, `Dialog missing aria-modal in ${file}`).not.toMatch(
+          /<[^>]*role\s*=\s*["']dialog["'](?![^>]*aria-modal\s*=\s*["']true["'])[^>]*>/i,
+        );
+      });
+    });
+
+    it('aria-controls should reference an existing id', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        const controls = content.match(/aria-controls\s*=\s*["'][^"']+["']/gi) ?? [];
+        controls.forEach((attr) => {
+          const idMatch = attr.match(/["']([^"']+)["']/);
+          if (!idMatch) return;
+          const id = idMatch[1];
+          expect(content, `aria-controls references missing id "${id}" in ${file}`).toMatch(
+            new RegExp(`id=["']${id}["']`, 'i'),
+          );
+        });
+      });
+    });
+
+    it('labels should contain accessible text', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(content, `Label without accessible text in ${file}`).not.toMatch(
+          /<label[^>]*>\s*<\/label>/i,
+        );
+      });
+    });
+
+    it('image inputs should include alt text', () => {
+      const htmlLikeFiles = allSourceFiles.filter((f) =>
+        ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
+      );
+      htmlLikeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(content, `Input type="image" missing alt attribute in ${file}`).not.toMatch(
+          /<input[^>]*type\s*=\s*["']image["'](?![^>]*alt\s*=)[^>]*>/i,
+        );
+      });
+    });
   });
 
   describe('Level 5: Architecture & Security', () => {

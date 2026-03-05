@@ -63,6 +63,76 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 105
+
+- **Fecha**: 2026-03-05 14:39
+- **Requerimiento**: Prohibir `input type="image"` carentes de atributo textual equivalente (`alt`).
+- **Información adicional**: Validar que implementaciones de imagen integradas en forma nativa provean referencias accesorias.
+- **Interpretación**:
+  1. Detectar `<input>` que instancien un type image y carezcan del atributo.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:40 - ✅ Passing correctly.
+
+### Requerimiento 104
+
+- **Fecha**: 2026-03-05 14:39
+- **Requerimiento**: Prohibir componentes de etiqueta textual sin contenido accesible o vacío.
+- **Información adicional**: Expresa invalidación visual a tags `<label></label>` que carezcan de string child.
+- **Interpretación**:
+  1. Detectar espacios en blanco o tags sin apertura encapsulados en elemento label.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:40 - ✅ Passing correctly.
+
+### Requerimiento 103
+
+- **Fecha**: 2026-03-05 14:39
+- **Requerimiento**: Prohibir uso de atributos WAI-ARIA `aria-controls` que apuntan en su referencia a `id` que no constan dentro del DOM del archivo analizado.
+- **Información adicional**: Garantía de sanidad de vínculos ARIA pre y post-refactorizaciones. Deshecha conexiones obsoletas o estáticas corrompidas.
+- **Interpretación**:
+  1. Localizar atributos `aria-controls`, extraer el índice apuntado e inferir la existencia del `<... id="match">` correspondiente dentro del file actual.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:40 - ✅ Passing correctly.
+
+### Requerimiento 102
+
+- **Fecha**: 2026-03-05 14:39
+- **Requerimiento**: Restringir componentes con declaración explícita de `role="dialog"` a integrar mandato `aria-modal="true"`.
+- **Información adicional**: Previene fuga de enfoque natural sobre modales nativos donde lectores de pantalla puedan interpretar que existe foco periférico pasable.
+- **Interpretación**:
+  1. Detección de `role="dialog"` y negación contextual cuando no integren el flag paralelos de modal aria.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:40 - ✅ Passing correctly.
+
+### Requerimiento 101
+
+- **Fecha**: 2026-03-05 14:39
+- **Requerimiento**: Restringir el uso de la propiedad booleana abstracta WAI-ARIA `aria-checked` para ser de acceso exclusivo ante roles con capacidad estatus compatibles (e.g. checkbox, radio, switch).
+- **Información adicional**: Fomenta el uso taxonómico válido con base a la compatibilidad del componente, evitando su uso anómalo en roles standard (div nativo).
+- **Interpretación**:
+  1. Escoger instanciaciones directas al estado check y derivar la validación al role declarado coincidente.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 14:40 - ✅ Passing correctly.
+
 ### Requerimiento 100
 
 - **Fecha**: 2026-03-05 14:30
