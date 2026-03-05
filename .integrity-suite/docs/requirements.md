@@ -63,6 +63,23 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 069
+
+- **Fecha**: 2026-03-05 13:34
+- **Requerimiento**: Obligar al uso del atributo `lang` en la etiqueta `<html>`.
+- **Información adicional**: Mejora la accesibilidad (a11y) permitiendo que los lectores de pantalla identifiquen el idioma del documento y que los motores de búsqueda lo indexen correctamente.
+- **Interpretación**:
+  1. Nuevo meta-test en el Nivel 4 que escanea archivos `.html` y verifica que la etiqueta `<html>` tenga el atributo `lang`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+  - `package.json` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 13:35 - ✅ html lang validation enforced (88 tests)
+
 ### Requerimiento 068
 
 - **Fecha**: 2026-03-05 13:32

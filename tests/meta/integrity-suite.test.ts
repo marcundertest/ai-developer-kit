@@ -874,6 +874,16 @@ describe('Integrity Suite', () => {
         ).not.toMatch(/<(?:div|span)[^>]*onClick/i);
       });
     });
+
+    it('should have lang attribute on <html> element', () => {
+      const htmlFiles = allSourceFiles.filter((f) => f.endsWith('.html'));
+      htmlFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(content, `Missing lang attribute on <html> in ${file}`).toMatch(
+          /<html[^>]+lang\s*=/i,
+        );
+      });
+    });
   });
 
   describe('Level 5: Architecture & Security', () => {
