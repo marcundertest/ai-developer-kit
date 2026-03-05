@@ -1,6 +1,6 @@
 {
-  "name": "ai-developer-kit",
-  "version": "1.4.49",
+  "name": "integrity-suite",
+  "version": "1.4.50",
   "type": "module",
   "description": "Strict project template for automated setup and code quality.",
   "main": "index.js",
@@ -9,7 +9,6 @@
     "test:unit": "vitest run tests/unit --coverage --reporter=verbose",
     "test:e2e": "vitest run tests/e2e --reporter=verbose",
     "test": "pnpm test:meta && pnpm test:unit && pnpm test:e2e",
-    "approve": "node .integrity-suite/scripts/sign-requirement.js",
     "build": "tsc",
     "start": "node dist/index.js || echo 'No entry point configured'",
     "audit": "pnpm audit --prod",

@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.50] - 2026-03-05
+
+### Changed
+
+- Renamed project from `ai-developer-kit` to `integrity-suite` (as current template identity).
+- Decoupled Integrity Suite from the project name, allowing its use in any project.
+- Implemented **Level HOOK (Physical Interaction)** in `.husky/pre-commit` (Simplified human validation message).
+- Updated requirements history to reflect project identity change.
+- Simplified workflow: Removed the "Double-Key Approval" system (user seals and secret files).
+- Process update: Agents now mark requirements as "Completado" and suggest commits, but only the user performs manual `git commit` and `push`.
+- Cleaned up `integrity-suite.test.ts` to remove approval/seal verification logic.
+- Removed `sign-requirement.js` script and ".user_secret" references.
+
 ## [1.4.49] - 2026-03-05
 
 ### Added

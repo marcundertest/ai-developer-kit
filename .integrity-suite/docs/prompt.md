@@ -17,8 +17,8 @@ Este proyecto utiliza una **Integrity Suite** estricta para garantizar los más 
 - **NO MODIFIQUES** `tests/meta/integrity-suite.test.ts`. Este archivo es el guardián de la integridad del proyecto.
 - **Pasa todos los tests**: Debes ejecutar `pnpm validate-project` (que incluye la Integrity Suite) antes de cada commit.
 - **Nunca uses el flag `HUSKY=0`** u otro bypass del entorno para saltarte los Git Hooks pre-commit bajo ninguna circunstancia.
-- **Aprobación de commit**: Antes de cada commit, debes sugerir un mensaje de commit al usuario. El commit solo se permitirá si el usuario cambia el campo **Estado** a **Aprobado** en el historial de requerimientos e introduce un **Sello de usuario** válido (generado por el usuario mediante `pnpm run approve`). Queda prohibido para el agente intentar predecir o extraer este sello de forma autónoma; debe ser proporcionado por el usuario.
-- **Documenta los requerimientos**: Eres responsable de mantener `.integrity-suite/docs/requirements.md` registrando cada requerimiento, su interpretación, los resultados de los tests y el campo **Estado: Pendiente**.
+- **Sugerencia de commit**: Una vez que la tarea está terminada y todos los tests pasan, debes marcar el requerimiento como **Completado** en el historial y sugerir un mensaje de commit al usuario. El agente tiene prohibido realizar commits o push de forma autónoma. El usuario es el único con permiso para efectuar estas operaciones manualmente.
+- **Documenta los requerimientos**: Eres responsable de mantener `.integrity-suite/docs/requirements.md` registrando cada requerimiento, su interpretación, los resultados de los tests y el campo **Estado: Pendiente** (hasta finalizar).
 - **Documenta los cambios**: Eres responsable de mantener `CHANGELOG.md`, siguiendo el formato establecido en el archivo.
 - **Idioma del agente**: Responde siempre en castellano. Sin embargo, advierte que **todo el código fuente (comentarios, variables, funciones)** DEBE estar estrictamente en inglés (sólo caracteres ASCII), de lo contrario la _Integrity Suite_ bloqueará el commit (Level 4: Hygiene).
 

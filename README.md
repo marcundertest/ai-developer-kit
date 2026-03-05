@@ -1,4 +1,4 @@
-# Project Template
+# Integrity Suite
 
 Strict project template for automated setup and code quality.
 

@@ -8,7 +8,6 @@ coverage/
 .vitest-results/
 junit.xml
 .integrity-suite/integrity-suite.sha256
-.integrity-suite/.user_secret
 test-results/
 playwright-report/
 blob-report/

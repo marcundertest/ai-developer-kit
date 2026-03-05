@@ -18,8 +18,7 @@ Utilizar la siguiente plantilla para cada requerimiento que sea testeable:
   - `[ruta del archivo]` (estado: [creado|modificado|eliminado])
 - **Tests**:
   - `[ruta del test]` (estado: [creado|modificado|eliminado])
-- **Estado**: [Pendiente|Aprobado]
-- **Sello de usuario**: [Obligatorio si Aprobado (sha256: ID + Estado + Secret)]
+- **Estado**: [Pendiente|Completado]
 - **Resultados de los tests**:
   - **Iteración [ID]**: yyyy-MM-dd HH:mm - [Resultado]
 ```
@@ -36,8 +35,7 @@ Y la siguiente para cada requerimiento que no sea testeable:
 - **Testeable**: false
 - **Archivos afectados**:
   - `[ruta del archivo]` (estado: [creado|modificado|eliminado])
-- **Estado**: [Pendiente|Aprobado]
-- **Sello de usuario**: [Obligatorio si Aprobado (sha256: ID + Estado + Secret)]
+- **Estado**: [Pendiente|Completado]
 - **Razón**: [Razón por la cual no es testeable]
 ```
 
@@ -65,6 +63,60 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 133
+
+- **Fecha**: 2026-03-05 16:25
+- **Requerimiento**: Eliminar la dependencia del nombre del proyecto en los tests de integridad.
+- **Información adicional**: Forzar que el proyecto se llame "integrity-suite" impide usar el kit como base para otros proyectos con nombres distintos.
+- **Interpretación**:
+  1. Eliminar el test que verifica `pkg.name === 'integrity-suite'`.
+  2. Sustituir el guard de protección de archivos del kit por una variable de entorno `INTEGRITY_SKIP_PROTECTION`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Completado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 16:26 - ✅ Tests desacoplados del nombre del proyecto.
+
+### Requerimiento 132
+
+- **Fecha**: 2026-03-05 16:18
+- **Requerimiento**: Renombrar el proyecto a "Integrity Suite" e implementar bloqueo físico de commit.
+- **Información adicional**: El usuario prefiere el nombre "Integrity Suite" (kebab: integrity-suite) al anterior. Se requiere además que el pre-commit hook solicite confirmación manual (Enter) para asegurar la intervención humana.
+- **Interpretación**:
+  1. Modificar `package.json` para cambiar el nombre.
+  2. Actualizar el test de identificación de proyecto en `integrity-suite.test.ts`.
+  3. Añadir paso interactivo `read` en `.husky/pre-commit`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `package.json` (estado: modificado)
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+  - `.husky/pre-commit` (estado: modificado)
+  - `.integrity-suite/docs/requirements.md` (estado: modificado)
+- **Estado**: Completado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 16:20 - ✅ Proyecto renombrado y Hook físico implementado.
+
+### Requerimiento 131
+
+- **Fecha**: 2026-03-05 15:55
+- **Requerimiento**: Simplificar el flujo de trabajo, eliminando la firma manual y el commit autónomo del agente.
+- **Información adicional**: El usuario considera el sistema de sellos absurdo. Se prefiere un flujo donde el agente completa la tarea (Estado: Completado), sugiere el mensaje de commit y el usuario realiza el commit/push manualmente.
+- **Interpretación**:
+  1. Eliminar pruebas de sellos en `integrity-suite.test.ts`.
+  2. Cambiar estado "Aprobado" por "Completado".
+  3. Eliminar script de firma y secreto local.
+  4. Actualizar documentación de flujo.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+  - `.integrity-suite/docs/requirements.md` (estado: modificado)
+  - `.integrity-suite/docs/workflow.md` (estado: modificado)
+  - `.integrity-suite/docs/prompt.md` (estado: modificado)
+- **Estado**: Completado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 15:56 - ✅ Sistema simplificado.
+
 ### Requerimiento 130
 
 - **Fecha**: 2026-03-05 15:44
@@ -77,8 +129,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Archivos afectados**:
   - `.integrity-suite/scripts/sign-requirement.js` (estado: modificado)
   - `.integrity-suite/docs/requirements.md` (estado: modificado)
-- **Estado**: Aprobado
-- **Sello de Usuario**: 24614e3bbc1e569c463b587389cd2e5f5d65cea0d31a1097933e6d8161963584
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 15:45 - ✅ Loophole closed: sign-req now detects duplicates.
 
@@ -96,8 +147,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
   - `.integrity-suite/.user_secret` (estado: creado por el usuario)
-- **Estado**: Aprobado
-- **Sello de Usuario**: b434000ef87e0f8f68dc79bad1f5a9416aa9eacdd061f72f58247277970ebed9
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 15:25 - ✅ Double-Key Security Verified.
 
@@ -111,7 +161,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 15:19 - ✅ Passing.
 
@@ -125,7 +175,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 15:19 - ✅ Passing.
 
@@ -139,7 +189,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 15:19 - ✅ Passing.
 
@@ -153,7 +203,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 15:19 - ✅ Passing.
 
@@ -167,7 +217,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 15:19 - ✅ Passing.
 
@@ -181,7 +231,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 15:19 - ✅ Passing.
 
@@ -195,7 +245,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 15:19 - ✅ Passing.
 
@@ -209,7 +259,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 15:19 - ✅ Passing.
 
@@ -223,7 +273,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 15:19 - ✅ Passing.
 
@@ -237,7 +287,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 15:09 - ✅ Testing verified successfully.
 
@@ -251,7 +301,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 15:09 - ✅ Testing verified successfully.
 
@@ -265,7 +315,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 15:09 - ✅ Testing verified successfully.
 
@@ -279,7 +329,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 15:09 - ✅ Testing verified successfully.
 
@@ -293,7 +343,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 15:09 - ✅ Testing verified successfully.
 
@@ -307,7 +357,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 15:09 - ✅ Testing verified successfully.
 
@@ -321,7 +371,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 15:09 - ✅ Testing verified successfully.
 
@@ -335,7 +385,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 15:09 - ✅ Testing verified successfully.
 
@@ -349,7 +399,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 15:09 - ✅ Testing verified successfully.
 
@@ -363,7 +413,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 14:56 - ✅ Tests passing.
 
@@ -377,7 +427,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 14:56 - ✅ Tests passing.
 
@@ -391,7 +441,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 14:56 - ✅ Tests passing.
 
@@ -405,7 +455,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 14:56 - ✅ Tests passing.
 
@@ -419,7 +469,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 14:56 - ✅ Tests passing.
 
@@ -433,7 +483,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 14:40 - ✅ Passing correctly.
 
@@ -447,7 +497,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 14:40 - ✅ Passing correctly.
 
@@ -461,7 +511,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 14:40 - ✅ Passing correctly.
 
@@ -475,7 +525,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 14:40 - ✅ Passing correctly.
 
@@ -489,7 +539,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 14:40 - ✅ Passing correctly.
 
@@ -503,7 +553,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 14:31 - ✅ Passing successfully.
 
@@ -517,7 +567,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 14:20 - ✅ All passing (118 tests).
 
@@ -531,7 +581,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 14:20 - ✅ All passing (118 tests).
 
@@ -545,7 +595,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 14:20 - ✅ All passing (118 tests).
 
@@ -559,7 +609,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 14:20 - ✅ All passing (118 tests).
 
@@ -573,7 +623,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 14:20 - ✅ All passing (118 tests).
 
@@ -587,7 +637,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 14:15 - ✅ 113 tests passing.
 
@@ -755,7 +805,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 14:06 - ✅ Clickable tabIndex validation enforced (101 tests)
 
@@ -769,7 +819,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 14:00 - ✅ All validation checks enforced (100 tests)
 
@@ -881,7 +931,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 13:46 - ✅ Kit core protection enforced (92 tests)
 
@@ -895,7 +945,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 - **Testeable**: true
 - **Archivos afectados**:
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 13:42 - ✅ External links security enforced (91 tests)
 
@@ -940,7 +990,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `package.json` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 13:35 - ✅ html lang validation enforced (88 tests)
 
@@ -957,7 +1007,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `package.json` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 13:33 - ✅ Semantic elements validation enforced (87 tests)
 
@@ -974,7 +1024,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `package.json` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 13:30 - ✅ tabIndex validation enforced (86 tests)
 
@@ -991,7 +1041,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `package.json` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 13:26 - ✅ Low-contrast color check enforced (85 tests)
 
@@ -1008,7 +1058,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `package.json` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (state: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 13:06 - ✅ Accessibility check for <main> landmark enforced (84 tests)
 
@@ -1025,7 +1075,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `package.json` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 12:54 - ✅ Accessibility check for input labels enforced (83 tests)
 
@@ -1042,7 +1092,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `package.json` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 12:49 - ✅ Accessibility check for button text enforced (82 tests)
 
@@ -1059,7 +1109,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `package.json` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 12:36 - ✅ Accessibility check for img alt enforced (81 tests)
 
@@ -1076,7 +1126,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `package.json` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 12:31 - ✅ No wildcard re-exports enforced (80 tests)
 
@@ -1093,7 +1143,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `package.json` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 12:26 - ✅ Dependency Inversion enforced (79 tests)
 
@@ -1110,7 +1160,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `package.json` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 11:21 - ✅ SRP enforcement through public method limit (78 tests)
 
@@ -1127,7 +1177,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `package.json` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 11:16 - ✅ No unreferenced exports found in 77 tests.
 
@@ -1144,7 +1194,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `package.json` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 11:15 - ✅ Parameter count limit enforced (76 tests)
 
@@ -1163,7 +1213,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `package.json` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 11:09 - ✅ No trivial assertions found in 75 tests. (Removed redundant `tests/unit/dummy.test.ts`).
 
@@ -1182,7 +1232,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `package.json` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 11:05 - ✅ TSC strictness enforced (75 tests)
 
@@ -1200,7 +1250,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `package.json` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 11:03 - ✅ New AI artifact detection passing (73 tests)
 
@@ -1228,7 +1278,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `tests/unit/index.test.ts` (estado: creado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 10:45 - ✅ Complete integrity suite refinement with 72 tests (version 1.4.19)
   - **Iteración 02**: 2026-03-05 10:59 - ✅ Enhanced test validation for source modules (72 tests)
@@ -1251,7 +1301,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `package.json` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 03:13 - ✅ 71 tests pass including 6 new checks and 1 bug fix (version 1.4.18)
 
@@ -1270,7 +1320,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `package.json` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 03:01 - ✅ All tests pass with ESLint overrides protection and gitignore audit (version 1.4.17)
 
@@ -1294,7 +1344,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `package.json` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 02:52 - ✅ All tests pass with four bugs fixed (version 1.4.16)
 
@@ -1316,7 +1366,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `package.json` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 02:43 - ✅ All tests pass with double-layer protection for commit message compliance (version 1.4.15)
 
@@ -1334,7 +1384,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `package.json` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 02:30 - ✅ Added typographic convention hygiene checks for Spanish and English phrasing over source and documentation (version 1.4.14)
 
@@ -1355,7 +1405,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `package.json` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 02:26 - ✅ Added static dependency CVE scanner and pipeline protection (version 1.4.13)
 
@@ -1388,7 +1438,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `.integrity-suite/integrity-suite.sha256` (estado: creado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 02:10 - ✅ Added 14+ deep structural restrictions and fixed bugs. (version 1.4.12)
 
@@ -1412,7 +1462,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `package.json` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 01:45 - ✅ Complete Integrity hardening via 7 major fixes (version 1.4.11)
 
@@ -1432,7 +1482,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `.eslintrc.json` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 01:40 - ✅ Minor bugs fixed and pipeline green (version 1.4.10)
 
@@ -1453,7 +1503,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `tsconfig.json` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 01:35 - ✅ L3 TypeScript safety rules hardened (version 1.4.9)
 
@@ -1477,7 +1527,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 01:30 - ✅ Hardened coverage settings validated (version 1.4.8)
 
@@ -1506,7 +1556,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `tests/e2e/dummy.spec.ts` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 01:25 - ✅ Security fixes successfully validated (version 1.4.7)
 
@@ -1527,7 +1577,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `.integrity-suite/scripts/check-changelog.js` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 01:20 - ✅ Cross-platform EMS setup guaranteed (version 1.4.6)
 
@@ -1543,7 +1593,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `prompt.md` (estado: modificado)
 - **Tests**:
   - N/A, es un cambio puramente de meta-instrucciones.
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 01:10 - ✅ Prompt updated and clarification added (version 1.4.5)
 
@@ -1561,7 +1611,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 01:05 - ✅ Testing order asserted (version 1.4.4)
 
@@ -1579,7 +1629,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 00:55 - ✅ Structural checks passed (version 1.4.3)
 
@@ -1599,7 +1649,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 00:50 - ✅ Coverage configuration installed and asserted (version 1.4.2)
 
@@ -1616,7 +1666,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 00:45 - ✅ Hook secured, version 1.4.1
 
@@ -1635,7 +1685,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `package.json` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 00:35 - ✅ Scripts updated, empty src ready, version 1.4.0
 
@@ -1656,7 +1706,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `.integrity-suite/docs/workflow.md` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 00:30 - ✅ File moved to tests/meta/ and all paths updated (version 1.4.0)
 
@@ -1673,7 +1723,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 01:20 - ✅ Self-escapes removed and evaluated successfully using code obfuscation (version 1.3.5)
 
@@ -1690,7 +1740,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 01:05 - ✅ getFiles refactored and root configurations correctly evaluated (version 1.3.4)
 
@@ -1707,7 +1757,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 00:50 - ✅ Secret detection enhanced and verified with config files and objects (version 1.3.3)
 
@@ -1724,7 +1774,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 00:40 - ✅ Commit lockdown test reinforced and made fail-safe (version 1.3.2)
 
@@ -1745,7 +1795,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `.integrity-suite/docs/prompt.md` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 00:30 - ✅ Filenames normalized to lowercase and references updated (version 1.3.1)
 
@@ -1765,7 +1815,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `.integrity-suite/docs/requirements.md` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 00:20 - ✅ Commit lockdown enforced and verified (version 1.3.0)
 
@@ -1784,7 +1834,7 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
   - `tests/meta/integrity-suite.test.ts` (estado: modificado)
 - **Tests**:
   - `pnpm validate-project` (estado: ejecutado)
-- **Estado**: Aprobado
+- **Estado**: Completado
 - **Resultados de los tests**:
   - **Iteración 01**: 2026-03-05 00:10 - ✅ Language policies reinforced and tested (version 1.2.2)
 

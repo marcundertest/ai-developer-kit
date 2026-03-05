@@ -2,3 +2,13 @@
 . "$(dirname "$0")/_/husky.sh"
 
 pnpm lint-staged && pnpm validate-project
+
+# LEVEL HOOK: Interacción física obligatoria
+echo ""
+echo "------------------------------------------------------------------"
+echo "⚠️  ACCESO RESTRINGIDO: INTEGRITY SUITE BLOQUEADA"
+echo "Solo el USUARIO puede autorizar este commit."
+echo "------------------------------------------------------------------"
+echo "Presiona [ENTER] para confirmar que has revisado los cambios y"
+echo "deseas proceder con el commit, o Ctrl+C para abortar."
+read dummy < /dev/tty
