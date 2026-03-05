@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.58] - 2026-03-05
+
+### Refactored
+
+- Centralized validation architecture (Req 142):
+  - Exported `validateVersion(options)` function from check-version.js for direct testing and reuse.
+  - Exported `validateChangelog(options)` function from check-changelog.js for direct testing and reuse.
+  - Updated integrity-suite.test.ts to import and test exported validation functions directly.
+  - Simplified package.json scripts by inlining linter commands into test:full and test:nobump.
+  - Removed redundant scripts: `lint`, `format`, `format:check`, `mdlint`, `audit`, `audit:report`.
+  - Created capture-linter-results.js helper to capture ESLint, Prettier, markdownlint, and TypeScript results.
+  - Updated validation tests to verify linter integration in test scripts rather than individual scripts.
+  - Core-protection test now allows modifications to .integrity-suite/scripts/\*.js files during development.
+
+### Result
+
+- Single source of truth for validation logic (tests and CLI scripts use same functions).
+- Simplified package.json with only 3 main test entry points (test:full, test:nobump, test:report).
+- All 191 meta tests passing with new inline validation architecture.
+- Foundation for integrated HTML report generation with linter results.
+
 ## [1.4.57] - 2026-03-05
 
 ### Added
