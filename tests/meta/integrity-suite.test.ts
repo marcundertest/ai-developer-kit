@@ -2108,4 +2108,115 @@ describe('Integrity Suite', () => {
       });
     });
   });
+
+  describe('Level 9: Advanced Code Safety & Consistency', () => {
+    it('should not mix async/await with .then()/.catch() in the same file', () => {
+      codeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        const hasAwait = /\bawait\s+/.test(content);
+        const hasThen = /\.(then|catch)\s*\(/.test(content);
+        expect(
+          hasAwait && hasThen,
+          `Mixed async styles (await + .then/.catch) in ${file}: stick to one style per file for consistency`,
+        ).toBe(false);
+      });
+    });
+
+    it('should use strict equality (===) instead of loose equality (==) in src/', () => {
+      codeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        // Allow != and == only if they're !== and === by ensuring no lonely == or !=
+        expect(content, `Loose equality (==) in ${file}`).not.toMatch(/(?<!=)={2}(?!=)/);
+        expect(content, `Loose inequality (!=) in ${file}`).not.toMatch(/!={1}(?!=)/);
+      });
+    });
+
+    it('should use object spread instead of Object.assign in src/', () => {
+      codeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(
+          content,
+          `Object.assign() in ${file}: use spread operator {...a, ...b} instead for better readability`,
+        ).not.toMatch(/\bObject\.assign\s*\(/);
+      });
+    });
+
+    it('should not exceed 4 levels of nesting in src/ files', () => {
+      const srcDir = path.join(rootDir, 'src') + path.sep;
+      codeFiles
+        .filter((f) => f.startsWith(srcDir))
+        .forEach((file) => {
+          const lines = fs.readFileSync(file, 'utf8').split('\n');
+          lines.forEach((line, idx) => {
+            const indentSpaces = line.match(/^(\s*)/)?.[1].replace(/\t/g, '    ').length ?? 0;
+            expect(
+              indentSpaces,
+              `Line ${idx + 1} in ${file} exceeds 4 levels of nesting (${indentSpaces / 4} levels assuming 4-space indent)`,
+            ).toBeLessThanOrEqual(32);
+          });
+        });
+    });
+
+    it('should not have untyped array callback parameters in src/', () => {
+      const srcDir = path.join(rootDir, 'src') + path.sep;
+      codeFiles
+        .filter((f) => f.startsWith(srcDir))
+        .forEach((file) => {
+          const content = fs.readFileSync(file, 'utf8');
+          // Matches .map(x => ...) or .filter(x => ...) where x has no type annotation
+          const untypedArrayCallback = /\.(map|filter|forEach|find|some|every|reduce)\(\s*\w+\s*=>/;
+          expect(
+            content,
+            `Untyped callback parameter in ${file}: add explicit types to array callbacks (e.g. .map((x: Type) => ...))`,
+          ).not.toMatch(untypedArrayCallback);
+        });
+    });
+
+    it('should type catch clause errors as unknown, not any', () => {
+      codeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(
+          content,
+          `Catch with "any" type in ${file}: use "unknown" and narrow with instanceof for better type safety`,
+        ).not.toMatch(/catch\s*\(\s*\w+\s*:\s*any\s*\)/);
+      });
+    });
+
+    it('should not interpolate variables directly into SQL-like query strings', () => {
+      const sqlPattern = /`\s*(?:SELECT|INSERT|UPDATE|DELETE|FROM|WHERE)[^`]*\$\{/i;
+      codeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(
+          content,
+          `Potential SQL injection via template literal in ${file}: use parameterized queries`,
+        ).not.toMatch(sqlPattern);
+      });
+    });
+
+    it('should not use Math.random() for security-sensitive operations', () => {
+      codeFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        // Flag if Math.random() appears near security-related variable names
+        const securityContext =
+          /(token|secret|password|key|auth|nonce|salt|id)\s*=.*Math\.random|Math\.random.*=.*(token|secret|password|key|auth|nonce|salt)/i;
+        expect(
+          content,
+          `Math.random() used for security token in ${file}: use crypto.randomUUID() or crypto.getRandomValues() for cryptographic safety`,
+        ).not.toMatch(securityContext);
+      });
+    });
+
+    it('should not use innerHTML assignment in src/', () => {
+      const srcDir = path.join(rootDir, 'src') + path.sep;
+      codeFiles
+        .filter((f) => f.startsWith(srcDir))
+        .forEach((file) => {
+          const content = fs.readFileSync(file, 'utf8');
+          expect(
+            content,
+            `innerHTML assignment in ${file}: use textContent or a DOM sanitizer to prevent XSS`,
+          ).not.toMatch(/\.innerHTML\s*=/);
+        });
+    });
+  });
 });

@@ -63,6 +63,132 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 128
+
+- **Fecha**: 2026-03-05 15:18
+- **Requerimiento**: Prohibición de asignaciones directas a `innerHTML` en el directorio `src/`.
+- **Información adicional**: Prevenir vulnerabilidades de Cross-Site Scripting (XSS) obligando al uso de `textContent` o herramientas de sanitización.
+- **Interpretación**:
+  1. Detectar el patrón `.innerHTML =` en archivos de código fuente.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 15:19 - ✅ Passing.
+
+### Requerimiento 127
+
+- **Fecha**: 2026-03-05 15:18
+- **Requerimiento**: Prohibición de `Math.random()` en contextos sensibles a la seguridad.
+- **Información adicional**: `Math.random()` no es criptográficamente seguro. Se debe usar `crypto.randomUUID()` o `crypto.getRandomValues()`.
+- **Interpretación**:
+  1. Detectar `Math.random()` cuando se usa cerca de variables como `token`, `secret`, `password`, etc.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 15:19 - ✅ Passing.
+
+### Requerimiento 126
+
+- **Fecha**: 2026-03-05 15:18
+- **Requerimiento**: Prevención de inyección SQL en literales de plantilla.
+- **Información adicional**: Detectar patrones de consulta SQL (`SELECT`, `INSERT`, etc.) que interpolan variables directamente.
+- **Interpretación**:
+  1. Analizar literales de plantilla (backticks) con palabras clave SQL e interpolación `${...}`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 15:19 - ✅ Passing.
+
+### Requerimiento 125
+
+- **Fecha**: 2026-03-05 15:18
+- **Requerimiento**: Tipado obligatorio de errores en bloques `catch` como `unknown`.
+- **Información adicional**: Evitar el uso de `any` para errores capturados para fomentar una gestión de errores más robusta y segura.
+- **Interpretación**:
+  1. Detectar `catch (e: any)` y forzar el cambio a `catch (e: unknown)`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 15:19 - ✅ Passing.
+
+### Requerimiento 124
+
+- **Fecha**: 2026-03-05 15:18
+- **Requerimiento**: Prohibición de parámetros implícitos (any) en callbacks de arrays.
+- **Información adicional**: Forzar el tipado explícito en `.map()`, `.filter()`, etc., para evitar la pérdida de seguridad de tipos.
+- **Interpretación**:
+  1. Detectar llamadas a métodos de array cuya función callback carezca de tipado explícito en sus argumentos.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 15:19 - ✅ Passing.
+
+### Requerimiento 123
+
+- **Fecha**: 2026-03-05 15:18
+- **Requerimiento**: Límite de anidamiento (nesting) máximo de 4 niveles.
+- **Información adicional**: El código con excesiva profundidad de indentación es difícil de leer y mantener. Fomenta la extracción de funciones.
+- **Interpretación**:
+  1. Medir la indentación por línea y fallar si excede el equivalente a 4 niveles (32 espacios generosos).
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 15:19 - ✅ Passing.
+
+### Requerimiento 122
+
+- **Fecha**: 2026-03-05 15:18
+- **Requerimiento**: Uso obligatorio de spread operator en lugar de `Object.assign()`.
+- **Información adicional**: Mejorar la legibilidad y consistencia del código favoreciendo la sintaxis moderna de ES2018+.
+- **Interpretación**:
+  1. Detectar el uso de `Object.assign()` y sugerir `{...obj}`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 15:19 - ✅ Passing.
+
+### Requerimiento 121
+
+- **Fecha**: 2026-03-05 15:18
+- **Requerimiento**: Uso obligatorio de igualdad estricta (`===` / `!==`).
+- **Información adicional**: Evitar errores de coerción de tipos mediante la prohibición de `==` y `!=`.
+- **Interpretación**:
+  1. Auditar archivos de código para asegurar que no existan comparadores de igualdad débil.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 15:19 - ✅ Passing.
+
+### Requerimiento 120
+
+- **Fecha**: 2026-03-05 15:18
+- **Requerimiento**: Prohibición de mezclar estilos de asincronía (`async/await` con `.then()/.catch()`) en el mismo archivo.
+- **Información adicional**: Mantener la consistencia del código y evitar la confusión de estilos asíncronos.
+- **Interpretación**:
+  1. Analizar cada archivo y fallar si detecta simultáneamente `await` y llamadas a `.then()` o `.catch()`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 15:19 - ✅ Passing.
+
 ### Requerimiento 119
 
 - **Fecha**: 2026-03-05 15:08

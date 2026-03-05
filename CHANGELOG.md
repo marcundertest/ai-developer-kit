@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.46] - 2026-03-05
+
+### Added
+
+- Level 9: Advanced Code Safety & Consistency meta-tests (Rules 129-137):
+  - Forbid mixing `async/await` with `.then()/.catch()` in the same file.
+  - Enforce strict equality (`===`) and inequality (`!==`) globally.
+  - Enforce object spread instead of `Object.assign()`.
+  - Limit code nesting depth to 4 levels (max 32-space indentation).
+  - Require explicit type annotations for array callback parameters (`map`, `filter`, etc.).
+  - Mandate `unknown` type for error variables in `catch` blocks.
+  - Detect potential SQL injection patterns in template literals.
+  - Forbid `Math.random()` in sensitive security contexts (tokens, secrets).
+  - Prohibit direct `innerHTML` assignments to prevent XSS.
+- Added `complexity: 10` rule to `.eslintrc.json` to enforce Single Responsibility Principle at the function level.
+
 ## [1.4.45] - 2026-03-05
 
 ### Added

@@ -13,7 +13,8 @@
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/ban-ts-comment": "error",
     "no-console": "error",
-    "no-warning-comments": ["error", { "terms": ["todo", "fixme"], "location": "anywhere" }]
+    "no-warning-comments": ["error", { "terms": ["todo", "fixme"], "location": "anywhere" }],
+    "complexity": ["error", { "max": 10 }]
   },
   "overrides": [
     {
