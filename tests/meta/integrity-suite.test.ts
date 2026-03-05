@@ -632,6 +632,42 @@ describe('Integrity Suite', () => {
         expect(content, `File ${file} contains @ts-expect-error`).not.toContain('@ts-expect-error');
       });
     });
+
+    it('should not have exports in src/ that are never imported anywhere', () => {
+      const srcDir = path.join(rootDir, 'src') + path.sep;
+      const srcFiles = codeFiles.filter((f) => f.startsWith(srcDir));
+      const allFilesContent = [
+        ...codeFiles,
+        ...allSourceFiles.filter((f) => f.startsWith(testsDir)),
+      ].map((f) => ({
+        path: f,
+        content: fs.readFileSync(f, 'utf8'),
+      }));
+
+      srcFiles.forEach((file) => {
+        const fileData = allFilesContent.find((f) => f.path === file);
+        if (!fileData) return;
+
+        const namedExports = [
+          ...fileData.content.matchAll(
+            /^export\s+(?:const|function|class|type|interface|enum)\s+(\w+)/gm,
+          ),
+        ].map((m) => m[1]);
+
+        namedExports.forEach((exportName) => {
+          const usagePattern = new RegExp(`\\b${exportName}\\b`);
+          const isUsedElsewhere = allFilesContent.some((f) => {
+            if (f.path === file) return false;
+            return usagePattern.test(f.content);
+          });
+
+          expect(
+            isUsedElsewhere,
+            `Export "${exportName}" in ${path.relative(rootDir, file)} is never used in other files or tests`,
+          ).toBe(true);
+        });
+      });
+    });
   });
 
   describe('Level 4: Hygiene & Global Standards', () => {

@@ -63,6 +63,23 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 058
+
+- **Fecha**: 2026-03-05 11:15
+- **Requerimiento**: Detectar y prohibir "código muerto" (exports en `src/` que nadie importa).
+- **Información adicional**: Se busca que cada miembro exportado sea usado al menos en un test o por otro módulo, evitando restos de refactorizaciones fallidas.
+- **Interpretación**:
+  1. Nuevo meta-test en Level 3 que verifica que cada `export` nombrado tenga al menos una mención fuera de su propio archivo.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+  - `package.json` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (estado: ejecutado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 11:16 - ✅ No unreferenced exports found in 77 tests.
+
 ### Requerimiento 057
 
 - **Fecha**: 2026-03-05 11:14
