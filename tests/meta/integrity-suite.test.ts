@@ -828,6 +828,14 @@ describe('Integrity Suite', () => {
         );
       });
     });
+
+    it('should have a <main> landmark element in HTML pages', () => {
+      const htmlFiles = allSourceFiles.filter((f) => f.endsWith('.html'));
+      htmlFiles.forEach((file) => {
+        const content = fs.readFileSync(file, 'utf8');
+        expect(content, `Missing <main> landmark in ${file}`).toMatch(/<main[\s>]/i);
+      });
+    });
   });
 
   describe('Level 5: Architecture & Security', () => {

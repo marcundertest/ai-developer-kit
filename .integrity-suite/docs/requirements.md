@@ -63,6 +63,23 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 065
+
+- **Fecha**: 2026-03-05 13:05
+- **Requerimiento**: Prohibir archivos HTML sin la etiqueta `<main>`.
+- **Información adicional**: Mejora la accesibilidad (a11y) proporcionando un punto de referencia (landmark) claro para el contenido principal.
+- **Interpretación**:
+  1. Nuevo meta-test en el Nivel 4 que escanea archivos `.html` y verifica la existencia de la etiqueta `<main>`.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `tests/meta/integrity-suite.test.ts` (estado: modificado)
+  - `package.json` (estado: modificado)
+- **Tests**:
+  - `pnpm validate-project` (state: ejecutado)
+- **Estado**: Aprobado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-05 13:06 - ✅ Accessibility check for <main> landmark enforced (84 tests)
+
 ### Requerimiento 064
 
 - **Fecha**: 2026-03-05 12:53
