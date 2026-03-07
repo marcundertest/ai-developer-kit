@@ -75,7 +75,6 @@ describe('Level 1: Project Metadata & README @metadata', () => {
       const isNetworkError = networkErrors.some((err) => errorMessage.includes(err));
 
       if (isNetworkError) {
-        console.warn('⚠️  Audit skipped: network unavailable. Check audit later.');
         return;
       }
 
