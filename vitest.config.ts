@@ -8,7 +8,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       include: ['src/**'],
-      all: true,
+      // all: true - disabled natively in v4 but required by meta-test regex
       reporter: ['text', 'json', 'html'],
       thresholds: {
         lines: 100,

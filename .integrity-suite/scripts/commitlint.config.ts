@@ -8,7 +8,7 @@ const config = {
   plugins: [
     {
       rules: {
-        'subject-ascii-only': ({ subject }) => {
+        'subject-ascii-only': ({ subject }: { subject?: string | null }) => {
           const isAscii = subject ? [...subject].every((c) => c.charCodeAt(0) <= 127) : true;
           return [isAscii, 'Commit message must be in English (ASCII only)'];
         },

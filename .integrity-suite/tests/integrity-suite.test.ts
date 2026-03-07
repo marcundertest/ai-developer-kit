@@ -41,11 +41,15 @@ describe('Integrity Suite', () => {
   const hasTailwind = pkg.dependencies?.tailwindcss || pkg.devDependencies?.tailwindcss;
 
   describe('Level 0: Base Environment & Cleanup @base', () => {
-    it('should compile this integrity-suite test file without type errors', () => {
+    it('should compile all test and script files without type errors (including implicit any)', () => {
       try {
+        const tsFiles = codeFiles.filter(
+          (f) => f.endsWith('.ts') && !f.includes('node_modules') && !f.includes('dist'),
+        );
         execSync(
-          'tsc --noEmit --target ESNext --module NodeNext --lib ESNext --moduleResolution NodeNext --esModuleInterop true --strict true --skipLibCheck true .integrity-suite/tests/integrity-suite.test.ts',
-          { encoding: 'utf8' },
+          'tsc --noEmit --target ESNext --module NodeNext --lib ESNext --moduleResolution NodeNext --esModuleInterop true --strict true --skipLibCheck true ' +
+            tsFiles.join(' '),
+          { encoding: 'utf8', stdio: 'pipe' },
         );
       } catch (e: any) {
         const msg = e.stdout ? e.stdout.toString() : String(e.message || e);
