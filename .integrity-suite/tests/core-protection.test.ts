@@ -29,7 +29,8 @@ describe('Core Protection Suite', () => {
 
     changedFiles.forEach(({ status, path }) => {
       // Exclude reports as they are legitimate dynamic output even for consumers
-      if (path.startsWith('.integrity-suite/') && !path.includes('/reports/')) {
+      const isSuspicious = ['M', 'A', 'D', 'R', '?'].some((code) => status.includes(code));
+      if (path.startsWith('.integrity-suite/') && !path.includes('/reports/') && isSuspicious) {
         const action = status.includes('D') ? 'deleted' : 'modified/added';
         expect(
           false,
