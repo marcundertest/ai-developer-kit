@@ -151,8 +151,13 @@ try {
     const width = 160;
     const height = 40;
     const padding = 5;
-    const min = 0;
-    const max = 100;
+    const min = Math.min(...data);
+    const max = Math.max(...data);
+    const range = max - min;
+    const centerValue = data[data.length - 1];
+    const visualRange = Math.max(range, 2);
+    const visualMin = centerValue - visualRange / 2;
+    const visualMax = centerValue + visualRange / 2;
 
     const last = data[data.length - 1];
     const prev = data[data.length - 2];
@@ -164,7 +169,7 @@ try {
     const points = data
       .map((val, i) => {
         const x = (i / (data.length - 1)) * (width - padding * 2) + padding;
-        const y = height - ((val - min) / (max - min)) * (height - padding * 2) - padding;
+        const y = height / 2 - (((val - centerValue) / visualRange) * (height - padding * 2)) / 2;
         return `${x},${y}`;
       })
       .join(' ');
@@ -175,7 +180,8 @@ try {
         ${data
           .map((val, i) => {
             const x = (i / (data.length - 1)) * (width - padding * 2) + padding;
-            const y = height - ((val - min) / (max - min)) * (height - padding * 2) - padding;
+            const y =
+              height / 2 - (((val - centerValue) / visualRange) * (height - padding * 2)) / 2;
             if (i === data.length - 1) {
               return `<circle cx="${x}" cy="${y}" r="5" fill="${pointColor}" stroke="white" stroke-width="1.5" />`;
             }

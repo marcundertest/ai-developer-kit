@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.4.109] - 2026-03-07
+
+### Changed
+
+- Trend sparkline now adapts vertical scale to recent values, making small differences visible in the HTML report.
+
 ## [1.4.108] - 2026-03-07
 
 ### Changed
