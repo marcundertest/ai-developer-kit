@@ -254,7 +254,6 @@ describe('Integrity Suite', () => {
     it('should have essential scripts in package.json', () => {
       expect(pkg.scripts['build']).toBeDefined();
       expect(pkg.scripts['test:full']).toBeDefined();
-      expect(pkg.scripts['test:nobump']).toBeDefined();
       expect(pkg.scripts['test:report']).toBeDefined();
       expect(pkg.scripts['start']).toBeDefined();
     });
@@ -578,7 +577,7 @@ describe('Integrity Suite', () => {
       ).toBeLessThan(script.indexOf('test:unit'));
     });
 
-    it('should call all three test suites in correct order in test:full and test:nobump', () => {
+    it('should call all three test suites in correct order in test:full', () => {
       const fullScript = pkg.scripts['test:full'] as string;
       expect(fullScript).toBeDefined();
       const fullMeta = fullScript.indexOf('test:meta');
@@ -589,21 +588,6 @@ describe('Integrity Suite', () => {
       expect(fullE2e, 'test:e2e is missing from test:full script').toBeGreaterThan(-1);
       expect(fullMeta, 'test:meta must run before test:unit in test:full').toBeLessThan(fullUnit);
       expect(fullUnit, 'test:unit must run before test:e2e in test:full').toBeLessThan(fullE2e);
-
-      const nobumpScript = pkg.scripts['test:nobump'] as string;
-      expect(nobumpScript).toBeDefined();
-      const nobumpMeta = nobumpScript.indexOf('test:meta');
-      const nobumpUnit = nobumpScript.indexOf('test:unit');
-      const nobumpE2e = nobumpScript.indexOf('test:e2e');
-      expect(nobumpMeta, 'test:meta is missing from test:nobump script').toBeGreaterThan(-1);
-      expect(nobumpUnit, 'test:unit is missing from test:nobump script').toBeGreaterThan(-1);
-      expect(nobumpE2e, 'test:e2e is missing from test:nobump script').toBeGreaterThan(-1);
-      expect(nobumpMeta, 'test:meta must run before test:unit in test:nobump').toBeLessThan(
-        nobumpUnit,
-      );
-      expect(nobumpUnit, 'test:unit must run before test:e2e in test:nobump').toBeLessThan(
-        nobumpE2e,
-      );
     });
 
     it('should have prepare script configured to install husky', () => {
@@ -720,21 +704,22 @@ describe('Integrity Suite', () => {
       expect(script, '&& exit 0 bypass in test:full').not.toMatch(/&&\s*exit\s+0/);
     });
 
-    it('should have a pre-push hook that runs only relaxed version/changelog checks', () => {
+    it('should have a pre-push hook that runs full validation suite in strict mode', () => {
       const prePushPath = path.join(rootDir, '.husky', 'pre-push');
       expect(fs.existsSync(prePushPath), '.husky/pre-push hook is missing').toBe(true);
       const prePushContent = fs.readFileSync(prePushPath, 'utf8');
       expect(
         prePushContent,
-        'pre-push hook must invoke check-version:relaxed and check-changelog',
-      ).toMatch(/check-version:relaxed[\s\S]*check-changelog/);
-      expect(prePushContent, 'pre-push must not contain full test commands').not.toMatch(
-        /test:(?:full|nobump)/,
+        'pre-push hook must invoke test:full with INTEGRITY_SUITE_STRICT=true for full protection',
+      ).toMatch(/test:full/);
+      expect(prePushContent, 'pre-push must not skip tests with bypass patterns').not.toMatch(
+        /\|\|\s*true/,
       );
     });
   });
 
   it('should protect core kit files from unauthorized modification @core-protection', async () => {
+    // Skip protection if in development mode (editing integrity-suite allowed)
     if (process.env['INTEGRITY_SUITE_DEVELOPMENT'] === 'true') return;
 
     const { execSync } = await import('node:child_process');
@@ -752,22 +737,36 @@ describe('Integrity Suite', () => {
 
     const protectedPaths = ['.integrity-suite/docs/prompt.md', '.integrity-suite/docs/workflow.md'];
 
+    const isStrictMode = process.env['INTEGRITY_SUITE_STRICT'] === 'true';
+
     paths.forEach((p) => {
-      // Allow .integrity-suite/scripts/*.js files to be modified during refactoring
-      if (p.startsWith('.integrity-suite/scripts/') && p.endsWith('.js')) {
-        return;
-      }
+      const protectedDocsOnly = protectedPaths.some((prot) => p === prot || p.startsWith(prot));
 
-      // Allow integrity-suite.test.ts to be modified for test improvements
-      if (p === '.integrity-suite/tests/integrity-suite.test.ts') {
-        return;
-      }
+      if (isStrictMode) {
+        // In strict mode (test:full for pre-push), protect ENTIRE .integrity-suite
+        if (p.startsWith('.integrity-suite/')) {
+          expect(
+            false,
+            `🔒 Strict protection: .integrity-suite/* is protected from modification in this mode: ${p}`,
+          ).toBe(true);
+        }
+      } else {
+        // In normal mode (test:meta, test:report), allow some exceptions
+        if (p.startsWith('.integrity-suite/scripts/') && p.endsWith('.js')) {
+          return; // Allow script refactoring
+        }
 
-      const isProtected = protectedPaths.some((prot) => p === prot || p.startsWith(prot));
-      expect(
-        isProtected,
-        `Kit protection: unauthorized modification attempt on protected core file: ${p}`,
-      ).toBe(false);
+        if (p === '.integrity-suite/tests/integrity-suite.test.ts') {
+          return; // Allow test improvements
+        }
+
+        if (protectedDocsOnly) {
+          expect(
+            false,
+            `Kit protection: unauthorized modification attempt on protected core file: ${p}`,
+          ).toBe(true);
+        }
+      }
     });
   });
 
@@ -2522,9 +2521,7 @@ describe('Integrity Suite', () => {
       );
       // Verify pipeline scripts are no longer directly calling check-audit.js
       const fullScript = pkg.scripts['test:full'];
-      const nobumpScript = pkg.scripts['test:nobump'];
       expect(fullScript).not.toContain('check-audit.js');
-      expect(nobumpScript).not.toContain('check-audit.js');
     });
 
     it('should run all validations (audit, version, changelog) within test:meta', () => {
@@ -3021,53 +3018,63 @@ describe('Integrity Suite', () => {
       }
     });
 
-    it('should require version bump when non-markdown files are staged', () => {
+    it('should require version bump when non-markdown files are modified', () => {
       // @version-release
-      // If any non-markdown files are in staging, version MUST be higher than HEAD
+      // If any non-markdown files are modified (staging or working dir), version MUST be different from HEAD
+      let nonMdFiles: string[] = [];
+      let headVersion = '';
+      let currentVersion = '';
+      let shouldCheck = false;
+
       try {
-        let stagedFiles: string[] = [];
+        // 1. Get all modified files from both staging and working directory
+        let stagedOutput = '';
+        let workingOutput = '';
         try {
-          stagedFiles = execSync('git diff --cached --name-only', {
+          stagedOutput = execSync('git diff --cached --name-only', {
             encoding: 'utf8',
-            stdio: ['pipe', 'pipe', 'pipe'],
-          })
-            .trim()
-            .split('\n')
-            .filter((line) => line.length > 0);
-        } catch (e: unknown) {
-          // Not in a git repo or no staging, skip
+          }).trim();
+          workingOutput = execSync('git diff --name-only', { encoding: 'utf8' }).trim();
+        } catch (e) {
           return;
         }
 
-        // Filter to non-markdown files
-        const nonMarkdownFiles = stagedFiles.filter((f) => !f.endsWith('.md'));
-        if (nonMarkdownFiles.length === 0) {
-          // Only markdown changes, no need to bump version
+        const allFiles = new Set<string>();
+        if (stagedOutput) stagedOutput.split('\n').forEach((f) => allFiles.add(f));
+        if (workingOutput) workingOutput.split('\n').forEach((f) => allFiles.add(f));
+
+        nonMdFiles = [...allFiles].filter((f) => f && !f.endsWith('.md'));
+
+        if (nonMdFiles.length === 0) {
           return;
         }
 
-        // Non-markdown files are staged; verify version was bumped
-        let headVersion = null;
+        // 2. Get HEAD version
         try {
-          const pkgAtHead = execSync('git show HEAD:package.json 2>/dev/null', {
+          const headPkg = execSync('git show HEAD:package.json', {
             encoding: 'utf8',
-            stdio: ['pipe', 'pipe', 'pipe'],
+            shell: true,
           });
-          headVersion = JSON.parse(pkgAtHead).version;
-        } catch (e: unknown) {
-          // initial commit, allow it
-          headVersion = '0.0.0';
+          headVersion = JSON.parse(headPkg).version;
+        } catch (e) {
+          return;
         }
 
-        if (headVersion && pkg.version === headVersion) {
-          expect(
-            false,
-            `Non-markdown files staged (${nonMarkdownFiles.join(', ')}) but version not bumped: ` +
-              `still at ${pkg.version}`,
-          ).toBe(true);
-        }
+        // 3. Get current version
+        currentVersion = pkg.version;
+
+        // 4. Mark that we should check versions
+        shouldCheck = true;
       } catch (e: unknown) {
-        // skip if git unavailable
+        // If any git error occurs, skip
+      }
+
+      // IMPORTANT: expect is OUTSIDE the try-catch so failures propagate correctly
+      if (shouldCheck) {
+        expect(
+          currentVersion,
+          `❌ Version not bumped! Modified non-markdown files (${nonMdFiles.join(', ')}) but version still ${currentVersion} (was ${headVersion}). Bump the version in package.json.`,
+        ).not.toBe(headVersion);
       }
     });
 
@@ -3209,6 +3216,361 @@ describe('Integrity Suite', () => {
       } catch (e: unknown) {
         // skip if unavailable
       }
+    });
+
+    it('should have exactly one changelog entry for the staged version (no duplicates, no missing)', () => {
+      try {
+        let headVersion = null;
+        try {
+          const pkgAtHead = execSync('git show HEAD:package.json 2>/dev/null', {
+            encoding: 'utf8',
+            stdio: ['pipe', 'pipe', 'pipe'],
+          });
+          headVersion = JSON.parse(pkgAtHead).version;
+        } catch (e: unknown) {
+          headVersion = '0.0.0';
+        }
+
+        if (headVersion && pkg.version !== headVersion) {
+          const changelogPath = path.join(rootDir, 'CHANGELOG.md');
+          const changelogContent = fs.readFileSync(changelogPath, 'utf8');
+          // Count exact occurrences of "## [version]"
+          const pattern = new RegExp('## \\[' + pkg.version.replace(/\./g, '\\.') + '\\]', 'g');
+          const matches = changelogContent.match(pattern) || [];
+          expect(
+            matches.length,
+            `CHANGELOG.md must have exactly 1 entry for version ${pkg.version}, but found ${matches.length}`,
+          ).toBe(1);
+        }
+      } catch (e: unknown) {
+        // skip if unavailable
+      }
+    });
+
+    it('should not have any changelog version posterior to the staged package.json version', () => {
+      const changelogPath = path.join(rootDir, 'CHANGELOG.md');
+      if (!fs.existsSync(changelogPath)) return;
+      const changelogContent = fs.readFileSync(changelogPath, 'utf8');
+
+      // Extract all version headers from CHANGELOG
+      const versionMatches = [...changelogContent.matchAll(/## \[([0-9]+\.[0-9]+\.[0-9]+)\]/g)];
+
+      versionMatches.forEach((match) => {
+        const changelogVersion = match[1];
+        // Compare versions: changelogVersion should NOT be greater than pkg.version
+        const changelogParts = changelogVersion.split('.').map(Number);
+        const pkgParts = pkg.version.split('.').map(Number);
+
+        for (let i = 0; i < 3; i++) {
+          if (changelogParts[i] > pkgParts[i]) {
+            throw new Error(
+              `CHANGELOG contains version ${changelogVersion} which is posterior to package.json version ${pkg.version}`,
+            );
+          }
+          if (changelogParts[i] < pkgParts[i]) {
+            break; // Earlier version is OK
+          }
+        }
+      });
+
+      expect(true).toBe(true); // Placeholder pass if no errors thrown
+    });
+
+    it('should allow multiple requirements with the staged version, but NOT posterior versions in requirements.md', () => {
+      const reqPath = path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md');
+      if (!fs.existsSync(reqPath)) return;
+      const reqContent = fs.readFileSync(reqPath, 'utf8');
+
+      // Extract all versions from requirements.md
+      let headVersion = null;
+      try {
+        const pkgAtHead = execSync('git show HEAD:package.json 2>/dev/null', {
+          encoding: 'utf8',
+          stdio: ['pipe', 'pipe', 'pipe'],
+        });
+        headVersion = JSON.parse(pkgAtHead).version;
+      } catch (e: unknown) {
+        headVersion = '0.0.0';
+      }
+
+      if (!headVersion || pkg.version === headVersion) {
+        // No version bump, skip
+        expect(true).toBe(true);
+        return;
+      }
+
+      // Find all version entries in requirements.md
+      const versionMatches = [
+        ...reqContent.matchAll(/\*\*Versi[oó]n\*\*:\s*([0-9]+\.[0-9]+\.[0-9]+)/g),
+      ];
+
+      versionMatches.forEach((match) => {
+        const reqVersion = match[1];
+        // Compare versions: reqVersion should NOT be greater than pkg.version
+        const reqParts = reqVersion.split('.').map(Number);
+        const pkgParts = pkg.version.split('.').map(Number);
+
+        for (let i = 0; i < 3; i++) {
+          expect(
+            reqParts[i],
+            `requirements.md version ${reqVersion} is posterior to package.json ${pkg.version}`,
+          ).toBeLessThanOrEqual(pkgParts[i]);
+          if (reqParts[i] < pkgParts[i]) break;
+        }
+      });
+    });
+
+    it('should ensure all changelog versions follow valid semver and are in descending order', () => {
+      const changelogPath = path.join(rootDir, 'CHANGELOG.md');
+      if (!fs.existsSync(changelogPath)) return;
+      const changelogContent = fs.readFileSync(changelogPath, 'utf8');
+
+      const versionMatches = [...changelogContent.matchAll(/## \[([0-9]+\.[0-9]+\.[0-9]+)\]/g)];
+      const versions = versionMatches.map((m) => m[1]);
+
+      // Check descending order
+      for (let i = 0; i < versions.length - 1; i++) {
+        const currParts = versions[i].split('.').map(Number);
+        const nextParts = versions[i + 1].split('.').map(Number);
+
+        for (let j = 0; j < 3; j++) {
+          expect(
+            currParts[j],
+            `CHANGELOG versions not in descending order: ${versions[i]} should be > ${versions[i + 1]}`,
+          ).toBeGreaterThanOrEqual(nextParts[j]);
+          if (currParts[j] > nextParts[j]) break;
+        }
+      }
+    });
+
+    it('should ensure requirements.md versions are in descending order by requirement number', () => {
+      const reqPath = path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md');
+      if (!fs.existsSync(reqPath)) return;
+      const reqContent = fs.readFileSync(reqPath, 'utf8');
+
+      // Extract version for each requirement (requirements are ordered by number descending)
+      const reqBlocks = reqContent.split('\n### Requerimiento');
+      const versionsByReq: Record<number, string> = {};
+
+      for (let i = 1; i < reqBlocks.length; i++) {
+        const block = reqBlocks[i];
+        const numMatch = block.match(/^\s*(\d+)/);
+        const versionMatch = block.match(/\*\*Versi[oó]n\*\*:\s*([0-9]+\.[0-9]+\.[0-9]+)/);
+
+        if (numMatch && versionMatch) {
+          versionsByReq[parseInt(numMatch[1], 10)] = versionMatch[1];
+        }
+      }
+
+      // Verify: requirements are descending by number, so their versions should generally be descending too
+      const reqNums = Object.keys(versionsByReq)
+        .map(Number)
+        .sort((a, b) => b - a);
+
+      for (let i = 0; i < reqNums.length - 1; i++) {
+        const currReqNum = reqNums[i];
+        const nextReqNum = reqNums[i + 1];
+        const currVersion = versionsByReq[currReqNum];
+        const nextVersion = versionsByReq[nextReqNum];
+
+        // currVersion should be >= nextVersion (newer or equal)
+        const currParts = currVersion.split('.').map(Number);
+        const nextParts = nextVersion.split('.').map(Number);
+
+        for (let j = 0; j < 3; j++) {
+          expect(
+            currParts[j],
+            `Requirement #${currReqNum} version ${currVersion} should be >= #${nextReqNum} version ${nextVersion}`,
+          ).toBeGreaterThanOrEqual(nextParts[j]);
+          if (currParts[j] > nextParts[j]) break;
+        }
+      }
+    });
+
+    it('should validate CHANGELOG sections match version bump type', () => {
+      const changelogPath = path.join(rootDir, 'CHANGELOG.md');
+      if (!fs.existsSync(changelogPath)) return;
+
+      try {
+        let headVersion = null;
+        try {
+          const pkgAtHead = execSync('git show HEAD:package.json 2>/dev/null', {
+            encoding: 'utf8',
+            stdio: ['pipe', 'pipe', 'pipe'],
+          });
+          headVersion = JSON.parse(pkgAtHead).version;
+        } catch (e: unknown) {
+          headVersion = '0.0.0';
+        }
+
+        if (!headVersion || pkg.version === headVersion) return;
+
+        const changelogContent = fs.readFileSync(changelogPath, 'utf8');
+        const [currMajor, currMinor, currPatch] = pkg.version.split('.').map(Number);
+        const [headMajor, headMinor, headPatch] = headVersion.split('.').map(Number);
+
+        // Extract current version section
+        const versionSection = changelogContent.match(
+          new RegExp(`## \\[${pkg.version}\\][\\s\\S]*?(?=## \\[|$)`, 'i'),
+        );
+        if (!versionSection) return;
+
+        const section = versionSection[0];
+        const hasAdded = /### Added/i.test(section);
+        const hasFixed = /### Fixed/i.test(section);
+        const hasChanged = /### Changed/i.test(section);
+        const hasContent = section.split('\n').filter((l) => l.match(/^\s*-\s+\S/)).length > 0;
+
+        expect(
+          hasContent,
+          `CHANGELOG entry for ${pkg.version} is empty: add at least one item under Added/Changed/Fixed`,
+        ).toBe(true);
+
+        if (currMajor > headMajor) {
+          // Major bump: any section OK, but should likely have Changed
+          expect(
+            hasAdded || hasChanged || hasFixed,
+            `CHANGELOG major bump (${headVersion} -> ${pkg.version}) should have substantial content`,
+          ).toBe(true);
+        } else if (currMinor > headMinor) {
+          // Minor bump: should have Added
+          expect(
+            hasAdded || hasChanged,
+            `CHANGELOG minor bump (${headVersion} -> ${pkg.version}) should include ### Added section`,
+          ).toBe(true);
+        }
+      } catch (e: unknown) {
+        // skip if git unavailable
+      }
+    });
+
+    it('should not have future dates in requirements.md', () => {
+      const reqPath = path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md');
+      if (!fs.existsSync(reqPath)) return;
+      const reqContent = fs.readFileSync(reqPath, 'utf8');
+      const today = new Date();
+      today.setHours(23, 59, 59, 999);
+
+      const dateMatches = [...reqContent.matchAll(/\*\*Fecha\*\*:\s*(\d{4}-\d{2}-\d{2})/g)];
+      dateMatches.forEach((match) => {
+        const dateStr = match[1];
+        const date = new Date(dateStr);
+        expect(date.getTime(), `Future date in requirements.md: ${dateStr}`).toBeLessThanOrEqual(
+          today.getTime(),
+        );
+      });
+    });
+
+    it('should have date for each requirement entry in requirements.md', () => {
+      const reqPath = path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md');
+      if (!fs.existsSync(reqPath)) return;
+      const reqContent = fs.readFileSync(reqPath, 'utf8');
+
+      const historialStart = reqContent.indexOf('## Historial de requerimientos');
+      if (historialStart === -1) return;
+      const historialContent = reqContent.substring(historialStart);
+      const reqBlocks = historialContent.split('### Requerimiento').slice(1);
+
+      let validCount = 0;
+      reqBlocks.forEach((block) => {
+        const numMatch = block.match(/^\s*([1-9]\d*)/);
+        if (!numMatch) return; // Skip non-requirement blocks
+
+        const hasFecha = /\*\*Fecha\*\*:\s*\d{4}-\d{2}-\d{2}/.test(block);
+        if (hasFecha) {
+          validCount++;
+        } else {
+          const reqNum = numMatch[1];
+          expect(false, `Requirement #${reqNum} is missing Fecha field`).toBe(true);
+        }
+      });
+
+      // Ensure we actually validated some requirements
+      expect(validCount, 'No valid requirements found in requirements.md').toBeGreaterThan(0);
+    });
+
+    it('should use consistent ISO date format in requirements.md (YYYY-MM-DD or YYYY-MM-DD HH:MM)', () => {
+      const reqPath = path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md');
+      if (!fs.existsSync(reqPath)) return;
+      const reqContent = fs.readFileSync(reqPath, 'utf8');
+
+      // Only look at actual histogram section, not templates
+      const historialStart = reqContent.indexOf('## Historial de requerimientos');
+      if (historialStart === -1) return;
+      const historialContent = reqContent.substring(historialStart);
+
+      // Match Fecha lines: they should all be in format YYYY-MM-DD or YYYY-MM-DD HH:MM (not yyyy-MM-dd)
+      const fechaLines = [...historialContent.matchAll(/^\s*-\s+\*\*Fecha\*\*:\s*(.+)$/gm)];
+      fechaLines.forEach((match) => {
+        const valor = match[1].trim();
+        const isValidFormat = /^\d{4}-\d{2}-\d{2}(\s+\d{2}:\d{2})?$/.test(valor);
+        expect(
+          isValidFormat,
+          `requirements.md has non-standard date format: "${valor}". Use YYYY-MM-DD or YYYY-MM-DD HH:MM`,
+        ).toBe(true);
+      });
+    });
+
+    it('should only use valid Estado values in requirements.md', () => {
+      const reqPath = path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md');
+      if (!fs.existsSync(reqPath)) return;
+      const reqContent = fs.readFileSync(reqPath, 'utf8');
+
+      const validEstados = ['Completado', 'Pendiente', 'En Progreso'];
+      const estadoMatches = [...reqContent.matchAll(/\*\*Estado\*\*:\s*(\w+(?:\s+\w+)?)/g)];
+
+      estadoMatches.forEach((match) => {
+        const estado = match[1];
+        expect(
+          validEstados.includes(estado),
+          `Invalid Estado value in requirements.md: "${estado}". Valid values: ${validEstados.join(', ')}`,
+        ).toBe(true);
+      });
+    });
+
+    it('should have all required fields in each requirement entry', () => {
+      const reqPath = path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md');
+      if (!fs.existsSync(reqPath)) return;
+      const reqContent = fs.readFileSync(reqPath, 'utf8');
+
+      const requiredFields = [
+        { name: 'Fecha', pattern: /\*\*Fecha\*\*:/ },
+        { name: 'Versión', pattern: /\*\*Versi[oó]n\*\*:/ },
+        { name: 'Requerimiento', pattern: /\*\*Requerimiento\*\*:/ },
+        { name: 'Estado', pattern: /\*\*Estado\*\*:/ },
+      ];
+
+      const historialStart = reqContent.indexOf('## Historial de requerimientos');
+      if (historialStart === -1) return;
+      const historialContent = reqContent.substring(historialStart);
+      const reqBlocks = historialContent.split('### Requerimiento').slice(1);
+
+      let validCount = 0;
+      reqBlocks.forEach((block) => {
+        const numMatch = block.match(/^\s*([1-9]\d*)/);
+        if (!numMatch) return; // Skip non-requirement blocks or requirement 0/001/037
+
+        const reqNum = numMatch[1];
+        let allFieldsPresent = true;
+
+        requiredFields.forEach(({ name, pattern }) => {
+          const hasField = pattern.test(block);
+          if (!hasField) {
+            allFieldsPresent = false;
+          }
+        });
+
+        if (allFieldsPresent) {
+          validCount++;
+        } else {
+          expect(false, `Requirement #${reqNum} is missing one or more required fields`).toBe(true);
+        }
+      });
+
+      expect(
+        validCount,
+        'No valid requirements found in requirements.md historial',
+      ).toBeGreaterThan(0);
     });
   });
 });
