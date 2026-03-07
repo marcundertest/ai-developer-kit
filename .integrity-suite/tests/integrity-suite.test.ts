@@ -144,7 +144,7 @@ describe('Integrity Suite', () => {
       expect(
         commitMsgContent,
         'commit-msg hook must reference the integrity-suite commitlint config',
-      ).toContain('.integrity-suite/scripts/commitlint.config.js');
+      ).toContain('.integrity-suite/scripts/commitlint.config.ts');
     });
 
     it('should have a .nvmrc or .node-version file for Node.js version pinning', () => {
@@ -308,8 +308,8 @@ describe('Integrity Suite', () => {
     });
 
     it('should enforce ASCII-only commit messages via commitlint plugin', async () => {
-      const configPath = path.join(rootDir, '.integrity-suite', 'scripts', 'commitlint.config.js');
-      expect(fs.existsSync(configPath), 'commitlint.config.js is missing').toBe(true);
+      const configPath = path.join(rootDir, '.integrity-suite', 'scripts', 'commitlint.config.ts');
+      expect(fs.existsSync(configPath), 'commitlint.config.ts is missing').toBe(true);
 
       const { default: commitlintConfig } = await import(configPath);
 

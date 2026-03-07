@@ -68,6 +68,29 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 156
+
+- **Fecha**: 2026-03-07 04:05
+- **Versión**: 1.4.73
+- **Requerimiento**: Valorar la posibilidad de que todos los archivos JS sean TS.
+- **Información adicional**: N/A
+- **Interpretación**: Los únicos dos archivos `.js` restantes en el proyecto (`commitlint.config.js` y `generate-report.js`) pueden ser migrados a TypeScript exitosamente mediante `tsx` y la resolución ESM de Node. Se renombran como `.ts`, se actualizan sus imports/scripts de invocación en `package.json` y los hooks de husky (`pre-commit`, `commit-msg`), verificando su validez e integrando las expectativas de test hacia estas nuevas rutas.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `.integrity-suite/scripts/commitlint.config.js` -> `.ts` (estado: renombrado)
+  - `.integrity-suite/scripts/generate-report.js` -> `.ts` (estado: renombrado)
+  - `package.json` (estado: modificado)
+  - `.husky/commit-msg` (estado: modificado)
+  - `.integrity-suite/tests/integrity-suite.test.ts` (estado: modificado)
+  - `CHANGELOG.md` (estado: modificado)
+  - `.integrity-suite/docs/requirements.md` (estado: modificado)
+- **Tests**:
+  - `should have a commit-msg hook that enforces commitlint` (modificado validaciones literales a `.ts`)
+  - `should enforce ASCII-only commit messages via commitlint plugin` (modificado ruta config)
+- **Estado**: Completado
+- **Resultados de los tests**:
+  - **Iteración 1**: 2026-03-07 04:05 - ✅ Pruebas corriendo exitosamente tras adaptar strings expect e imports.
+
 ### Requerimiento 155
 
 - **Fecha**: 2026-03-07 04:00

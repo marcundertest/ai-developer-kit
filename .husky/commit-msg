@@ -1,1 +1,1 @@
-npx --no -- commitlint --config .integrity-suite/scripts/commitlint.config.js --edit $1
+npx --no -- commitlint --config .integrity-suite/scripts/commitlint.config.ts --edit $1
