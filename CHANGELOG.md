@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.96] - 2026-03-07
+
+### Added
+
+- Implemented Level 12 meta-test: Transitive Dependency Integrity. This test scans the lockfile to detect and warn about multiple versions of the same package being used as transitive dependencies.
+
 ## [1.4.95] - 2026-03-07
 
 ### Changed
