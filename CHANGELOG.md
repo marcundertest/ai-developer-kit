@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.104] - 2026-03-08
+
+### Fixed
+
+- Corrected imports of `testsDir` to `testsDirs` in performance and documentation tests.
+- Adapted documentation quality test to iterate over the `testsDirs` array.
+
 ## [1.4.103] - 2026-03-08
 
 ### Added

@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { execSync } from 'node:child_process';
-import { rootDir, codeFiles, pkg, allSourceFiles, testsDir, hasTailwind } from './shared';
+import { rootDir, codeFiles, pkg, allSourceFiles, testsDirs, hasTailwind } from './shared';
 
 describe('Level 10: Runtime Performance & Efficiency @performance', () => {
   it('Should not use namespace imports (import * as) in src/', () => {
