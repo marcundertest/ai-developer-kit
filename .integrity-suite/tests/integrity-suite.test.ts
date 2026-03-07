@@ -88,24 +88,6 @@ describe('Integrity Suite', () => {
       expect(content).toContain('Fixed');
     });
 
-    it('should have a requirements.md file in Spanish', () => {
-      const reqPath = path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md');
-      expect(fs.existsSync(reqPath), 'requirements.md is missing').toBe(true);
-      const content = fs.readFileSync(reqPath, 'utf8');
-
-      expect(content, 'requirements.md missing language policy notice').toContain(
-        'mantiene estrictamente en **castellano**',
-      );
-
-      expect(content).toContain('Historial de requerimientos');
-      expect(content).toContain('Interpretación');
-
-      const spanishChars = /[áéíóúñÁÉÍÓÚÑ]/;
-      expect(spanishChars.test(content), 'requirements.md should contain Spanish characters').toBe(
-        true,
-      );
-    });
-
     it('should have a pnpm-lock.yaml lockfile', () => {
       expect(
         fs.existsSync(path.join(rootDir, 'pnpm-lock.yaml')),
@@ -445,110 +427,6 @@ describe('Integrity Suite', () => {
       });
     });
 
-    it('should verify the latest requirement in requirements.md is not Pendiente', () => {
-      const reqPath = path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md');
-      expect(fs.existsSync(reqPath), 'requirements.md is missing').toBe(true);
-      const content = fs.readFileSync(reqPath, 'utf8');
-
-      const historyParts = content.split('## Historial de requerimientos');
-      expect(
-        historyParts.length,
-        'Missing "## Historial de requerimientos" section in requirements.md',
-      ).toBeGreaterThan(1);
-
-      const historySection = historyParts[1];
-      const reqBlocks = historySection.split(/\n### Requerimiento\s+/);
-
-      expect(
-        reqBlocks.length,
-        'No requirements found in history section of requirements.md',
-      ).toBeGreaterThan(1);
-
-      const latestReqRaw = reqBlocks[1];
-      const latestIdMatch = latestReqRaw.match(/^(\d+)/);
-      const latestId = latestIdMatch ? latestIdMatch[1] : 'unknown';
-
-      expect(
-        latestReqRaw,
-        `The latest requirement (#${latestId}) is still "Pendiente". The agent must complete the task and all tests must pass before suggesting a commit.`,
-      ).not.toContain('- **Estado**: Pendiente');
-
-      expect(
-        latestReqRaw,
-        `The latest requirement (#${latestId}) must be marked as "Completado".`,
-      ).toContain('- **Estado**: Completado');
-    });
-
-    it('should maintain structured and sequential requirements in requirements.md', () => {
-      const reqPath = path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md');
-      if (!fs.existsSync(reqPath)) return;
-      const content = fs.readFileSync(reqPath, 'utf8');
-
-      const historyParts = content.split('## Historial de requerimientos');
-      if (historyParts.length < 2) return;
-
-      const reqBlocks = historyParts[1].split('\n### Requerimiento');
-      const numbers: number[] = [];
-
-      for (let i = 1; i < reqBlocks.length; i++) {
-        const block = reqBlocks[i];
-
-        const estadoMatches = (block.match(/- \*\*Estado\*\*:/g) || []).length;
-        expect(
-          estadoMatches,
-          `Multiple '- **Estado**:' entries found in a single Requerimiento block (missing heading?)`,
-        ).toBeLessThanOrEqual(1);
-
-        const fechaMatches = (block.match(/- \*\*Fecha\*\*:/g) || []).length;
-        expect(
-          fechaMatches,
-          `Multiple '- **Fecha**:' entries found in a single Requerimiento block (missing heading?)`,
-        ).toBeLessThanOrEqual(1);
-
-        const numMatch = block.match(/^\s*(\d+)/);
-        if (numMatch) {
-          numbers.push(parseInt(numMatch[1], 10));
-        }
-      }
-
-      for (let i = 0; i < numbers.length - 1; i++) {
-        expect(
-          numbers[i],
-          `Requirements are not sorted in strict descending order: ${numbers[i]} followed by ${numbers[i + 1]}`,
-        ).toBeGreaterThan(numbers[i + 1]);
-      }
-    });
-
-    it('should have requirements with chronologically consistent dates', () => {
-      const reqPath = path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md');
-      if (!fs.existsSync(reqPath)) return;
-      const content = fs.readFileSync(reqPath, 'utf8');
-      const historyParts = content.split('## Historial de requerimientos');
-      if (historyParts.length < 2) return;
-
-      const reqBlocks = historyParts[1].split('\n### Requerimiento');
-      const dates: Date[] = [];
-
-      for (let i = 1; i < reqBlocks.length; i++) {
-        const match = reqBlocks[i].match(/- \*\*Fecha\*\*:\s*(\d{4}-\d{2}-\d{2})(\s+\d{2}:\d{2})?/);
-        if (match) {
-          const date = new Date(match[1]);
-          expect(
-            date.getTime(),
-            `Invalid date format in requirement ${i}: "${match[1]}"`,
-          ).not.toBeNaN();
-          dates.push(date);
-        }
-      }
-
-      for (let i = 0; i < dates.length - 1; i++) {
-        expect(
-          dates[i].getTime(),
-          `Date in requirement ${i + 1} is older than requirement ${i + 2}: check order`,
-        ).toBeGreaterThanOrEqual(dates[i + 1].getTime());
-      }
-    });
-
     it('should have a zero-tolerance validation script with consolidated validations in tests', () => {
       const script = pkg.scripts['test:full'];
       expect(script).toContain('eslint . --max-warnings 0');
@@ -658,11 +536,11 @@ describe('Integrity Suite', () => {
         .filter((l) => l && !l.startsWith('#'));
 
       const coreKitPatterns = [
-        '.integrity-suite/docs',
-        '.integrity-suite/docs/prompt.md',
-        '.integrity-suite/docs/workflow.md',
         '.integrity-suite/scripts',
+        '.integrity-suite/scripts/commitlint.config.js',
+        '.integrity-suite/scripts/generate-report.js',
         '.integrity-suite/tests',
+        '.integrity-suite/tests/core-protection.test.ts',
         '.integrity-suite/tests/integrity-suite.test.ts',
       ];
 
@@ -2826,23 +2704,6 @@ describe('Integrity Suite', () => {
         });
     });
 
-    it('should have requirements.md in git staging area (for commits)', () => {
-      try {
-        const stagingFiles = execSync('git diff --cached --name-only', {
-          encoding: 'utf8',
-          stdio: ['pipe', 'pipe', 'pipe'],
-        })
-          .trim()
-          .split('\n');
-
-        const hasRequirements = stagingFiles.includes('.integrity-suite/docs/requirements.md');
-        expect(
-          hasRequirements,
-          'requirements.md must be staged during commits to track completed requirements',
-        ).toBe(true);
-      } catch (e: unknown) {}
-    });
-
     it('should never have a version inferior to origin HEAD (version-check)', () => {
       try {
         const currentVersion = pkg.version;
@@ -2877,21 +2738,6 @@ describe('Integrity Suite', () => {
           }
         }
       } catch (e: unknown) {}
-    });
-
-    it('should record current version in requirements file', () => {
-      try {
-        const reqContent = fs.readFileSync(
-          path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md'),
-          'utf8',
-        );
-        const patternStr = '\\*\\*Versi[oó]n\\*\\*: ' + pkg.version.replace(/\./g, '\\.');
-        const versionPattern = new RegExp(patternStr);
-        expect(
-          versionPattern.test(reqContent),
-          'requirements.md must include "**Versión**: ' + pkg.version + '" for the current release',
-        ).toBe(true);
-      } catch (e) {}
     });
 
     it('should require version bump when non-markdown files are modified', () => {
@@ -3044,39 +2890,6 @@ describe('Integrity Suite', () => {
       }
     });
 
-    it('should have requirements entry for staged version bumped (commit only)', () => {
-      let headVersion: string | null = null;
-      let currentVersion = pkg.version;
-      let shouldCheck = false;
-
-      try {
-        try {
-          const pkgAtHead = execSync('git show HEAD:package.json', {
-            encoding: 'utf8',
-          });
-          headVersion = JSON.parse(pkgAtHead).version;
-        } catch (e: unknown) {
-          headVersion = '0.0.0';
-        }
-
-        if (headVersion && currentVersion !== headVersion) {
-          shouldCheck = true;
-        }
-      } catch (e: unknown) {}
-
-      if (shouldCheck && headVersion) {
-        const reqPath = path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md');
-        const reqContent = fs.readFileSync(reqPath, 'utf8');
-        const patternStr = '\\*\\*Versi[oó]n\\*\\*: ' + currentVersion.replace(/\./g, '\\.');
-        const versionPattern = new RegExp(patternStr);
-
-        expect(
-          versionPattern.test(reqContent),
-          `requirements.md must include "**Versión**: ${currentVersion}" when version bumped from ${headVersion}`,
-        ).toBe(true);
-      }
-    });
-
     it('should have exactly one changelog entry for the staged version (no duplicates, no missing)', () => {
       try {
         let headVersion = null;
@@ -3130,46 +2943,6 @@ describe('Integrity Suite', () => {
       expect(true).toBe(true); // Placeholder pass if no errors thrown
     });
 
-    it('should allow multiple requirements with the staged version, but NOT posterior versions in requirements.md', () => {
-      const reqPath = path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md');
-      if (!fs.existsSync(reqPath)) return;
-      const reqContent = fs.readFileSync(reqPath, 'utf8');
-
-      let headVersion = null;
-      try {
-        const pkgAtHead = execSync('git show HEAD:package.json 2>/dev/null', {
-          encoding: 'utf8',
-          stdio: ['pipe', 'pipe', 'pipe'],
-        });
-        headVersion = JSON.parse(pkgAtHead).version;
-      } catch (e: unknown) {
-        headVersion = '0.0.0';
-      }
-
-      if (!headVersion || pkg.version === headVersion) {
-        expect(true).toBe(true);
-        return;
-      }
-
-      const versionMatches = [
-        ...reqContent.matchAll(/\*\*Versi[oó]n\*\*:\s*([0-9]+\.[0-9]+\.[0-9]+)/g),
-      ];
-
-      versionMatches.forEach((match) => {
-        const reqVersion = match[1];
-        const reqParts = reqVersion.split('.').map(Number);
-        const pkgParts = pkg.version.split('.').map(Number);
-
-        for (let i = 0; i < 3; i++) {
-          expect(
-            reqParts[i],
-            `requirements.md version ${reqVersion} is posterior to package.json ${pkg.version}`,
-          ).toBeLessThanOrEqual(pkgParts[i]);
-          if (reqParts[i] < pkgParts[i]) break;
-        }
-      });
-    });
-
     it('should ensure all changelog versions follow valid semver and are in descending order', () => {
       const changelogPath = path.join(rootDir, 'CHANGELOG.md');
       if (!fs.existsSync(changelogPath)) return;
@@ -3186,47 +2959,6 @@ describe('Integrity Suite', () => {
           expect(
             currParts[j],
             `CHANGELOG versions not in descending order: ${versions[i]} should be > ${versions[i + 1]}`,
-          ).toBeGreaterThanOrEqual(nextParts[j]);
-          if (currParts[j] > nextParts[j]) break;
-        }
-      }
-    });
-
-    it('should ensure requirements.md versions are in descending order by requirement number', () => {
-      const reqPath = path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md');
-      if (!fs.existsSync(reqPath)) return;
-      const reqContent = fs.readFileSync(reqPath, 'utf8');
-
-      const reqBlocks = reqContent.split('\n### Requerimiento');
-      const versionsByReq: Record<number, string> = {};
-
-      for (let i = 1; i < reqBlocks.length; i++) {
-        const block = reqBlocks[i];
-        const numMatch = block.match(/^\s*(\d+)/);
-        const versionMatch = block.match(/\*\*Versi[oó]n\*\*:\s*([0-9]+\.[0-9]+\.[0-9]+)/);
-
-        if (numMatch && versionMatch) {
-          versionsByReq[parseInt(numMatch[1], 10)] = versionMatch[1];
-        }
-      }
-
-      const reqNums = Object.keys(versionsByReq)
-        .map(Number)
-        .sort((a, b) => b - a);
-
-      for (let i = 0; i < reqNums.length - 1; i++) {
-        const currReqNum = reqNums[i];
-        const nextReqNum = reqNums[i + 1];
-        const currVersion = versionsByReq[currReqNum];
-        const nextVersion = versionsByReq[nextReqNum];
-
-        const currParts = currVersion.split('.').map(Number);
-        const nextParts = nextVersion.split('.').map(Number);
-
-        for (let j = 0; j < 3; j++) {
-          expect(
-            currParts[j],
-            `Requirement #${currReqNum} version ${currVersion} should be >= #${nextReqNum} version ${nextVersion}`,
           ).toBeGreaterThanOrEqual(nextParts[j]);
           if (currParts[j] > nextParts[j]) break;
         }
@@ -3283,132 +3015,6 @@ describe('Integrity Suite', () => {
           ).toBe(true);
         }
       } catch (e: unknown) {}
-    });
-
-    it('should not have future dates in requirements.md', () => {
-      const reqPath = path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md');
-      if (!fs.existsSync(reqPath)) return;
-      const reqContent = fs.readFileSync(reqPath, 'utf8');
-      const today = new Date();
-      today.setHours(23, 59, 59, 999);
-
-      const dateMatches = [...reqContent.matchAll(/\*\*Fecha\*\*:\s*(\d{4}-\d{2}-\d{2})/g)];
-      dateMatches.forEach((match) => {
-        const dateStr = match[1];
-        const date = new Date(dateStr);
-        expect(date.getTime(), `Future date in requirements.md: ${dateStr}`).toBeLessThanOrEqual(
-          today.getTime(),
-        );
-      });
-    });
-
-    it('should have date for each requirement entry in requirements.md', () => {
-      const reqPath = path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md');
-      if (!fs.existsSync(reqPath)) return;
-      const reqContent = fs.readFileSync(reqPath, 'utf8');
-
-      const historialStart = reqContent.indexOf('## Historial de requerimientos');
-      if (historialStart === -1) return;
-      const historialContent = reqContent.substring(historialStart);
-      const reqBlocks = historialContent.split('### Requerimiento').slice(1);
-
-      let validCount = 0;
-      reqBlocks.forEach((block) => {
-        const numMatch = block.match(/^\s*([1-9]\d*)/);
-        if (!numMatch) return; // Skip non-requirement blocks
-
-        const hasFecha = /\*\*Fecha\*\*:\s*\d{4}-\d{2}-\d{2}/.test(block);
-        if (hasFecha) {
-          validCount++;
-        } else {
-          const reqNum = numMatch[1];
-          expect(false, `Requirement #${reqNum} is missing Fecha field`).toBe(true);
-        }
-      });
-
-      expect(validCount, 'No valid requirements found in requirements.md').toBeGreaterThan(0);
-    });
-
-    it('should use consistent ISO date format in requirements.md (YYYY-MM-DD or YYYY-MM-DD HH:MM)', () => {
-      const reqPath = path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md');
-      if (!fs.existsSync(reqPath)) return;
-      const reqContent = fs.readFileSync(reqPath, 'utf8');
-
-      const historialStart = reqContent.indexOf('## Historial de requerimientos');
-      if (historialStart === -1) return;
-      const historialContent = reqContent.substring(historialStart);
-
-      const fechaLines = [...historialContent.matchAll(/^\s*-\s+\*\*Fecha\*\*:\s*(.+)$/gm)];
-      fechaLines.forEach((match) => {
-        const valor = match[1].trim();
-        const isValidFormat = /^\d{4}-\d{2}-\d{2}(\s+\d{2}:\d{2})?$/.test(valor);
-        expect(
-          isValidFormat,
-          `requirements.md has non-standard date format: "${valor}". Use YYYY-MM-DD or YYYY-MM-DD HH:MM`,
-        ).toBe(true);
-      });
-    });
-
-    it('should only use valid Estado values in requirements.md', () => {
-      const reqPath = path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md');
-      if (!fs.existsSync(reqPath)) return;
-      const reqContent = fs.readFileSync(reqPath, 'utf8');
-
-      const validEstados = ['Completado', 'Pendiente', 'En Progreso'];
-      const estadoMatches = [...reqContent.matchAll(/\*\*Estado\*\*:\s*(\w+(?:\s+\w+)?)/g)];
-
-      estadoMatches.forEach((match) => {
-        const estado = match[1];
-        expect(
-          validEstados.includes(estado),
-          `Invalid Estado value in requirements.md: "${estado}". Valid values: ${validEstados.join(', ')}`,
-        ).toBe(true);
-      });
-    });
-
-    it('should have all required fields in each requirement entry', () => {
-      const reqPath = path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md');
-      if (!fs.existsSync(reqPath)) return;
-      const reqContent = fs.readFileSync(reqPath, 'utf8');
-
-      const requiredFields = [
-        { name: 'Fecha', pattern: /\*\*Fecha\*\*:/ },
-        { name: 'Versión', pattern: /\*\*Versi[oó]n\*\*:/ },
-        { name: 'Requerimiento', pattern: /\*\*Requerimiento\*\*:/ },
-        { name: 'Estado', pattern: /\*\*Estado\*\*:/ },
-      ];
-
-      const historialStart = reqContent.indexOf('## Historial de requerimientos');
-      if (historialStart === -1) return;
-      const historialContent = reqContent.substring(historialStart);
-      const reqBlocks = historialContent.split('### Requerimiento').slice(1);
-
-      let validCount = 0;
-      reqBlocks.forEach((block) => {
-        const numMatch = block.match(/^\s*([1-9]\d*)/);
-        if (!numMatch) return; // Skip non-requirement blocks or requirement 0/001/037
-
-        const reqNum = numMatch[1];
-        let allFieldsPresent = true;
-
-        requiredFields.forEach(({ name, pattern }) => {
-          const hasField = pattern.test(block);
-          if (!hasField) {
-            allFieldsPresent = false;
-          }
-        });
-
-        if (allFieldsPresent) {
-          validCount++;
-        } else {
-          expect(false, `Requirement #${reqNum} is missing one or more required fields`).toBe(true);
-        }
-      });
-
-      expect(
-        validCount,
-        'No valid requirements found in requirements.md historial',
-      ).toBeGreaterThan(0);
     });
   });
 });

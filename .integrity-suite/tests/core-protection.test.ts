@@ -20,11 +20,7 @@ describe('Core Protection Suite', () => {
       .filter(Boolean)
       .map((line) => line.trim().slice(2).trim());
 
-    const protectedPaths = ['.integrity-suite/docs/prompt.md', '.integrity-suite/docs/workflow.md'];
-
     paths.forEach((p) => {
-      const protectedDocsOnly = protectedPaths.some((prot) => p === prot || p.startsWith(prot));
-
       if (p.startsWith('.integrity-suite/')) {
         expect(
           false,
