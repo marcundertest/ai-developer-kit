@@ -2,6 +2,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse } from '@typescript-eslint/typescript-estree';
+import { load } from 'js-yaml';
 
 // Node: module URL is evaluated relative to tests/meta. Need rootDir
 export const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
@@ -14,23 +15,11 @@ function getWorkspacePackages(): string[] {
 
   try {
     const content = fs.readFileSync(workspacePath, 'utf8');
-    const packages: string[] = [];
-    let inPackages = false;
-
-    content.split('\n').forEach((line) => {
-      const trimmed = line.trim();
-      if (trimmed.startsWith('packages:')) {
-        inPackages = true;
-      } else if (inPackages && trimmed.startsWith('-')) {
-        const pattern = trimmed.replace(/^-/, '').trim().replace(/['"]/g, '');
-        packages.push(pattern);
-      } else if (inPackages && trimmed && !trimmed.startsWith(' ')) {
-        inPackages = false;
-      }
-    });
+    const yaml = load(content) as { packages?: string[] };
+    const patterns = yaml.packages || [];
 
     const dirs: string[] = [];
-    packages.forEach((pattern) => {
+    patterns.forEach((pattern) => {
       if (pattern.endsWith('/*')) {
         const parent = path.join(rootDir, pattern.slice(0, -2));
         if (fs.existsSync(parent) && fs.statSync(parent).isDirectory()) {

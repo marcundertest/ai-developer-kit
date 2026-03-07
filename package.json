@@ -1,6 +1,6 @@
 {
   "name": "integrity-suite",
-  "version": "1.4.121",
+  "version": "1.4.122",
   "type": "module",
   "description": "Strict project template for automated setup and code quality.",
   "main": "index.js",
@@ -38,7 +38,8 @@
     "tsx": "4.21.0",
     "typescript": "5.4.5",
     "vitest": "4.0.18",
-    "semver": "7.7.4"
+    "semver": "7.7.4",
+    "js-yaml": "4.1.0"
   },
   "packageManager": "pnpm@10.18.0",
   "engines": {
