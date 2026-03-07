@@ -1,4 +1,5 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect } from 'vitest';
+import { it } from './shared.js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { execSync } from 'node:child_process';

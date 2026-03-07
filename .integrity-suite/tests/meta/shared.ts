@@ -4,9 +4,48 @@ import { fileURLToPath } from 'node:url';
 import { execSync } from 'node:child_process';
 import { parse } from '@typescript-eslint/typescript-estree';
 import { load } from 'js-yaml';
+import { it as vitestIt } from 'vitest';
 
 // Node: module URL is evaluated relative to tests/meta. Need rootDir
 export const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
+
+// configuration support
+export interface SuiteConfig {
+  rules?: Record<string, any>;
+}
+
+const configPaths = [
+  path.join(rootDir, '.integrity-suite.config.ts'),
+  path.join(rootDir, '.integrity-suite.config.js'),
+];
+
+export const suiteConfig: SuiteConfig = await (async () => {
+  for (const p of configPaths) {
+    if (fs.existsSync(p)) {
+      try {
+        const mod = await import(p);
+        return mod.default || {};
+      } catch {
+        // ignore malformed config
+      }
+    }
+  }
+  return {};
+})();
+
+export function ruleEnabled(rule: string): boolean {
+  const setting = suiteConfig.rules?.[rule];
+  if (setting === 'off') return false;
+  return true;
+}
+
+// custom it that respects configuration
+export function it(title: string, fn: any) {
+  if (!ruleEnabled(title)) {
+    return vitestIt.skip(title + ' (disabled via config)', fn);
+  }
+  return vitestIt(title, fn);
+}
 
 export const isMonorepo = fs.existsSync(path.join(rootDir, 'pnpm-workspace.yaml'));
 
