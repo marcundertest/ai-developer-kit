@@ -591,4 +591,11 @@ try {
       process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open';
     execSync(`${openCmd} "${htmlPath}"`);
   } catch (e) {}
-} catch (e) {}
+} catch (e: unknown) {
+  const msg = e instanceof Error ? e.message : String(e);
+  process.stderr.write(`Report generation failed: ${msg}\n`);
+  if (fs.existsSync(resultsPath)) {
+    process.stderr.write(`Raw results preserved for inspection at: ${resultsPath}\n`);
+  }
+  process.exit(1);
+}
