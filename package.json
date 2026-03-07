@@ -1,6 +1,6 @@
 {
   "name": "integrity-suite",
-  "version": "1.4.93",
+  "version": "1.4.94",
   "type": "module",
   "description": "Strict project template for automated setup and code quality.",
   "main": "index.js",

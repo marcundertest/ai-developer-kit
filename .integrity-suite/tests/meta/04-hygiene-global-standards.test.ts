@@ -184,10 +184,11 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     );
     htmlLikeFiles.forEach((file) => {
       const content = fs.readFileSync(file, 'utf8');
+      const positiveTabIndex = /tabIndex\s*=\s*(?:['"]\s*[1-9]|\{\s*(?:[1-9]|[^}]*[?:]\s*[1-9]))/i;
       expect(
         content,
         `Positive tabIndex in ${file}: disrupts keyboard navigation order`,
-      ).not.toMatch(/tabIndex\s*=\s*['"]\s*[1-9]/i);
+      ).not.toMatch(positiveTabIndex);
     });
   });
 
@@ -221,12 +222,13 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
       const elements = content.match(/<(button|a)[^>]*>/gi) ?? [];
       elements.forEach((el) => {
         if (hasTailwind) {
+          // Check for cursor-pointer in class or className (supporting JSX/TSX)
           expect(el, `Missing cursor-pointer in ${file}: ${el}`).toMatch(
-            /class\s*=\s*["'][^"']*cursor-pointer/,
+            /(?:class|className)\s*=\s*(?:["'][^"']*cursor-pointer|\{[^}]*cursor-pointer)/i,
           );
         } else {
           expect(el, `Missing cursor:pointer in ${file}: ${el}`).toMatch(
-            /style\s*=\s*["'][^"']*cursor\s*:\s*pointer/,
+            /style\s*=\s*(?:["'][^"']*cursor\s*:\s*pointer|\{[^}]*cursor\s*:\s*pointer)/i,
           );
         }
       });
@@ -243,11 +245,11 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
       buttons.forEach((btn) => {
         if (hasTailwind) {
           expect(btn, `Missing select-none in ${file}: ${btn}`).toMatch(
-            /class\s*=\s*["'][^"']*select-none/,
+            /(?:class|className)\s*=\s*(?:["'][^"']*select-none|\{[^}]*select-none)/i,
           );
         } else {
           expect(btn, `Missing user-select:none in ${file}: ${btn}`).toMatch(
-            /style\s*=\s*["'][^"']*user-select\s*:\s*none/,
+            /style\s*=\s*(?:["'][^"']*user-select\s*:\s*none|\{[^}]*user-select\s*:\s*none)/i,
           );
         }
       });
@@ -263,10 +265,10 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
       const externalLinks = content.match(/<a[^>]*href=["']https?:\/\/[^"']+["'][^>]*>/gi) ?? [];
       externalLinks.forEach((link) => {
         expect(link, `External link without target="_blank" in ${file}`).toMatch(
-          /target\s*=\s*["']_blank["']/,
+          /target\s*=\s*(?:["']_blank["']|\{\s*["']_blank["']\s*\})/i,
         );
         expect(link, `External link missing rel="noopener noreferrer" in ${file}`).toMatch(
-          /rel\s*=\s*["'][^"']*(noopener|noreferrer)/,
+          /rel\s*=\s*(?:["'][^"']*(noopener|noreferrer)|\{[^}]*(noopener|noreferrer))/i,
         );
       });
     });
@@ -278,8 +280,8 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     );
     htmlLikeFiles.forEach((file) => {
       const content = fs.readFileSync(file, 'utf8');
-      expect(content, `Image without loading="lazy" in ${file}`).not.toMatch(
-        /<img(?![^>]*\bloading\s*=\s*["']lazy["'])[^>]*>/i,
+      expect(content, `Image without loading="lazy" or dynamic loading in ${file}`).not.toMatch(
+        /<img(?![^>]*\bloading\s*=\s*(?:["']lazy["']|\{))[^>]*>/i,
       );
     });
   });
@@ -464,7 +466,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     htmlLikeFiles.forEach((file) => {
       const content = fs.readFileSync(file, 'utf8');
       expect(content, `Required input missing aria-required in ${file}`).not.toMatch(
-        /<input[^>]*required(?![^>]*aria-required\s*=\s*["']true["'])[^>]*>/i,
+        /<input[^>]*required(?![^>]*aria-required\s*=\s*(?:["']true["']|\{))[^>]*>/i,
       );
     });
   });
@@ -699,7 +701,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     htmlLikeFiles.forEach((file) => {
       const content = fs.readFileSync(file, 'utf8');
       expect(content, `Dialog missing aria-modal in ${file}`).not.toMatch(
-        /<[^>]*role\s*=\s*["']dialog["'](?![^>]*aria-modal\s*=\s*["']true["'])[^>]*>/i,
+        /<[^>]*role\s*=\s*["']dialog["'](?![^>]*aria-modal\s*=\s*(?:["']true["']|\{))[^>]*>/i,
       );
     });
   });
@@ -814,10 +816,10 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
       const meters = content.match(/<meter[^>]*>/gi) ?? [];
       meters.forEach((meter) => {
         expect(meter, `Meter missing min attribute in ${file}`).toMatch(
-          /\bmin\s*=\s*["'][^"']+["']/i,
+          /\bmin\s*=\s*(?:["'][^"']+["']|\{)/i,
         );
         expect(meter, `Meter missing max attribute in ${file}`).toMatch(
-          /\bmax\s*=\s*["'][^"']+["']/i,
+          /\bmax\s*=\s*(?:["'][^"']+["']|\{)/i,
         );
       });
     });
@@ -965,5 +967,19 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
           firstRelativeIdx,
         );
       });
+  });
+
+  it('Should use axe-core or equivalent for runtime accessibility testing if JSX/TSX is present', () => {
+    const hasJsx = allSourceFiles.some((f) => ['.tsx', '.jsx'].includes(path.extname(f)));
+    if (!hasJsx) return;
+
+    const deps = { ...(pkg.dependencies || {}), ...(pkg.devDependencies || {}) };
+    const a11yTools = ['axe-core', 'vitest-axe', 'jest-axe', 'cypress-axe', '@axe-core/react'];
+    const hasA11yTool = a11yTools.some((tool) => deps[tool]);
+
+    expect(
+      hasA11yTool,
+      'Projects with JSX/TSX should include axe-core or an equivalent for runtime accessibility testing due to regex limitations on dynamic attributes.',
+    ).toBe(true);
   });
 });
