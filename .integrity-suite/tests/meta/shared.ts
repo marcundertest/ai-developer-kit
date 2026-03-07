@@ -1,6 +1,7 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { execSync } from 'node:child_process';
 import { parse } from '@typescript-eslint/typescript-estree';
 import { load } from 'js-yaml';
 
@@ -47,6 +48,23 @@ function getWorkspacePackages(): string[] {
 }
 
 export const targetDirs = isMonorepo ? getWorkspacePackages() : [rootDir];
+
+export function getMainBranch(): string {
+  try {
+    const ref = execSync('git symbolic-ref refs/remotes/origin/HEAD', {
+      encoding: 'utf8',
+      stdio: ['pipe', 'pipe', 'ignore'],
+    }).trim();
+    return ref.replace('refs/remotes/origin/', '');
+  } catch {
+    try {
+      execSync('git show origin/main:package.json', { stdio: 'pipe' });
+      return 'main';
+    } catch {
+      return 'master';
+    }
+  }
+}
 
 export const getFiles = (dir: string, allFiles: string[] = []) => {
   if (!fs.existsSync(dir)) return allFiles;

@@ -10,6 +10,7 @@ import {
   testsDirs,
   hasTailwind,
   semverGt,
+  getMainBranch,
 } from './shared.js';
 
 describe('Level 11: Documentation Quality @documentation', () => {
@@ -86,13 +87,14 @@ describe('Level 11: Documentation Quality @documentation', () => {
   });
 
   it('Should never have a version inferior to origin HEAD (version-check)', () => {
+    const mainBranch = getMainBranch();
     try {
       const currentVersion = pkg.version;
 
       let originVersion = null;
       try {
         const pkgAtOrigin = execSync(
-          'git show origin:package.json 2>/dev/null || git show HEAD:package.json',
+          `git show origin/${mainBranch}:package.json 2>/dev/null || git show HEAD:package.json`,
           {
             encoding: 'utf8',
             stdio: ['pipe', 'pipe', 'pipe'],
@@ -146,7 +148,8 @@ describe('Level 11: Documentation Quality @documentation', () => {
       }
 
       try {
-        const headPkg = execSync('git show HEAD:package.json', {
+        const mainBranch = getMainBranch();
+        const headPkg = execSync(`git show origin/${mainBranch}:package.json`, {
           encoding: 'utf8',
         });
         headVersion = JSON.parse(headPkg).version;
@@ -168,10 +171,11 @@ describe('Level 11: Documentation Quality @documentation', () => {
   });
 
   it('Should enforce version bump in staging (strict commit mode)', () => {
+    const mainBranch = getMainBranch();
     try {
       let headVersion: string | null = null;
       try {
-        const pkgAtHead = execSync('git show HEAD:package.json 2>/dev/null', {
+        const pkgAtHead = execSync(`git show origin/${mainBranch}:package.json 2>/dev/null`, {
           encoding: 'utf8',
           stdio: ['pipe', 'pipe', 'pipe'],
         });
@@ -199,10 +203,11 @@ describe('Level 11: Documentation Quality @documentation', () => {
   });
 
   it('Should allow same or higher version in staging (relaxed push mode)', () => {
+    const mainBranch = getMainBranch();
     try {
       let headVersion: string | null = null;
       try {
-        const pkgAtHead = execSync('git show HEAD:package.json 2>/dev/null', {
+        const pkgAtHead = execSync(`git show origin/${mainBranch}:package.json 2>/dev/null`, {
           encoding: 'utf8',
           stdio: ['pipe', 'pipe', 'pipe'],
         });
@@ -236,7 +241,8 @@ describe('Level 11: Documentation Quality @documentation', () => {
 
     try {
       try {
-        const pkgAtHead = execSync('git show HEAD:package.json', {
+        const mainBranch = getMainBranch();
+        const pkgAtHead = execSync(`git show origin/${mainBranch}:package.json`, {
           encoding: 'utf8',
         });
         headVersion = JSON.parse(pkgAtHead).version;
@@ -265,9 +271,10 @@ describe('Level 11: Documentation Quality @documentation', () => {
 
   it('Should have exactly one changelog entry for the staged version (no duplicates, no missing)', () => {
     try {
+      const mainBranch = getMainBranch();
       let headVersion: string | null = null;
       try {
-        const pkgAtHead = execSync('git show HEAD:package.json 2>/dev/null', {
+        const pkgAtHead = execSync(`git show origin/${mainBranch}:package.json 2>/dev/null`, {
           encoding: 'utf8',
           stdio: ['pipe', 'pipe', 'pipe'],
         });
@@ -333,7 +340,8 @@ describe('Level 11: Documentation Quality @documentation', () => {
     try {
       let headVersion: string | null = null;
       try {
-        const pkgAtHead = execSync('git show HEAD:package.json 2>/dev/null', {
+        const mainBranch = getMainBranch();
+        const pkgAtHead = execSync(`git show origin/${mainBranch}:package.json 2>/dev/null`, {
           encoding: 'utf8',
           stdio: ['pipe', 'pipe', 'pipe'],
         });
