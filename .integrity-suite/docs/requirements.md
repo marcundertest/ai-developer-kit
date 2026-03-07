@@ -68,6 +68,66 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 153
+
+- **Fecha**: 2026-03-07 03:00
+- **Versión**: 1.4.70
+- **Requerimiento**: Actualizar requirements.md con entrada correspondiente al bump de versión 1.4.70, necesario para pasar tests de validación de version bump.
+- **Información adicional**: El cambio de versión a 1.4.70 ocurrió durante la corrección de report generator. Los tests detectan ausencia de registro en requirements.md cuando se ejecuta post-bump.
+- **Interpretación**: Añadir sección de registro para 1.4.70 y describir brevemente la corrección del flujo de test:report/report generator.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `.integrity-suite/docs/requirements.md` (estado: modificado)
+- **Tests**:
+  - `should have requirements entry for staged version bumped (commit only)` (agregado detalles de versión 1.4.70)
+- **Estado**: Completado
+
+### Requerimiento 152
+
+- **Fecha**: 2026-03-07 02:50
+- **Versión**: 1.4.69
+- **Requerimiento**: Eliminar los flags de ambiente `INTEGRITY_SUITE_STRICT` y `INTEGRITY_SUITE_DEVELOPMENT`. Hacer que el comportamiento de los tests sea controlado únicamente por los scripts en `package.json`.
+- **Información adicional**: Los flags de ambiente añadían indirección y complejidad. Con la separación de suites (core-protection vs integrity-suite), es más limpio simplemente especificar qué test files ejecutar en cada script.
+- **Interpretación**: Remover `INTEGRITY_SUITE_STRICT` y `INTEGRITY_SUITE_DEVELOPMENT` de package.json scripts. Actualizar core-protection.test.ts para que SIEMPRE corra en modo estricto (sin checks de environment). Remover test:meta script. Hacer que test:develop execute solo integrity-suite.test.ts, test:full execute todas las suites, test:report execute test:full. Ajustar generate-report.js para usar vitest json reporter y asegurar la generación de HTML.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `package.json` (estado: modificado - version bump, removed flags)
+  - `.integrity-suite/tests/core-protection.test.ts` (estado: modificado)
+  - `.integrity-suite/tests/integrity-suite.test.ts` (estado: modificado)
+  - `.integrity-suite/scripts/generate-report.js` (estado: modificado)
+  - `.integrity-suite/docs/prompt.md` (estado: modificado)
+  - `CHANGELOG.md` (estado: modificado)
+- **Tests**:
+  - `should have a pre-push hook that runs full validation suite` (actualizado nombre)
+  - `should have a zero-tolerance validation script with consolidated validations in tests` (actualizado)
+  - `should call all three test suites in correct order in test:full` (actualizado)
+  - `should have audit check integrated as a test case` (actualizado nombre)
+  - `should run all validations as test cases` (actualizado nombre)
+- **Estado**: Completado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-07 02:50 - ✅ test:develop: 208 tests, test:full: 209 tests
+  - `should have requirements entry for staged version bumped (commit only)` (agregado detalles de versión 1.4.70)
+
+### Requerimiento 151
+
+- **Fecha**: 2026-03-07 02:40
+- **Versión**: 1.4.68
+- **Requerimiento**: Extraer el test de protección de archivos core kit a una suite separada (core-protection.test.ts) para permitir que test:develop ejecute solo los tests principales sin validar protección de core.
+- **Información adicional**: test:develop debe permitir modificaciones a archivos de test/integrity-suite sin que core-protection los reporte como violación. Al separar la suite, test:develop puede ejecutar SOLO integrity-suite.test.ts mientras test:full ejecuta ambas.
+- **Interpretación**: Crear nuevo archivo `.integrity-suite/tests/core-protection.test.ts` con el test `should protect core kit files from unauthorized modification`. Remover ese test de integrity-suite.test.ts. Actualizar package.json: test:meta ejecuta todas las suites, test:develop usa INTEGRITY_SUITE_DEVELOPMENT=true (que hace que core-protection se salte), test:full ejecuta ambas.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `.integrity-suite/tests/core-protection.test.ts` (estado: creado)
+  - `.integrity-suite/tests/integrity-suite.test.ts` (estado: modificado)
+  - `package.json` (estado: modificado - version bump)
+  - `CHANGELOG.md` (estado: modificado)
+- **Tests**:
+  - `should protect core kit files from unauthorized modification @core-protection` (movido a nueva suite)
+  - Todos los tests de integrity-suite (sin cambios, sin el test de core-protection)
+- **Estado**: Completado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-07 02:40 - ✅ test:develop: 208/208 tests, test:full: 209/209 tests
+
 ### Requerimiento 150
 
 - **Fecha**: 2026-03-07 01:10

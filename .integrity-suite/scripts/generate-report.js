@@ -18,12 +18,11 @@ if (!fs.existsSync(reportsDir)) {
 console.log('🚀 Generating Integrity Suite Audit Report...');
 
 try {
-  // 1. Run Vitest with JSON reporter
+  // 1. Run Vitest with JSON reporter to collect results from all suites
   console.log('📦 Running meta-tests...');
   execSync(`npx vitest run .integrity-suite/tests --reporter=json --outputFile="${resultsPath}"`, {
     cwd: rootDir,
     stdio: 'inherit',
-    env: { ...process.env, INTEGRITY_SUITE_DEVELOPMENT: 'true' },
   });
 } catch (error) {
   console.log(

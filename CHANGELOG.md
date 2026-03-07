@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.70] - 2026-03-07
+
+### Fixed
+
+- **Corrected test:report workflow:** script now invokes `generate-report.js` again. The reporting tool was updated to run `vitest` with JSON reporter (`pnpm test:full` no longer suitable), ensuring HTML reports can be produced.
+
+## [1.4.69] - 2026-03-07
+
+### Changed
+
+- **Eliminated environment flags:** removed `INTEGRITY_SUITE_STRICT` and
+  `INTEGRITY_SUITE_DEVELOPMENT` flags. Script behavior now controlled entirely
+  via `package.json` scripts: test:develop excludes core-protection.test.ts,
+  test:full executes both suites.
+- **Simplified test:meta:** removed `test:meta` script as intermediate layer.
+  Tests now execute directly from `test:full` and `test:develop`.
+- **Updated test:report:** now executes `pnpm test:full` directly instead of
+  using separate script with environment flags.
+- **Cleaner architecture:** eliminated environment variable checks from test
+  files. Core-protection.test.ts now always runs in strict mode when invoked,
+  and is simply excluded from test:develop via script targeting.
+
 ## [1.4.67] - 2026-03-07
 
 ### Fixed

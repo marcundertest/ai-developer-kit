@@ -1,17 +1,16 @@
 {
   "name": "integrity-suite",
-  "version": "1.4.67",
+  "version": "1.4.70",
   "type": "module",
   "description": "Strict project template for automated setup and code quality.",
   "main": "index.js",
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js || echo 'No entry point configured'",
-    "test:meta": "vitest run .integrity-suite/tests --reporter=verbose",
     "test:unit": "echo 'no unit tests'",
     "test:e2e": "echo 'no e2e tests'",
-    "test:full": "INTEGRITY_SUITE_STRICT=true bash -c 'eslint . --max-warnings 0 && markdownlint . && prettier --check . && tsc --noEmit && pnpm test:meta && pnpm test:unit && pnpm test:e2e'",
-    "test:develop": "INTEGRITY_SUITE_DEVELOPMENT=true pnpm test:full",
+    "test:full": "eslint . --max-warnings 0 && markdownlint . && prettier --check . && tsc --noEmit && vitest run .integrity-suite/tests && pnpm test:unit && pnpm test:e2e",
+    "test:develop": "eslint . --max-warnings 0 && markdownlint . && prettier --check . && tsc --noEmit && vitest run .integrity-suite/tests/integrity-suite.test.ts && pnpm test:unit && pnpm test:e2e",
     "test:report": "node .integrity-suite/scripts/generate-report.js",
     "prepare": "husky"
   },

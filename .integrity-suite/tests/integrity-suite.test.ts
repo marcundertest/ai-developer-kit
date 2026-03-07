@@ -573,33 +573,35 @@ describe('Integrity Suite', () => {
 
     it('should have a zero-tolerance validation script with consolidated validations in tests', () => {
       const script = pkg.scripts['test:full'];
-      // Pipeline should have linting, formatting, type checking, and test:meta
+      // Pipeline should have linting, formatting, type checking, and vitest runner
       expect(script).toContain('eslint . --max-warnings 0');
       expect(script).toContain('markdownlint .');
       expect(script).toContain('prettier --check .');
       expect(script).toContain('tsc --noEmit');
-      expect(script).toContain('pnpm test:meta');
+      expect(script).toContain('vitest run .integrity-suite/tests');
       // Verify it's clean: no direct CLI calls to check-version, check-changelog, or audit scripts
       expect(script).not.toContain('check-version');
       expect(script).not.toContain('check-changelog');
       expect(script).not.toContain('check-audit.js');
-      // Verify test:meta runs before unit/e2e tests
+      // Verify vitest tests run before unit/e2e tests
       expect(
-        script.indexOf('test:meta'),
-        'test:meta must run before other test suites',
+        script.indexOf('vitest run .integrity-suite/tests'),
+        'vitest tests must run before other test suites',
       ).toBeLessThan(script.indexOf('test:unit'));
     });
 
     it('should call all three test suites in correct order in test:full', () => {
       const fullScript = pkg.scripts['test:full'] as string;
       expect(fullScript).toBeDefined();
-      const fullMeta = fullScript.indexOf('test:meta');
+      const fullVitest = fullScript.indexOf('vitest run .integrity-suite/tests');
       const fullUnit = fullScript.indexOf('test:unit');
       const fullE2e = fullScript.indexOf('test:e2e');
-      expect(fullMeta, 'test:meta is missing from test:full script').toBeGreaterThan(-1);
+      expect(fullVitest, 'vitest tests are missing from test:full script').toBeGreaterThan(-1);
       expect(fullUnit, 'test:unit is missing from test:full script').toBeGreaterThan(-1);
       expect(fullE2e, 'test:e2e is missing from test:full script').toBeGreaterThan(-1);
-      expect(fullMeta, 'test:meta must run before test:unit in test:full').toBeLessThan(fullUnit);
+      expect(fullVitest, 'vitest tests must run before test:unit in test:full').toBeLessThan(
+        fullUnit,
+      );
       expect(fullUnit, 'test:unit must run before test:e2e in test:full').toBeLessThan(fullE2e);
     });
 
@@ -717,69 +719,17 @@ describe('Integrity Suite', () => {
       expect(script, '&& exit 0 bypass in test:full').not.toMatch(/&&\s*exit\s+0/);
     });
 
-    it('should have a pre-push hook that runs full validation suite in strict mode', () => {
+    it('should have a pre-push hook that runs full validation suite', () => {
       const prePushPath = path.join(rootDir, '.husky', 'pre-push');
       expect(fs.existsSync(prePushPath), '.husky/pre-push hook is missing').toBe(true);
       const prePushContent = fs.readFileSync(prePushPath, 'utf8');
       expect(
         prePushContent,
-        'pre-push hook must invoke test:full with INTEGRITY_SUITE_STRICT=true for full protection',
+        'pre-push hook must invoke test:full for full protection (includes core-protection)',
       ).toMatch(/test:full/);
       expect(prePushContent, 'pre-push must not skip tests with bypass patterns').not.toMatch(
         /\|\|\s*true/,
       );
-    });
-  });
-
-  it('should protect core kit files from unauthorized modification @core-protection', async () => {
-    // Skip protection if in development mode (editing integrity-suite allowed)
-    if (process.env['INTEGRITY_SUITE_DEVELOPMENT'] === 'true') return;
-
-    const { execSync } = await import('node:child_process');
-    let changedFiles = '';
-    try {
-      changedFiles = execSync('git status --porcelain', { encoding: 'utf8', stdio: 'pipe' });
-    } catch (e: unknown) {
-      return;
-    }
-
-    const paths = changedFiles
-      .split('\n')
-      .filter(Boolean)
-      .map((line) => line.trim().slice(2).trim());
-
-    const protectedPaths = ['.integrity-suite/docs/prompt.md', '.integrity-suite/docs/workflow.md'];
-
-    const isStrictMode = process.env['INTEGRITY_SUITE_STRICT'] === 'true';
-
-    paths.forEach((p) => {
-      const protectedDocsOnly = protectedPaths.some((prot) => p === prot || p.startsWith(prot));
-
-      if (isStrictMode) {
-        // In strict mode (test:full for pre-push), protect ENTIRE .integrity-suite
-        if (p.startsWith('.integrity-suite/')) {
-          expect(
-            false,
-            `🔒 Strict protection: .integrity-suite/* is protected from modification in this mode: ${p}`,
-          ).toBe(true);
-        }
-      } else {
-        // In normal mode (test:meta, test:report), allow some exceptions
-        if (p.startsWith('.integrity-suite/scripts/') && p.endsWith('.js')) {
-          return; // Allow script refactoring
-        }
-
-        if (p === '.integrity-suite/tests/integrity-suite.test.ts') {
-          return; // Allow test improvements
-        }
-
-        if (protectedDocsOnly) {
-          expect(
-            false,
-            `Kit protection: unauthorized modification attempt on protected core file: ${p}`,
-          ).toBe(true);
-        }
-      }
     });
   });
 
@@ -2517,7 +2467,7 @@ describe('Integrity Suite', () => {
   });
 
   describe('Level 8: Dependency Security @security-audit', () => {
-    it('should have audit check integrated into test:meta as a test case', () => {
+    it('should have audit check integrated as a test case', () => {
       // Verify that the audit validation has been moved into tests
       const testFilePath = path.join(
         rootDir,
@@ -2537,8 +2487,8 @@ describe('Integrity Suite', () => {
       expect(fullScript).not.toContain('check-audit.js');
     });
 
-    it('should run all validations (audit, version, changelog) within test:meta', () => {
-      // Verify that validation tests exist within the test:meta suite
+    it('should run all validations (audit, version, changelog) as test cases', () => {
+      // Verify that validation tests exist within the test suite
       const testFilePath = path.join(
         rootDir,
         '.integrity-suite',
