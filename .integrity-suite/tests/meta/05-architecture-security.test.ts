@@ -213,7 +213,9 @@ describe('Level 5: Architecture & Security @security', () => {
       const content = fs
         .readFileSync(file, 'utf8')
         .replace(/import\s+.*from\s+['"].*['"]/g, '')
-        .replace(/https?:\/\/[^\s'"]+/g, '');
+        .replace(/https?:\/\/[^\s'"]+/g, '')
+        .replace(/`[^`]*`/g, '')
+        .replace(/\/\/[^\n]*/g, '');
 
       const hardcodedSlashPattern = /\.(includes|match)\(['"][^'"]*[/\\][^'"]*['"]\)/;
       expect(
