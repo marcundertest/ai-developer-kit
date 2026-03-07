@@ -564,13 +564,15 @@ try {
 
   fs.writeFileSync(htmlPath, htmlContent);
 
+  if (fs.existsSync(resultsPath)) {
+    try {
+      fs.unlinkSync(resultsPath);
+    } catch {}
+  }
+
   try {
     const openCmd =
       process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open';
     execSync(`${openCmd} "${htmlPath}"`);
   } catch (e) {}
-} finally {
-  if (fs.existsSync(resultsPath)) {
-    fs.unlinkSync(resultsPath);
-  }
-}
+} catch (e) {}
