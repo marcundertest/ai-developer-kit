@@ -43,6 +43,12 @@ interface CategoryData {
   total: number;
   tests: any[];
   sortKey: number;
+  severities: {
+    critical: any[];
+    high: any[];
+    medium: any[];
+    low: any[];
+  };
 }
 const categories: Record<string, CategoryData> = {};
 data.testResults.forEach((fileResult: any) => {
@@ -60,8 +66,46 @@ data.testResults.forEach((fileResult: any) => {
     }
 
     if (!categories[categoryName]) {
-      categories[categoryName] = { passed: 0, failed: 0, total: 0, tests: [], sortKey };
+      categories[categoryName] = {
+        passed: 0,
+        failed: 0,
+        total: 0,
+        tests: [],
+        sortKey,
+        severities: { critical: [], high: [], medium: [], low: [] },
+      };
     }
+
+    let severity = 'low';
+    const rawTitle = test.title.toLowerCase();
+
+    if (
+      rawTitle.includes('security') ||
+      rawTitle.includes('unauthorized') ||
+      rawTitle.includes('secret') ||
+      test.ancestorTitles.includes('Core Protection Suite')
+    ) {
+      severity = 'critical';
+    } else if (
+      rawTitle.includes('forbid') ||
+      rawTitle.includes('never') ||
+      rawTitle.includes('require')
+    ) {
+      severity = 'high';
+    } else if (
+      rawTitle.includes('should check') ||
+      rawTitle.includes('lint') ||
+      rawTitle.includes('format')
+    ) {
+      severity = 'medium';
+    } else {
+      severity = 'low';
+    }
+
+    test.severity = severity;
+    categories[categoryName].severities[
+      severity as keyof (typeof categories)[string]['severities']
+    ].push(test);
 
     categories[categoryName].total++;
     if (test.status === 'passed') {
@@ -325,27 +369,41 @@ const htmlContent = `
                         <h3>${name}</h3>
                         <span class="category-meta">${data.passed} / ${data.total} passed</span>
                     </div>
-                    <ul class="test-list">
-                        ${data.tests
-                          .map(
-                            (test) => `
-                            <li class="test-item" data-status="${test.status}">
-                                <div class="test-row">
-                                    <div class="status-indicator status-${test.status}"></div>
-                                    <span class="test-title">${test.title}</span>
-                                </div>
-                                ${
-                                  test.status === 'failed'
-                                    ? `
-                                    <div class="error-box">${test.failureMessages.join('\n').replace(/</g, '&lt;')}</div>
-                                `
-                                    : ''
-                                }
-                            </li>
-                        `,
-                          )
-                          .join('')}
-                    </ul>
+                    ${['critical', 'high', 'medium', 'low']
+                      .map((sev) => {
+                        const sevTests = data.severities[sev as keyof typeof data.severities];
+                        if (sevTests.length === 0) return '';
+
+                        return `
+                        <div class="severity-group severity-${sev}" style="border-top: 1px solid hsl(var(--border)); background: hsl(var(--card));">
+                            <h4 style="font-size: 0.75rem; text-transform: uppercase; padding: 0.5rem 1rem; color: hsl(var(--muted-foreground)); background: hsl(var(--muted) / 0.5); border-bottom: 1px solid hsl(var(--border)); letter-spacing: 0.05em; font-weight: 600;">
+                                ${sev.toUpperCase()} SEVERITY (${sevTests.length})
+                            </h4>
+                            <ul class="test-list">
+                                ${sevTests
+                                  .map(
+                                    (test) => `
+                                    <li class="test-item" data-status="${test.status}" data-severity="${test.severity}">
+                                        <div class="test-row">
+                                            <div class="status-indicator status-${test.status}"></div>
+                                            <span class="test-title">${test.title}</span>
+                                        </div>
+                                        ${
+                                          test.status === 'failed'
+                                            ? `
+                                            <div class="error-box">${test.failureMessages.join('\n').replace(/</g, '&lt;')}</div>
+                                        `
+                                            : ''
+                                        }
+                                    </li>
+                                `,
+                                  )
+                                  .join('')}
+                            </ul>
+                        </div>
+                        `;
+                      })
+                      .join('')}
                 </div>
             `,
               )
