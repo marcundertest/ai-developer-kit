@@ -973,7 +973,6 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
 
   it('Should use axe-core or equivalent for runtime accessibility testing if JSX/TSX is present', () => {
     const hasJsx = allSourceFiles.some((f) => ['.tsx', '.jsx'].includes(path.extname(f)));
-    if (!hasJsx) return;
 
     const deps = { ...(pkg.dependencies || {}), ...(pkg.devDependencies || {}) };
     const a11yTools = ['axe-core', 'vitest-axe', 'jest-axe', 'cypress-axe', '@axe-core/react'];
@@ -984,13 +983,15 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
       'Projects with JSX/TSX should include axe-core or an equivalent for runtime accessibility testing due to regex limitations on dynamic attributes.',
     ).toBe(true);
 
-    const testFiles = allSourceFiles.filter(
-      (f) => testsDirs.some((dir) => f.startsWith(dir)) && /\.(test|spec)\.(ts|tsx)$/.test(f),
-    );
-    const isUsed = testFiles.some((f) => {
-      const content = fs.readFileSync(f, 'utf8');
-      return a11yTools.some((tool) => content.includes(tool));
-    });
-    expect(isUsed, 'axe-core is installed but not used in any test file').toBe(true);
+    if (hasJsx) {
+      const testFiles = allSourceFiles.filter(
+        (f) => testsDirs.some((dir) => f.startsWith(dir)) && /\.(test|spec)\.(ts|tsx)$/.test(f),
+      );
+      const isUsed = testFiles.some((f) => {
+        const content = fs.readFileSync(f, 'utf8');
+        return a11yTools.some((tool) => content.includes(tool));
+      });
+      expect(isUsed, 'axe-core is installed but not used in any test file').toBe(true);
+    }
   });
 });
