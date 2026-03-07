@@ -66,14 +66,16 @@ export function getMainBranch(): string {
   }
 }
 
-export const getFiles = (dir: string, allFiles: string[] = []) => {
+export const getFiles = (dir: string, allFiles: string[] = [], depth = 0): string[] => {
+  if (depth > 20) return allFiles;
+
   if (!fs.existsSync(dir)) return allFiles;
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   entries.forEach((entry) => {
     const name = path.join(dir, entry.name);
     if (entry.isDirectory()) {
       if (!['node_modules', '.git', 'dist', '.integrity-suite', 'coverage'].includes(entry.name)) {
-        getFiles(name, allFiles);
+        getFiles(name, allFiles, depth + 1);
       }
     } else {
       const ext = path.extname(entry.name);
