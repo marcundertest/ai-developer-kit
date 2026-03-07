@@ -1,6 +1,6 @@
 {
   "name": "integrity-suite",
-  "version": "1.4.99",
+  "version": "1.4.100",
   "type": "module",
   "description": "Strict project template for automated setup and code quality.",
   "main": "index.js",
@@ -32,6 +32,7 @@
     "eslint-config-prettier": "10.1.8",
     "husky": "9.0.11",
     "lint-staged": "15.2.5",
+    "madge": "8.0.0",
     "markdownlint-cli": "0.48.0",
     "prettier": "3.2.5",
     "tsx": "4.21.0",

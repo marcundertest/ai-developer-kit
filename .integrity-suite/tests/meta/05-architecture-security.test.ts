@@ -274,4 +274,17 @@ describe('Level 5: Architecture & Security @security', () => {
         ).not.toMatch(/\bthrow\s+['"]/);
       });
   });
+
+  it('Should not have circular imports in src/', () => {
+    try {
+      execSync('pnpm exec madge --circular --extensions ts src/', {
+        cwd: rootDir,
+        encoding: 'utf8',
+        stdio: 'pipe',
+      });
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      expect(false, `Circular imports detected:\n${msg}`).toBe(true);
+    }
+  });
 });
