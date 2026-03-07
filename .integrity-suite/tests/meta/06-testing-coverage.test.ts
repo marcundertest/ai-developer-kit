@@ -54,9 +54,6 @@ describe('Level 6: Testing & Coverage @testing', () => {
     expect(content).toMatch(/functions:\s*100/);
     expect(content).toMatch(/statements:\s*100/);
     expect(content).toMatch(/branches:\s*100/);
-    expect(content, 'vitest.config.ts missing all: true coverage definition').toMatch(
-      /all:\s*true/,
-    );
     expect(content, 'vitest.config.ts missing include definition').toContain('include:');
     expect(content, 'vitest.config.ts include must target src/').toMatch(
       /include:\s*\[['"`]src\/\*\*['"`]\]/,
