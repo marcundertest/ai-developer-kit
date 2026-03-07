@@ -11,118 +11,128 @@ const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
 const reportFileName = `audit-report-${timestamp}.html`;
 const htmlPath = path.join(reportsDir, reportFileName);
 
+function sanitizePaths(text: string): string {
+  if (!text) return text;
+  return text
+    .replace(/[a-zA-Z]:\\Users\\[^\\]+\\/g, '~/')
+    .replace(/\/Users\/[^/]+\//g, '~/')
+    .replace(/\/home\/[^/]+\//g, '~/');
+}
+
 if (!fs.existsSync(reportsDir)) {
   fs.mkdirSync(reportsDir, { recursive: true });
 }
 
-console.log('Generating Integrity Suite Audit Report...');
-
 try {
-  console.log('Running meta-tests...');
-  execSync(`npx vitest run .integrity-suite/tests --reporter=json --outputFile="${resultsPath}"`, {
-    cwd: rootDir,
-    stdio: 'inherit',
+  try {
+    console.log('Running meta-tests...');
+    execSync(
+      `npx vitest run .integrity-suite/tests --reporter=json --outputFile="${resultsPath}"`,
+      {
+        cwd: rootDir,
+        stdio: 'inherit',
+      },
+    );
+  } catch (error) {
+    console.log(
+      'Some tests failed (this is expected in a real audit). Proceeding to generate report.',
+    );
+  }
+
+  if (!fs.existsSync(resultsPath)) {
+    console.error('Error: Results file was not generated.');
+    process.exit(1);
+  }
+
+  const data = JSON.parse(fs.readFileSync(resultsPath, 'utf8'));
+  const pkg = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf8'));
+
+  interface CategoryData {
+    passed: number;
+    failed: number;
+    total: number;
+    tests: any[];
+    sortKey: number;
+    severities: {
+      critical: any[];
+      high: any[];
+      medium: any[];
+      low: any[];
+    };
+  }
+  const categories: Record<string, CategoryData> = {};
+  data.testResults.forEach((fileResult: any) => {
+    fileResult.assertionResults.forEach((test: any) => {
+      const categoryMatch = test.ancestorTitles[0]?.match(/Level (\d+): ([^@]+)/);
+      let categoryName = 'General';
+      let sortKey = 999;
+
+      if (categoryMatch) {
+        categoryName = `Level ${categoryMatch[1]}: ${categoryMatch[2].trim()}`;
+        sortKey = parseInt(categoryMatch[1], 10);
+      } else if (test.ancestorTitles.includes('Core Protection Suite')) {
+        categoryName = 'Core Protection';
+        sortKey = -1;
+      }
+
+      if (!categories[categoryName]) {
+        categories[categoryName] = {
+          passed: 0,
+          failed: 0,
+          total: 0,
+          tests: [],
+          sortKey,
+          severities: { critical: [], high: [], medium: [], low: [] },
+        };
+      }
+
+      let severity = 'low';
+      const rawTitle = test.title.toLowerCase();
+
+      if (
+        rawTitle.includes('security') ||
+        rawTitle.includes('unauthorized') ||
+        rawTitle.includes('secret') ||
+        test.ancestorTitles.includes('Core Protection Suite')
+      ) {
+        severity = 'critical';
+      } else if (
+        rawTitle.includes('forbid') ||
+        rawTitle.includes('never') ||
+        rawTitle.includes('require')
+      ) {
+        severity = 'high';
+      } else if (
+        rawTitle.includes('should check') ||
+        rawTitle.includes('lint') ||
+        rawTitle.includes('format')
+      ) {
+        severity = 'medium';
+      } else {
+        severity = 'low';
+      }
+
+      test.severity = severity;
+      categories[categoryName].severities[
+        severity as keyof (typeof categories)[string]['severities']
+      ].push(test);
+
+      categories[categoryName].total++;
+      if (test.status === 'passed') {
+        categories[categoryName].passed++;
+      } else {
+        categories[categoryName].failed++;
+      }
+      categories[categoryName].tests.push(test);
+    });
   });
-} catch (error) {
-  console.log(
-    'Some tests failed (this is expected in a real audit). Proceeding to generate report.',
-  );
-}
 
-if (!fs.existsSync(resultsPath)) {
-  console.error('Error: Results file was not generated.');
-  process.exit(1);
-}
+  const totalTests = data.numTotalTests;
+  const passedTests = data.numPassedTests;
+  const failedTests = data.numFailedTests;
+  const successRate = ((passedTests / totalTests) * 100).toFixed(1);
 
-const data = JSON.parse(fs.readFileSync(resultsPath, 'utf8'));
-const pkg = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf8'));
-
-interface CategoryData {
-  passed: number;
-  failed: number;
-  total: number;
-  tests: any[];
-  sortKey: number;
-  severities: {
-    critical: any[];
-    high: any[];
-    medium: any[];
-    low: any[];
-  };
-}
-const categories: Record<string, CategoryData> = {};
-data.testResults.forEach((fileResult: any) => {
-  fileResult.assertionResults.forEach((test: any) => {
-    const categoryMatch = test.ancestorTitles[0]?.match(/Level (\d+): ([^@]+)/);
-    let categoryName = 'General';
-    let sortKey = 999;
-
-    if (categoryMatch) {
-      categoryName = `Level ${categoryMatch[1]}: ${categoryMatch[2].trim()}`;
-      sortKey = parseInt(categoryMatch[1], 10);
-    } else if (test.ancestorTitles.includes('Core Protection Suite')) {
-      categoryName = 'Core Protection';
-      sortKey = -1;
-    }
-
-    if (!categories[categoryName]) {
-      categories[categoryName] = {
-        passed: 0,
-        failed: 0,
-        total: 0,
-        tests: [],
-        sortKey,
-        severities: { critical: [], high: [], medium: [], low: [] },
-      };
-    }
-
-    let severity = 'low';
-    const rawTitle = test.title.toLowerCase();
-
-    if (
-      rawTitle.includes('security') ||
-      rawTitle.includes('unauthorized') ||
-      rawTitle.includes('secret') ||
-      test.ancestorTitles.includes('Core Protection Suite')
-    ) {
-      severity = 'critical';
-    } else if (
-      rawTitle.includes('forbid') ||
-      rawTitle.includes('never') ||
-      rawTitle.includes('require')
-    ) {
-      severity = 'high';
-    } else if (
-      rawTitle.includes('should check') ||
-      rawTitle.includes('lint') ||
-      rawTitle.includes('format')
-    ) {
-      severity = 'medium';
-    } else {
-      severity = 'low';
-    }
-
-    test.severity = severity;
-    categories[categoryName].severities[
-      severity as keyof (typeof categories)[string]['severities']
-    ].push(test);
-
-    categories[categoryName].total++;
-    if (test.status === 'passed') {
-      categories[categoryName].passed++;
-    } else {
-      categories[categoryName].failed++;
-    }
-    categories[categoryName].tests.push(test);
-  });
-});
-
-const totalTests = data.numTotalTests;
-const passedTests = data.numPassedTests;
-const failedTests = data.numFailedTests;
-const successRate = ((passedTests / totalTests) * 100).toFixed(1);
-
-const htmlContent = `
+  const htmlContent = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -391,7 +401,10 @@ const htmlContent = `
                                         ${
                                           test.status === 'failed'
                                             ? `
-                                            <div class="error-box">${test.failureMessages.join('\n').replace(/</g, '&lt;')}</div>
+                                            <div class="error-box">${test.failureMessages
+                                              .map((m: string) => sanitizePaths(m))
+                                              .join('\n')
+                                              .replace(/</g, '&lt;')}</div>
                                         `
                                             : ''
                                         }
@@ -458,17 +471,18 @@ const htmlContent = `
 </html>
 `;
 
-fs.writeFileSync(htmlPath, htmlContent);
-console.log(`Report generated successfully at: ${htmlPath}`);
+  fs.writeFileSync(htmlPath, htmlContent);
+  console.log(`Report generated successfully at: ${htmlPath}`);
 
-try {
-  const openCmd =
-    process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open';
-  execSync(`${openCmd} "${htmlPath}"`);
-} catch (e) {
-  console.log('Note: Could not auto-open report, but it is available at:', htmlPath);
-}
-
-if (fs.existsSync(resultsPath)) {
-  fs.unlinkSync(resultsPath);
+  try {
+    const openCmd =
+      process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open';
+    execSync(`${openCmd} "${htmlPath}"`);
+  } catch (e) {
+    console.log('Note: Could not auto-open report, but it is available at:', htmlPath);
+  }
+} finally {
+  if (fs.existsSync(resultsPath)) {
+    fs.unlinkSync(resultsPath);
+  }
 }

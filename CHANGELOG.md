@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.92] - 2026-03-07
+
+### Security
+
+- Improved report generation reliability by ensuring temporary `results.json` is always cleaned up after audit.
+- Implemented path sanitization in generated HTML reports to remove absolute system paths from failure messages and stacktraces.
+
 ## [1.4.91] - 2026-03-07
 
 ### Refactored
