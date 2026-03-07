@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.4.108] - 2026-03-07
+
+### Changed
+
+- Removed severity test count from HTML report category headers for clarity.
+
 ## [1.4.107] - 2026-03-07
 
 ### Changed

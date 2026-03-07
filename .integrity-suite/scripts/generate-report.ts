@@ -469,10 +469,10 @@ try {
 
                         return `
                         <div class="severity-group severity-${sev}" style="border-top: 1px solid hsl(var(--border)); background: hsl(var(--card));">
-                            <h4 style="font-size: 0.75rem; text-transform: uppercase; padding: 0.5rem 1rem; color: hsl(var(--muted-foreground)); background: hsl(var(--muted) / 0.5); border-bottom: 1px solid hsl(var(--border)); letter-spacing: 0.05em; font-weight: 600;">
-                                ${sev.toUpperCase()} SEVERITY (${sevTests.length})
-                            </h4>
-                            <ul class="test-list">
+                          <h4 style="font-size: 0.75rem; text-transform: uppercase; padding: 0.5rem 1rem; color: hsl(var(--muted-foreground)); background: hsl(var(--muted) / 0.5); border-bottom: 1px solid hsl(var(--border)); letter-spacing: 0.05em; font-weight: 600;">
+                            ${sev.toUpperCase()} SEVERITY
+                          </h4>
+                          <ul class="test-list">
                                 ${sevTests
                                   .map(
                                     (test) => `
