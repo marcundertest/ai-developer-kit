@@ -1,6 +1,6 @@
 {
   "name": "integrity-suite",
-  "version": "1.4.125",
+  "version": "1.4.126",
   "type": "module",
   "description": "Strict project template for automated setup and code quality.",
   "main": "index.js",
@@ -22,6 +22,7 @@
     "@changesets/cli": "2.30.0",
     "@commitlint/cli": "20.0.0",
     "@commitlint/config-conventional": "20.0.0",
+    "@types/js-yaml": "4.0.9",
     "@types/node": "25.3.3",
     "@types/semver": "7.7.1",
     "@typescript-eslint/eslint-plugin": "7.11.0",
