@@ -2,7 +2,16 @@ import { describe, it, expect } from 'vitest';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { execSync } from 'node:child_process';
-import { rootDir, codeFiles, pkg, allSourceFiles, testsDir, hasTailwind } from './shared';
+import {
+  rootDir,
+  codeFiles,
+  pkg,
+  allSourceFiles,
+  testsDir,
+  hasTailwind,
+  parse,
+  getNodesByType,
+} from './shared';
 
 describe('Level 3: TypeScript Strictness & Config @typescript', () => {
   const tsconfig = JSON.parse(fs.readFileSync(path.join(rootDir, 'tsconfig.json'), 'utf8'));
@@ -65,11 +74,22 @@ describe('Level 3: TypeScript Strictness & Config @typescript', () => {
       const fileData = allFilesContent.find((f) => f.path === file);
       if (!fileData) return;
 
-      let namedExports = [
-        ...fileData.content.matchAll(
-          /^export\s+(?:const|function|class|type|interface|enum)\s+(\w+)/gm,
-        ),
-      ].map((m) => m[1]);
+      const ast = parse(fileData.content);
+      const namedExportsNodes = getNodesByType(ast, 'ExportNamedDeclaration');
+      let namedExports: string[] = [];
+
+      namedExportsNodes.forEach((node) => {
+        if (node.declaration) {
+          if (node.declaration.type === 'VariableDeclaration') {
+            node.declaration.declarations.forEach((d: any) => {
+              if (d.id.type === 'Identifier') namedExports.push(d.id.name);
+            });
+          } else if (node.declaration.id && node.declaration.id.type === 'Identifier') {
+            namedExports.push(node.declaration.id.name);
+          }
+        }
+      });
+
       namedExports = namedExports.filter((n) => !['version', 'ping'].includes(n));
 
       namedExports.forEach((exportName) => {
@@ -106,10 +126,21 @@ describe('Level 3: TypeScript Strictness & Config @typescript', () => {
       .filter((f) => f.startsWith(srcDir))
       .forEach((file) => {
         const content = fs.readFileSync(file, 'utf8');
+        const ast = parse(content);
+        const enums = getNodesByType(ast, 'TSEnumDeclaration');
+        const numericEnums = enums.filter((e) =>
+          e.members.some(
+            (m: any) =>
+              m.initializer &&
+              m.initializer.type === 'Literal' &&
+              typeof m.initializer.value === 'number',
+          ),
+        );
+
         expect(
-          content,
+          numericEnums.length,
           `Numeric enum in ${file}: use string enums or const objects for better debuggability`,
-        ).not.toMatch(/enum\s+\w+\s*\{[^}]*=\s*\d/);
+        ).toBe(0);
       });
   });
 
@@ -130,11 +161,22 @@ describe('Level 3: TypeScript Strictness & Config @typescript', () => {
     const filesToCheck = [...codeFiles.filter((f) => f.includes('/src/') || f.includes('/tests/'))];
     filesToCheck.forEach((file) => {
       const content = fs.readFileSync(file, 'utf8');
-      const untypedCatch = content.match(/catch\s*\(\s*\w+\s*\)(?!\s*:\s*unknown)/g);
+      const ast = parse(content);
+      const catchClauses = getNodesByType(ast, 'CatchClause');
+      const untypedCatch = catchClauses.filter((c) => {
+        if (!c.param) return false;
+        if (c.param.typeAnnotation) {
+          // Check if it's explicitly unknown
+          const type = c.param.typeAnnotation.typeAnnotation;
+          return type.type !== 'TSUnknownKeyword';
+        }
+        return true; // No type annotation at all
+      });
+
       expect(
-        untypedCatch,
-        `Untyped catch clause found in ${file}. Use \`catch (e: unknown)\` to properly type error handling`,
-      ).toBeFalsy();
+        untypedCatch.length,
+        `Untyped or non-unknown catch clause found in ${file}. Use \`catch (e: unknown)\` to properly type error handling`,
+      ).toBe(0);
     });
   });
 

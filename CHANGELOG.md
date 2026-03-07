@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.99] - 2026-03-07
+
+### Changed
+
+- Replaced fragile regex with TypeScript AST parser (`@typescript-eslint/typescript-estree`) in `03-typescript-strictness-config.test.ts` and `09-advanced-code-safety-consistency.test.ts` for more robust code analysis.
+- Implemented AST-based detection for named exports, numeric enums, untyped catch clauses, and default exports.
+
 ## [1.4.98] - 2026-03-07
 
 ### Added

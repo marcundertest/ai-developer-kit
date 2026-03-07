@@ -1,6 +1,6 @@
 {
   "name": "integrity-suite",
-  "version": "1.4.98",
+  "version": "1.4.99",
   "type": "module",
   "description": "Strict project template for automated setup and code quality.",
   "main": "index.js",
@@ -25,6 +25,7 @@
     "@types/node": "25.3.3",
     "@typescript-eslint/eslint-plugin": "7.11.0",
     "@typescript-eslint/parser": "7.11.0",
+    "@typescript-eslint/typescript-estree": "7.11.0",
     "@vitest/coverage-v8": "4.0.18",
     "@vitest/ui": "4.0.18",
     "eslint": "8.57.0",

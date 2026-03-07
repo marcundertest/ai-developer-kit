@@ -2,7 +2,16 @@ import { describe, it, expect } from 'vitest';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { execSync } from 'node:child_process';
-import { rootDir, codeFiles, pkg, allSourceFiles, testsDir, hasTailwind } from './shared';
+import {
+  rootDir,
+  codeFiles,
+  pkg,
+  allSourceFiles,
+  testsDir,
+  hasTailwind,
+  parse,
+  getNodesByType,
+} from './shared';
 
 describe('Level 9: Advanced Code Safety & Consistency @consistency', () => {
   it('Should not mix async/await with .then()/.catch() in the same file', () => {
@@ -68,10 +77,19 @@ describe('Level 9: Advanced Code Safety & Consistency @consistency', () => {
   it('Should type catch clause errors as unknown, not any', () => {
     codeFiles.forEach((file) => {
       const content = fs.readFileSync(file, 'utf8');
+      const ast = parse(content);
+      const catchClauses = getNodesByType(ast, 'CatchClause');
+      const anyCatch = catchClauses.filter((c) => {
+        if (c.param?.typeAnnotation?.typeAnnotation?.type === 'TSAnyKeyword') {
+          return true;
+        }
+        return false;
+      });
+
       expect(
-        content,
+        anyCatch.length,
         `Catch with "any" type in ${file}: use "unknown" and narrow with instanceof for better type safety`,
-      ).not.toMatch(/catch\s*\(\s*\w+\s*:\s*any\s*\)/);
+      ).toBe(0);
     });
   });
 
@@ -159,10 +177,13 @@ describe('Level 9: Advanced Code Safety & Consistency @consistency', () => {
       .filter((f) => f.startsWith(srcDir))
       .forEach((file) => {
         const content = fs.readFileSync(file, 'utf8');
+        const ast = parse(content);
+        const defaultExports = getNodesByType(ast, 'ExportDefaultDeclaration');
+
         expect(
-          content,
+          defaultExports.length,
           `Default export in ${file}: use named exports for safer refactoring and explicit imports`,
-        ).not.toMatch(/^export\s+default\s/m);
+        ).toBe(0);
       });
   });
 

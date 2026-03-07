@@ -1,6 +1,7 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { parse } from '@typescript-eslint/typescript-estree';
 
 // Node: module URL is evaluated relative to tests/meta. Need rootDir
 export const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
@@ -50,3 +51,19 @@ export const pkg = JSON.parse(
 ) as PackageJson;
 
 export const hasTailwind = !!(pkg.dependencies?.tailwindcss || pkg.devDependencies?.tailwindcss);
+
+export { parse };
+
+export function getNodesByType(node: any, type: string, results: any[] = []): any[] {
+  if (!node || typeof node !== 'object') return results;
+  if (node.type === type) results.push(node);
+  Object.keys(node).forEach((key) => {
+    const child = node[key];
+    if (Array.isArray(child)) {
+      child.forEach((c) => getNodesByType(c, type, results));
+    } else if (child && typeof child === 'object') {
+      getNodesByType(child, type, results);
+    }
+  });
+  return results;
+}
