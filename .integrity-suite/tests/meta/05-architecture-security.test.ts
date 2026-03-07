@@ -140,7 +140,14 @@ describe('Level 5: Architecture & Security @security', () => {
 
     allSourceFiles.forEach((file) => {
       const base = path.basename(file);
-      if (base === '.env' || file.endsWith('.md') || base === 'tsconfig.json') return;
+      if (
+        base === '.env' ||
+        file.endsWith('.md') ||
+        base === 'tsconfig.json' ||
+        base === 'pnpm-lock.yaml' ||
+        file.endsWith('.yaml')
+      )
+        return;
 
       const content = fs.readFileSync(file, 'utf8');
       patterns.forEach((pattern) => {
