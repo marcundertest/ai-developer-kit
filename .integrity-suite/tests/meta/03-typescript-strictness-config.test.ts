@@ -12,7 +12,7 @@ import {
   hasTailwind,
   parse,
   getNodesByType,
-} from './shared';
+} from './shared.js';
 
 describe('Level 3: TypeScript Strictness & Config @typescript', () => {
   const tsconfig = JSON.parse(fs.readFileSync(path.join(rootDir, 'tsconfig.json'), 'utf8'));

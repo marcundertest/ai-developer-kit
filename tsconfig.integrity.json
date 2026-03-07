@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // relax certain rules for meta-tests and scripts so they compile cleanly
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitAny": false
+  },
+  "include": ["src/**/*", ".integrity-suite/**/*"]
+}

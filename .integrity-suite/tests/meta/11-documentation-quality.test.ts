@@ -10,7 +10,7 @@ import {
   testsDirs,
   hasTailwind,
   semverGt,
-} from './shared';
+} from './shared.js';
 
 describe('Level 11: Documentation Quality @documentation', () => {
   it('Should not have placeholder or empty descriptions in test files', () => {
@@ -169,7 +169,7 @@ describe('Level 11: Documentation Quality @documentation', () => {
 
   it('Should enforce version bump in staging (strict commit mode)', () => {
     try {
-      let headVersion = null;
+      let headVersion: string | null = null;
       try {
         const pkgAtHead = execSync('git show HEAD:package.json 2>/dev/null', {
           encoding: 'utf8',
@@ -200,7 +200,7 @@ describe('Level 11: Documentation Quality @documentation', () => {
 
   it('Should allow same or higher version in staging (relaxed push mode)', () => {
     try {
-      let headVersion = null;
+      let headVersion: string | null = null;
       try {
         const pkgAtHead = execSync('git show HEAD:package.json 2>/dev/null', {
           encoding: 'utf8',
@@ -265,7 +265,7 @@ describe('Level 11: Documentation Quality @documentation', () => {
 
   it('Should have exactly one changelog entry for the staged version (no duplicates, no missing)', () => {
     try {
-      let headVersion = null;
+      let headVersion: string | null = null;
       try {
         const pkgAtHead = execSync('git show HEAD:package.json 2>/dev/null', {
           encoding: 'utf8',
@@ -331,7 +331,7 @@ describe('Level 11: Documentation Quality @documentation', () => {
     if (!fs.existsSync(changelogPath)) return;
 
     try {
-      let headVersion = null;
+      let headVersion: string | null = null;
       try {
         const pkgAtHead = execSync('git show HEAD:package.json 2>/dev/null', {
           encoding: 'utf8',

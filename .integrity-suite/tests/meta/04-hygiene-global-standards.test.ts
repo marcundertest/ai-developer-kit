@@ -6,13 +6,12 @@ import {
   rootDir,
   targetDirs,
   codeFiles,
-  pkg,
   allSourceFiles,
   testsDirs,
-  srcDirs,
   hasTailwind,
+  pkg,
   getFiles,
-} from './shared';
+} from './shared.js';
 
 describe('Level 4: Hygiene & Global Standards @hygiene', () => {
   it('Should forbid em dash in Spanish source code comments', () => {

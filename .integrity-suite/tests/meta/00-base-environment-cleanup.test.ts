@@ -2,19 +2,13 @@ import { describe, it, expect } from 'vitest';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { execSync } from 'node:child_process';
-import { rootDir, codeFiles, pkg, allSourceFiles, testsDirs, hasTailwind } from './shared';
+import { rootDir } from './shared.js';
 
 describe('Level 0: Base Environment & Cleanup @base', () => {
   it('Should compile all test and script files without type errors (including implicit any)', () => {
     try {
-      const tsFiles = codeFiles.filter(
-        (f) => f.endsWith('.ts') && !f.includes('node_modules') && !f.includes('dist'),
-      );
-      execSync(
-        'tsc --noEmit --target ESNext --module NodeNext --lib ESNext --moduleResolution NodeNext --esModuleInterop true --strict true --skipLibCheck true ' +
-          tsFiles.join(' '),
-        { encoding: 'utf8', stdio: 'pipe' },
-      );
+      // rely on a specialized tsconfig that covers both src/ and .integrity-suite/
+      execSync('tsc --noEmit -p tsconfig.integrity.json', { encoding: 'utf8', stdio: 'pipe' });
     } catch (e: any) {
       const msg = e.stdout ? e.stdout.toString() : String(e.message || e);
       expect(false, `TypeScript compilation failed:\n${msg}`).toBe(true);

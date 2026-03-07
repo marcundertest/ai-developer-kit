@@ -10,9 +10,8 @@ import {
   allSourceFiles,
   testsDirs,
   srcDirs,
-  hasTailwind,
   getFiles,
-} from './shared';
+} from './shared.js';
 
 describe('Level 6: Testing & Coverage @testing', () => {
   it('Should have at least one non-dummy test file per source module', () => {

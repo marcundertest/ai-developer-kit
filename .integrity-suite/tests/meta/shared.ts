@@ -104,7 +104,9 @@ export const pkg = JSON.parse(
   fs.readFileSync(path.join(rootDir, 'package.json'), 'utf8'),
 ) as PackageJson;
 
-export const hasTailwind = !!(pkg.dependencies?.tailwindcss || pkg.devDependencies?.tailwindcss);
+export const hasTailwind = !!(
+  pkg.dependencies?.['tailwindcss'] || pkg.devDependencies?.['tailwindcss']
+);
 
 export { parse };
 

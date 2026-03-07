@@ -13,7 +13,7 @@ import {
   hasTailwind,
   parse,
   getNodesByType,
-} from './shared';
+} from './shared.js';
 
 // Helper to filter files based on directories
 const filterFilesByDirs = (files: string[], dirs: string[]) =>

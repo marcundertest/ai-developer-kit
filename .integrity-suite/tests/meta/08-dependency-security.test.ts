@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { execSync } from 'node:child_process';
-import { rootDir, codeFiles, pkg, allSourceFiles, testsDirs, hasTailwind } from './shared';
+import { rootDir, pkg } from './shared.js';
 
 describe('Level 8: Dependency Security @security-audit', () => {
   it('Should have audit check integrated as a test case', () => {

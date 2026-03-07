@@ -12,7 +12,7 @@ import {
   srcDirs,
   hasTailwind,
   getFiles,
-} from './shared';
+} from './shared.js';
 
 describe('Level 5: Architecture & Security @security', () => {
   it('Should have a .env.example documenting required variables', () => {
