@@ -68,6 +68,25 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 154
+
+- **Fecha**: 2026-03-07 03:30
+- **Versión**: 1.4.71
+- **Requerimiento**: El archivo integrity-suite.test.ts debe dar ejemplo y no incumplir reglas como @ts-expect-error, @ts-ignore, etc. Debe aplicar sus pruebas a cualquier archivo del proyecto, sin excepciones.
+- **Información adicional**: N/A
+- **Interpretación**: Eliminar las exclusiones de código en integrity-suite.test.ts para escanear todo el proyecto. Obfuscar las cadenas de texto dentro de tests del mismo archivo para evitar que se disparen a sí mismos. Incrementar versión a 1.4.71.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `.integrity-suite/tests/integrity-suite.test.ts` (estado: modificado)
+  - `package.json` (estado: modificado)
+  - `CHANGELOG.md` (estado: modificado)
+  - `.integrity-suite/docs/requirements.md` (estado: modificado)
+- **Tests**:
+  - `should be a TypeScript project and forbid bypass keywords` (modificado validaciones literales)
+- **Estado**: Completado
+- **Resultados de los tests**:
+  - **Iteración 1**: 2026-03-07 03:30 - ✅ Tests OK con el código fuente propio incluido en los escaneos globales.
+
 ### Requerimiento 153
 
 - **Fecha**: 2026-03-07 03:00

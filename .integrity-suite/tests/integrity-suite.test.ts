@@ -41,11 +41,6 @@ describe('Integrity Suite', () => {
   const testsDir = path.join(rootDir, 'tests') + path.sep;
   const codeFiles = allSourceFiles.filter((f) => {
     const ext = path.extname(f);
-    // ignore any file inside the regular tests folder or the internal
-    // `.integrity-suite` tooling (which contains its own bypass keywords,
-    // exports, etc.)
-    if (f.startsWith(testsDir)) return false;
-    if (f.includes(`${path.sep}.integrity-suite${path.sep}`)) return false;
     return ['.ts', '.js', '.tsx', '.jsx'].includes(ext);
   });
   const pkg = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf8'));
@@ -767,15 +762,16 @@ describe('Integrity Suite', () => {
 
       expect(fs.existsSync(path.join(rootDir, 'tsconfig.json'))).toBe(true);
       codeFiles.forEach((file) => {
-        // we already filter out internal files above, but double-check here just in
-        // case path handling changes later
-        if (file.includes(`${path.sep}.integrity-suite${path.sep}`)) return;
-
         const content = fs.readFileSync(file, 'utf8');
-        expect(content, `File ${file} contains @ts-ignore`).not.toContain('@ts-ignore');
-        expect(content, `File ${file} contains explicit "any" cast`).not.toMatch(/<any>/);
-        expect(content, `File ${file} contains explicit "any" cast`).not.toMatch(/as\s+any/);
-        expect(content, `File ${file} contains @ts-expect-error`).not.toContain('@ts-expect-error');
+        const tsI = '@ts-' + 'ignore';
+        const tsE = '@ts-' + 'expect-error';
+        const anyCast1 = new RegExp('<an' + 'y>');
+        const anyCast2 = new RegExp('as\\s+an' + 'y');
+
+        expect(content, `File ${file} contains ${tsI}`).not.toContain(tsI);
+        expect(content, `File ${file} contains explicit "any" cast`).not.toMatch(anyCast1);
+        expect(content, `File ${file} contains explicit "any" cast`).not.toMatch(anyCast2);
+        expect(content, `File ${file} contains ${tsE}`).not.toContain(tsE);
       });
     });
 

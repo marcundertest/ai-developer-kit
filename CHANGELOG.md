@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.71] - 2026-03-07
+
+### Changed
+
+- **Self-validation of test code against rules:** removed internal ignores from `integrity-suite.test.ts` so that it also evaluates itself without skipping any core kit files, preventing exceptions to linting rules within the integrity suite itself.
+- Extensively obfuscated test comparison strings so tests don't improperly flag themselves when ensuring global bypass keyword bans (`@ts-ignore`, `any` cast mappings).
+
 ## [1.4.70] - 2026-03-07
 
 ### Fixed
