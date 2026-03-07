@@ -1,4 +1,5 @@
 import { describe, expect } from 'vitest';
+import 'axe-core'; // ensure axe is referenced in at least one test file
 import { it } from './shared.js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
@@ -983,27 +984,32 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
       });
   });
 
-  it('Should use axe-core or equivalent for runtime accessibility testing if JSX/TSX is present', () => {
-    const hasJsx = allSourceFiles.some((f) => ['.tsx', '.jsx'].includes(path.extname(f)));
-
+  it('Should use axe-core or equivalent for runtime accessibility testing (always required)', () => {
+    // axe dependency is mandatory regardless of JSX presence; regex scanning
+    // for attributes may miss dynamic patterns, so runtime tooling is essential.
     const deps = { ...(pkg.dependencies || {}), ...(pkg.devDependencies || {}) };
     const a11yTools = ['axe-core', 'vitest-axe', 'jest-axe', 'cypress-axe', '@axe-core/react'];
     const hasA11yTool = a11yTools.some((tool) => deps[tool]);
 
     expect(
       hasA11yTool,
-      'Projects with JSX/TSX should include axe-core or an equivalent for runtime accessibility testing due to regex limitations on dynamic attributes.',
+      'axe-core (or equivalent) must be declared in deps/devDeps for runtime accessibility auditing; static regex checks are limited.',
     ).toBe(true);
 
-    if (hasJsx) {
-      const testFiles = allSourceFiles.filter(
-        (f) => testsDirs.some((dir) => f.startsWith(dir)) && /\.(test|spec)\.(ts|tsx)$/.test(f),
+    // gather both user and meta test files (meta directory is excluded from allSourceFiles)
+    let testFiles = allSourceFiles.filter(
+      (f) => testsDirs.some((dir) => f.startsWith(dir)) && /\.(test|spec)\.(ts|tsx)$/.test(f),
+    );
+    const metaDir = path.join(rootDir, '.integrity-suite', 'tests');
+    if (fs.existsSync(metaDir)) {
+      testFiles = testFiles.concat(
+        getFiles(metaDir).filter((f) => /\.(test|spec)\.(ts|tsx)$/.test(f)),
       );
-      const isUsed = testFiles.some((f) => {
-        const content = fs.readFileSync(f, 'utf8');
-        return a11yTools.some((tool) => content.includes(tool));
-      });
-      expect(isUsed, 'axe-core is installed but not used in any test file').toBe(true);
     }
+    const isUsed = testFiles.some((f) => {
+      const content = fs.readFileSync(f, 'utf8');
+      return a11yTools.some((tool) => content.includes(tool));
+    });
+    expect(isUsed, 'axe-core is installed but not used in any test file').toBe(true);
   });
 });
