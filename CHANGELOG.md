@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.89] - 2026-03-07
+
+### Added
+
+- Enhanced hardcoded secret detection with broader coverage: accounts for URLs with embedded credentials, secrets within comments, long Base64 strings, and JS nullish coalescing operators in env fallbacks.
+- Expanded secret detection to include all source files, including configuration formats like JSON and YAML.
+
 ## [1.4.88] - 2026-03-07
 
 ### Added

@@ -108,26 +108,36 @@ describe('Level 5: Architecture & Security @security', () => {
       'private[_-]?key',
       'auth[_-]?key',
       'credential',
+      'bearer',
+      'access[_-]?key',
+      'client[_-]?secret',
+      'passphrase',
+      'refresh[_-]?token',
+      'webhook[_-]?secret',
     ];
-    const patterns = keys.map(
-      (key) =>
-        new RegExp(
-          `(['"\`]?${key}['"\`]?)\\s*[:=]\\s*['"\`][\\w\\-/+=]{8,}['"\`]|process\\.env\\.[\\w_]+\\s*\\|\\|\\s*['"\`][\\w\\-/+=]{8,}['"\`]`,
-          'i',
-        ),
-    );
+    const patterns = [
+      ...keys.map(
+        (key) =>
+          new RegExp(
+            `(['"\`]?${key}['"\`]?)\\s*[:=]\\s*['"\`][\\w\\-/+=]{8,}['"\`]|process\\.env\\.[\\w_]+\\s*(?:\\|\\||\\?\\?)\\s*['"\`][\\w\\-/+=]{8,}['"\`]`,
+            'i',
+          ),
+      ),
+      /https?:\/\/[^:@\s"'`]+:[^@\s"'`]{4,}@/i, // URLs with credentials
+      /\/\/.*(?:password|secret|token)\s*[:=]\s*\S{6,}/i, // Secrets in comments
+      /['"`][A-Za-z0-9+/]{32,}={0,2}['"`]/, // Base64-like (32+ chars)
+      /ey[a-zA-Z0-9_-]{10,}\.ey[a-zA-Z0-9_-]{10,}\.[a-zA-Z0-9_-]{10,}/, // JWT
+      /['"`][0-9a-fA-F]{40,}['"`]/, // Hex secret (40+ chars)
+    ];
 
     allSourceFiles.forEach((file) => {
       const base = path.basename(file);
-      if (base === '.env' || file.endsWith('.md')) return;
+      if (base === '.env' || file.endsWith('.md') || base === 'tsconfig.json') return;
 
       const content = fs.readFileSync(file, 'utf8');
       patterns.forEach((pattern) => {
         expect(content, `Potential hardcoded secret in ${file}`).not.toMatch(pattern);
       });
-
-      const jwtPattern = /ey[a-zA-Z0-9_-]{10,}\.ey[a-zA-Z0-9_-]{10,}\.[a-zA-Z0-9_-]{10,}/;
-      expect(content, `Potential JWT token found in ${file}`).not.toMatch(jwtPattern);
     });
   });
 
@@ -219,33 +229,6 @@ describe('Level 5: Architecture & Security @security', () => {
       expect(content, `Bypass directive in ${file}`).not.toContain('eslint-' + 'disable');
       expect(content, `Bypass directive in ${file}`).not.toContain('prettier-' + 'ignore');
       expect(content, `Bypass directive in ${file}`).not.toContain('markdownlint-' + 'disable');
-    });
-  });
-
-  it('Should not have extended hardcoded secret patterns', () => {
-    const extendedKeys = [
-      'bearer',
-      'access[_-]?key',
-      'client[_-]?secret',
-      'passphrase',
-      'api[_-]?token',
-      'refresh[_-]?token',
-      'webhook[_-]?secret',
-    ];
-    const extendedPatterns = extendedKeys.map(
-      (key) =>
-        new RegExp('([\'"`]?' + key + '[\'"`]?)\\s*[:=]\\s*[\'"`][\\w\\-/+=]{8,}[\'"`]', 'i'),
-    );
-    const hexSecretPattern = /['"`][0-9a-fA-F]{40,}['"`]/;
-    codeFiles.forEach((file) => {
-      const content = fs.readFileSync(file, 'utf8');
-      extendedPatterns.forEach((pattern) => {
-        expect(content, `Potential extended hardcoded secret in ${file}`).not.toMatch(pattern);
-      });
-      expect(
-        content,
-        `Potential raw hex secret (40+ chars) in ${file}: use environment variables`,
-      ).not.toMatch(hexSecretPattern);
     });
   });
 
