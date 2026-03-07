@@ -1,3 +1,16 @@
+export function semverGt(a: string, b: string): boolean {
+  const parse = (v: string) =>
+    v
+      .split('-')[0]
+      .split('.')
+      .map((p) => parseInt(p, 10));
+  const [aMaj, aMin, aPat] = parse(a);
+  const [bMaj, bMin, bPat] = parse(b);
+  if (aMaj !== bMaj) return aMaj > bMaj;
+  if (aMin !== bMin) return aMin > bMin;
+  if (aPat !== bPat) return aPat > bPat;
+  return !a.includes('-') && b.includes('-');
+}
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';

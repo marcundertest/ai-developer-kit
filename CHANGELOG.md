@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.4.107] - 2026-03-07
+
+### Changed
+
+- Extracted `semverGt` utility to `shared.ts` and refactored `11-documentation-quality.test.ts` to use the shared function, removing redundant local definitions.
+
 All notable changes to this project will be documented in this file. This file is strictly maintained in **English** and must only contain **ASCII** characters.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),

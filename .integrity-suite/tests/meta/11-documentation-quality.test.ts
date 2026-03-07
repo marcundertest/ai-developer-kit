@@ -2,7 +2,15 @@ import { describe, it, expect } from 'vitest';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { execSync } from 'node:child_process';
-import { rootDir, codeFiles, pkg, allSourceFiles, testsDirs, hasTailwind } from './shared';
+import {
+  rootDir,
+  codeFiles,
+  pkg,
+  allSourceFiles,
+  testsDirs,
+  hasTailwind,
+  semverGt,
+} from './shared';
 
 describe('Level 11: Documentation Quality @documentation', () => {
   it('Should not have placeholder or empty descriptions in test files', () => {
@@ -96,16 +104,6 @@ describe('Level 11: Documentation Quality @documentation', () => {
       }
 
       if (originVersion) {
-        const semverGt = (a: string, b: string): boolean => {
-          const parse = (v: string) => v.split('.').map((p) => parseInt(p, 10));
-          const [aMaj, aMin, aPat] = parse(a);
-          const [bMaj, bMin, bPat] = parse(b);
-          if (aMaj !== bMaj) return aMaj > bMaj;
-          if (aMin !== bMin) return aMin > bMin;
-          if (aPat !== bPat) return aPat > bPat;
-          return !a.includes('-') && b.includes('-');
-        };
-
         const isLower =
           !semverGt(currentVersion, originVersion) && currentVersion !== originVersion;
 
@@ -300,16 +298,6 @@ describe('Level 11: Documentation Quality @documentation', () => {
       ...changelogContent.matchAll(/## \[(\d+\.\d+\.\d+(?:-[a-zA-Z0-9.]+)?)]/g),
     ];
 
-    const semverGt = (a: string, b: string): boolean => {
-      const parse = (v: string) => v.split('.').map((p) => parseInt(p, 10));
-      const [aMaj, aMin, aPat] = parse(a);
-      const [bMaj, bMin, bPat] = parse(b);
-      if (aMaj !== bMaj) return aMaj > bMaj;
-      if (aMin !== bMin) return aMin > bMin;
-      if (aPat !== bPat) return aPat > bPat;
-      return !a.includes('-') && b.includes('-');
-    };
-
     versionMatches.forEach((match) => {
       const changelogVersion = match[1];
       if (semverGt(changelogVersion, pkg.version)) {
@@ -329,16 +317,6 @@ describe('Level 11: Documentation Quality @documentation', () => {
       ...changelogContent.matchAll(/## \[(\d+\.\d+\.\d+(?:-[a-zA-Z0-9.]+)?)]/g),
     ];
     const versions = versionMatches.map((m) => m[1]);
-
-    function semverGt(a: string, b: string): boolean {
-      const parse = (v: string) => v.split('.').map((p) => parseInt(p, 10));
-      const [aMaj, aMin, aPat] = parse(a);
-      const [bMaj, bMin, bPat] = parse(b);
-      if (aMaj !== bMaj) return aMaj > bMaj;
-      if (aMin !== bMin) return aMin > bMin;
-      if (aPat !== bPat) return aPat > bPat;
-      return !a.includes('-') && b.includes('-');
-    }
 
     for (let i = 0; i < versions.length - 1; i++) {
       expect(
