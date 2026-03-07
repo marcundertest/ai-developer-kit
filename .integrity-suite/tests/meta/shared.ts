@@ -119,7 +119,19 @@ export const getFiles = (dir: string, allFiles: string[] = [], depth = 0): strin
     } else {
       const ext = path.extname(entry.name);
       if (
-        ['.ts', '.js', '.tsx', '.jsx', '.html', '.css', '.json'].includes(ext) ||
+        [
+          '.ts',
+          '.js',
+          '.tsx',
+          '.jsx',
+          '.html',
+          '.css',
+          '.json',
+          '.mts',
+          '.cts',
+          '.mjs',
+          '.cjs',
+        ].includes(ext) ||
         entry.name.startsWith('.env')
       ) {
         allFiles.push(name);
@@ -134,7 +146,7 @@ export const srcDirs = targetDirs.map((d) => path.join(d, 'src') + path.sep);
 export const testsDirs = targetDirs.map((d) => path.join(d, 'tests') + path.sep);
 export const codeFiles = allSourceFiles.filter((f) => {
   const ext = path.extname(f);
-  return ['.ts', '.js', '.tsx', '.jsx'].includes(ext);
+  return ['.ts', '.js', '.tsx', '.jsx', '.mts', '.cts', '.mjs', '.cjs'].includes(ext);
 });
 interface PackageJson {
   name: string;
