@@ -132,6 +132,63 @@ try {
   const failedTests = data.numFailedTests;
   const successRate = ((passedTests / totalTests) * 100).toFixed(1);
 
+  // Historical trend persistence
+  const historyPath = path.join(reportsDir, 'history.json');
+  const history: Array<{ date: string; score: number; passed: number; total: number }> =
+    fs.existsSync(historyPath) ? JSON.parse(fs.readFileSync(historyPath, 'utf8')) : [];
+
+  history.push({
+    date: new Date().toISOString(),
+    score: Number(successRate),
+    passed: passedTests,
+    total: totalTests,
+  });
+
+  const recentHistory = history.slice(-30);
+  fs.writeFileSync(historyPath, JSON.stringify(recentHistory, null, 2));
+
+  function generateSparkline(data: number[]): string {
+    if (data.length < 2) return '';
+    const width = 160;
+    const height = 40;
+    const padding = 5;
+    const min = 0;
+    const max = 100;
+
+    const last = data[data.length - 1];
+    const prev = data[data.length - 2];
+    let pointColor = 'hsl(var(--primary))';
+    if (last > prev) pointColor = 'hsl(var(--success))';
+    else if (last < prev) pointColor = 'hsl(var(--destructive))';
+    else pointColor = '#3b82f6'; // Blue
+
+    const points = data
+      .map((val, i) => {
+        const x = (i / (data.length - 1)) * (width - padding * 2) + padding;
+        const y = height - ((val - min) / (max - min)) * (height - padding * 2) - padding;
+        return `${x},${y}`;
+      })
+      .join(' ');
+
+    return `
+      <svg width="100%" height="${height}" viewBox="0 0 ${width} ${height}" style="overflow: visible; display: block;">
+        <polyline fill="none" stroke="hsl(var(--primary) / 0.3)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" points="${points}" />
+        ${data
+          .map((val, i) => {
+            const x = (i / (data.length - 1)) * (width - padding * 2) + padding;
+            const y = height - ((val - min) / (max - min)) * (height - padding * 2) - padding;
+            if (i === data.length - 1) {
+              return `<circle cx="${x}" cy="${y}" r="5" fill="${pointColor}" stroke="white" stroke-width="1.5" />`;
+            }
+            return '';
+          })
+          .join('')}
+      </svg>
+    `;
+  }
+
+  const sparklineSvg = generateSparkline(recentHistory.map((h) => h.score));
+
   const htmlContent = `
 <!DOCTYPE html>
 <html lang="en">
@@ -194,7 +251,7 @@ try {
 
         .summary-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 1rem;
             margin-bottom: 3rem;
         }
@@ -214,6 +271,8 @@ try {
             font-size: inherit;
             line-height: inherit;
             color: inherit;
+            min-width: 0;
+            overflow: hidden;
         }
 
         .summary-item.clickable {
@@ -363,6 +422,12 @@ try {
                 <span class="summary-label">Failed</span>
                 <span class="summary-value value-destructive">${failedTests}</span>
             </button>
+            <div class="summary-item">
+                <span class="summary-label">Trend (Last 30)</span>
+                <div style="margin-top: 0.5rem; display: flex; align-items: center; justify-content: center; height: 40px;">
+                    ${sparklineSvg || '<span style="font-size: 0.75rem; color: hsl(var(--muted-foreground));">Insufficient data</span>'}
+                </div>
+            </div>
         </div>
 
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
