@@ -5,7 +5,7 @@ import { execSync } from 'node:child_process';
 import { rootDir, codeFiles, pkg, allSourceFiles, testsDir, hasTailwind } from './shared';
 
 describe('Level 9: Advanced Code Safety & Consistency @consistency', () => {
-  it('should not mix async/await with .then()/.catch() in the same file', () => {
+  it('Should not mix async/await with .then()/.catch() in the same file', () => {
     codeFiles.forEach((file) => {
       const content = fs.readFileSync(file, 'utf8');
       const hasAwait = /\bawait\s+/.test(content);
@@ -17,7 +17,7 @@ describe('Level 9: Advanced Code Safety & Consistency @consistency', () => {
     });
   });
 
-  it('should use strict equality (===) instead of loose equality (==) in src/', () => {
+  it('Should use strict equality (===) instead of loose equality (==) in src/', () => {
     codeFiles.forEach((file) => {
       const content = fs.readFileSync(file, 'utf8');
       expect(content, `Loose equality (==) in ${file}`).not.toMatch(/(?<![!=<>])={2}(?!=)/);
@@ -25,7 +25,7 @@ describe('Level 9: Advanced Code Safety & Consistency @consistency', () => {
     });
   });
 
-  it('should use object spread instead of Object.assign in src/', () => {
+  it('Should use object spread instead of Object.assign in src/', () => {
     codeFiles.forEach((file) => {
       const content = fs.readFileSync(file, 'utf8');
       expect(
@@ -35,12 +35,12 @@ describe('Level 9: Advanced Code Safety & Consistency @consistency', () => {
     });
   });
 
-  it('should not exceed 4 levels of nesting in src/ files', () => {
+  it('Should not exceed 4 levels of nesting in src/ files', () => {
     const srcDir = path.join(rootDir, 'src') + path.sep;
     codeFiles
       .filter((f) => f.startsWith(srcDir))
       .forEach((file) => {
-        const lines = fs.readFileSync(file, 'utf8').split('\n');
+        const lines = fs.readFileSync(file, 'utf8').split('\N');
         lines.forEach((line, idx) => {
           const indentSpaces = line.match(/^(\s*)/)?.[1].replace(/\t/g, '    ').length ?? 0;
           expect(
@@ -51,7 +51,7 @@ describe('Level 9: Advanced Code Safety & Consistency @consistency', () => {
       });
   });
 
-  it('should not have untyped array callback parameters in src/', () => {
+  it('Should not have untyped array callback parameters in src/', () => {
     const srcDir = path.join(rootDir, 'src') + path.sep;
     codeFiles
       .filter((f) => f.startsWith(srcDir))
@@ -65,7 +65,7 @@ describe('Level 9: Advanced Code Safety & Consistency @consistency', () => {
       });
   });
 
-  it('should type catch clause errors as unknown, not any', () => {
+  it('Should type catch clause errors as unknown, not any', () => {
     codeFiles.forEach((file) => {
       const content = fs.readFileSync(file, 'utf8');
       expect(
@@ -75,7 +75,7 @@ describe('Level 9: Advanced Code Safety & Consistency @consistency', () => {
     });
   });
 
-  it('should not interpolate variables directly into SQL-like query strings', () => {
+  it('Should not interpolate variables directly into SQL-like query strings', () => {
     const sqlPattern = /`\s*(?:SELECT|INSERT|UPDATE|DELETE|FROM|WHERE)[^`]*\$\{/i;
     codeFiles.forEach((file) => {
       const content = fs.readFileSync(file, 'utf8');
@@ -86,7 +86,7 @@ describe('Level 9: Advanced Code Safety & Consistency @consistency', () => {
     });
   });
 
-  it('should not use Math.random() for security-sensitive operations', () => {
+  it('Should not use Math.random() for security-sensitive operations', () => {
     codeFiles.forEach((file) => {
       const content = fs.readFileSync(file, 'utf8');
       const securityContext =
@@ -98,7 +98,7 @@ describe('Level 9: Advanced Code Safety & Consistency @consistency', () => {
     });
   });
 
-  it('should not use innerHTML assignment in src/', () => {
+  it('Should not use innerHTML assignment in src/', () => {
     const srcDir = path.join(rootDir, 'src') + path.sep;
     codeFiles
       .filter((f) => f.startsWith(srcDir))
@@ -111,7 +111,7 @@ describe('Level 9: Advanced Code Safety & Consistency @consistency', () => {
       });
   });
 
-  it('should not use setTimeout or setInterval in src/', () => {
+  it('Should not use setTimeout or setInterval in src/', () => {
     const srcDir = path.join(rootDir, 'src') + path.sep;
     codeFiles
       .filter((f) => f.startsWith(srcDir))
@@ -128,7 +128,7 @@ describe('Level 9: Advanced Code Safety & Consistency @consistency', () => {
       });
   });
 
-  it('should not have top-level floating promises in src/', () => {
+  it('Should not have top-level floating promises in src/', () => {
     const srcDir = path.join(rootDir, 'src') + path.sep;
     codeFiles
       .filter((f) => f.startsWith(srcDir))
@@ -141,7 +141,7 @@ describe('Level 9: Advanced Code Safety & Consistency @consistency', () => {
       });
   });
 
-  it('should not use var declarations in src/', () => {
+  it('Should not use var declarations in src/', () => {
     const srcDir = path.join(rootDir, 'src') + path.sep;
     codeFiles
       .filter((f) => f.startsWith(srcDir))
@@ -153,7 +153,7 @@ describe('Level 9: Advanced Code Safety & Consistency @consistency', () => {
       });
   });
 
-  it('should not use default exports in src/', () => {
+  it('Should not use default exports in src/', () => {
     const srcDir = path.join(rootDir, 'src') + path.sep;
     codeFiles
       .filter((f) => f.startsWith(srcDir))
@@ -166,7 +166,7 @@ describe('Level 9: Advanced Code Safety & Consistency @consistency', () => {
       });
   });
 
-  it('should not have nested ternary expressions in src/', () => {
+  it('Should not have nested ternary expressions in src/', () => {
     const srcDir = path.join(rootDir, 'src') + path.sep;
     codeFiles
       .filter((f) => f.startsWith(srcDir))
@@ -179,7 +179,7 @@ describe('Level 9: Advanced Code Safety & Consistency @consistency', () => {
       });
   });
 
-  it('should have a default clause in all switch statements in src/', () => {
+  it('Should have a default clause in all switch statements in src/', () => {
     const srcDir = path.join(rootDir, 'src') + path.sep;
     codeFiles
       .filter((f) => f.startsWith(srcDir))

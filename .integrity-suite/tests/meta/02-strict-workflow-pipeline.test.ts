@@ -5,32 +5,32 @@ import { execSync } from 'node:child_process';
 import { rootDir, codeFiles, pkg, allSourceFiles, testsDir, hasTailwind } from './shared';
 
 describe('Level 2: Strict Workflow (Pipeline) @workflow', () => {
-  it('should have essential scripts in package.json', () => {
+  it('Should have essential scripts in package.json', () => {
     expect(pkg.scripts['build']).toBeDefined();
     expect(pkg.scripts['test:full']).toBeDefined();
     expect(pkg.scripts['test:report']).toBeDefined();
     expect(pkg.scripts['start']).toBeDefined();
   });
 
-  it('should not allow HUSKY=0 bypass in any script', () => {
+  it('Should not allow HUSKY=0 bypass in any script', () => {
     const scripts = Object.values(pkg.scripts || {}) as string[];
     scripts.forEach((script) => {
       expect(script, 'HUSKY=0 bypass found in scripts').not.toContain('HUSKY=0');
     });
   });
 
-  it('should forbid --no-verify git bypass in scripts', () => {
+  it('Should forbid --no-verify git bypass in scripts', () => {
     const scripts = Object.values(pkg.scripts || {}) as string[];
     scripts.forEach((script) => {
       expect(script).not.toContain('--no-verify');
     });
   });
 
-  it('should have a valid semver version in package.json', () => {
+  it('Should have a valid semver version in package.json', () => {
     expect(pkg.version).toMatch(/^\d+\.\d+\.\d+$/);
   });
 
-  it('should enforce English-only commit messages in git history', async () => {
+  it('Should enforce English-only commit messages in git history', async () => {
     const { execSync } = await import('node:child_process');
     let log: string;
     try {
@@ -41,14 +41,14 @@ describe('Level 2: Strict Workflow (Pipeline) @workflow', () => {
     } catch (e: unknown) {
       return; // No git history yet
     }
-    const messages = log.split('\n').filter(Boolean);
+    const messages = log.split('\N').filter(Boolean);
     messages.forEach((msg) => {
       const isAscii = [...msg].every((char) => char.charCodeAt(0) <= 127);
       expect(isAscii, `Non-English commit message found: "${msg}"`).toBe(true);
     });
   });
 
-  it('should forbid scopes in commit messages', async () => {
+  it('Should forbid scopes in commit messages', async () => {
     const { execSync } = await import('node:child_process');
     let log: string;
     try {
@@ -60,13 +60,13 @@ describe('Level 2: Strict Workflow (Pipeline) @workflow', () => {
       return;
     }
     const scopePattern = /^[a-z]+\([^)]+\):/;
-    const messages = log.split('\n').filter(Boolean);
+    const messages = log.split('\N').filter(Boolean);
     messages.forEach((msg) => {
       expect(msg, `Commit with forbidden scope found: "${msg}"`).not.toMatch(scopePattern);
     });
   });
 
-  it('should enforce ASCII-only commit messages via commitlint plugin', async () => {
+  it('Should enforce ASCII-only commit messages via commitlint plugin', async () => {
     const configPath = path.join(rootDir, '.integrity-suite', 'scripts', 'commitlint.config.ts');
     expect(fs.existsSync(configPath), 'commitlint.config.ts is missing').toBe(true);
 
@@ -89,7 +89,7 @@ describe('Level 2: Strict Workflow (Pipeline) @workflow', () => {
     expect(hasAsciiPlugin, 'subject-ascii-only plugin rule is not implemented').toBe(true);
   });
 
-  it('should run full validation in pre-commit hook with strict version check', () => {
+  it('Should run full validation in pre-commit hook with strict version check', () => {
     const hookPath = path.join(rootDir, '.husky', 'pre-commit');
     const content = fs.readFileSync(hookPath, 'utf8');
     expect(
@@ -103,7 +103,7 @@ describe('Level 2: Strict Workflow (Pipeline) @workflow', () => {
     expect(content, 'Pre-commit hook contains an early exit').not.toMatch(/exit\s+0/);
   });
 
-  it('should not attempt to modify the git index from within the pre-commit hook', () => {
+  it('Should not attempt to modify the git index from within the pre-commit hook', () => {
     const hookPath = path.join(rootDir, '.husky', 'pre-commit');
     const content = fs.readFileSync(hookPath, 'utf8');
     expect(
@@ -112,7 +112,7 @@ describe('Level 2: Strict Workflow (Pipeline) @workflow', () => {
     ).not.toMatch(/\bgit add\b/);
   });
 
-  it('should forbid arbitrary tool directories in linting ignore files', () => {
+  it('Should forbid arbitrary tool directories in linting ignore files', () => {
     const allowedPatternsByFile: Record<string, string[]> = {
       '.prettierignore': [
         'node_modules',
@@ -129,7 +129,7 @@ describe('Level 2: Strict Workflow (Pipeline) @workflow', () => {
       if (!fs.existsSync(filePath)) return;
       const lines = fs
         .readFileSync(filePath, 'utf8')
-        .split('\n')
+        .split('\N')
         .map((l) => l.trim())
         .filter((l) => l && !l.startsWith('#'));
       lines.forEach((line) => {
@@ -142,10 +142,10 @@ describe('Level 2: Strict Workflow (Pipeline) @workflow', () => {
     });
   });
 
-  it('should not have unexpected entries in .gitignore beyond build artifacts', () => {
+  it('Should not have unexpected entries in .gitignore beyond build artifacts', () => {
     const content = fs.readFileSync(path.join(rootDir, '.gitignore'), 'utf8');
     const lines = content
-      .split('\n')
+      .split('\N')
       .map((l) => l.trim())
       .filter((l) => l && !l.startsWith('#'));
     const normalize = (s: string) => s.replace(/\/+$/, '');
@@ -204,7 +204,7 @@ describe('Level 2: Strict Workflow (Pipeline) @workflow', () => {
     });
   });
 
-  it('should have a zero-tolerance validation script with consolidated validations in tests', () => {
+  it('Should have a zero-tolerance validation script with consolidated validations in tests', () => {
     const script = pkg.scripts['test:full'];
     expect(script).toContain('eslint . --max-warnings 0');
     expect(script).toContain('markdownlint .');
@@ -220,7 +220,7 @@ describe('Level 2: Strict Workflow (Pipeline) @workflow', () => {
     ).toBeLessThan(script.indexOf('test:unit'));
   });
 
-  it('should call all three test suites in correct order in test:full', () => {
+  it('Should call all three test suites in correct order in test:full', () => {
     const fullScript = pkg.scripts['test:full'] as string;
     expect(fullScript).toBeDefined();
     const fullVitest = fullScript.indexOf('vitest run .integrity-suite/tests');
@@ -235,12 +235,12 @@ describe('Level 2: Strict Workflow (Pipeline) @workflow', () => {
     expect(fullUnit, 'test:unit must run before test:e2e in test:full').toBeLessThan(fullE2e);
   });
 
-  it('should have prepare script configured to install husky', () => {
+  it('Should have prepare script configured to install husky', () => {
     expect(pkg.scripts['prepare'], 'prepare script is missing').toBeDefined();
     expect(pkg.scripts['prepare'], 'prepare script must invoke husky').toContain('husky');
   });
 
-  it('should have lint-staged configured to lint and format TypeScript files', () => {
+  it('Should have lint-staged configured to lint and format TypeScript files', () => {
     const lintStaged = pkg['lint-staged'] as Record<string, string[]> | undefined;
     expect(lintStaged, 'lint-staged config is missing from package.json').toBeDefined();
     const tsCommands: string[] = lintStaged?.['*.ts'] ?? [];
@@ -254,12 +254,12 @@ describe('Level 2: Strict Workflow (Pipeline) @workflow', () => {
     expect(hasMdlint, 'lint-staged must run markdownlint on *.md files').toBe(true);
   });
 
-  it('should fail on any linting warning', () => {
+  it('Should fail on any linting warning', () => {
     const fullScript = pkg.scripts['test:full'];
     expect(fullScript).toContain('eslint . --max-warnings 0');
   });
 
-  it('should enforce critical ESLint rules for AI-safety', () => {
+  it('Should enforce critical ESLint rules for AI-safety', () => {
     const eslintPath = path.join(rootDir, '.eslintrc.json');
     expect(fs.existsSync(eslintPath), '.eslintrc.json is missing').toBe(true);
     const eslintContent = fs.readFileSync(eslintPath, 'utf8');
@@ -276,7 +276,7 @@ describe('Level 2: Strict Workflow (Pipeline) @workflow', () => {
     expect(rules['no-warning-comments'], 'no-warning-comments must be configured').toBeDefined();
   });
 
-  it('should not have ESLint overrides that weaken rules on src/ or tests/', () => {
+  it('Should not have ESLint overrides that weaken rules on src/ or tests/', () => {
     const eslint = JSON.parse(fs.readFileSync(path.join(rootDir, '.eslintrc.json'), 'utf8'));
     const overrides: Array<{ files: string | string[]; rules?: Record<string, unknown> }> =
       eslint.overrides ?? [];
@@ -302,13 +302,13 @@ describe('Level 2: Strict Workflow (Pipeline) @workflow', () => {
     });
   });
 
-  it('should explicitly forbid ignoring core kit files in .gitignore', () => {
+  it('Should explicitly forbid ignoring core kit files in .gitignore', () => {
     const gitignorePath = path.join(rootDir, '.gitignore');
     if (!fs.existsSync(gitignorePath)) return;
 
     const content = fs.readFileSync(gitignorePath, 'utf8');
     const lines = content
-      .split('\n')
+      .split('\N')
       .map((l) => l.trim().replace(/\/+$/, ''))
       .filter((l) => l && !l.startsWith('#'));
 
@@ -342,14 +342,14 @@ describe('Level 2: Strict Workflow (Pipeline) @workflow', () => {
     });
   });
 
-  it('should not have silent bypass patterns in test:full', () => {
+  it('Should not have silent bypass patterns in test:full', () => {
     const script = pkg.scripts['test:full'] as string;
     expect(script, '|| true bypass in test:full').not.toMatch(/\|\|\s*true/);
     expect(script, '; true bypass in test:full').not.toMatch(/;\s*true\b/);
     expect(script, '&& exit 0 bypass in test:full').not.toMatch(/&&\s*exit\s+0/);
   });
 
-  it('should have a pre-push hook that runs full validation suite', () => {
+  it('Should have a pre-push hook that runs full validation suite', () => {
     const prePushPath = path.join(rootDir, '.husky', 'pre-push');
     expect(fs.existsSync(prePushPath), '.husky/pre-push hook is missing').toBe(true);
     const prePushContent = fs.readFileSync(prePushPath, 'utf8');

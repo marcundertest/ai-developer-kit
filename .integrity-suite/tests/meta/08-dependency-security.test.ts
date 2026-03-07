@@ -5,7 +5,7 @@ import { execSync } from 'node:child_process';
 import { rootDir, codeFiles, pkg, allSourceFiles, testsDir, hasTailwind } from './shared';
 
 describe('Level 8: Dependency Security @security-audit', () => {
-  it('should have audit check integrated as a test case', () => {
+  it('Should have audit check integrated as a test case', () => {
     const testFilePath = path.join(
       rootDir,
       '.integrity-suite',
@@ -15,7 +15,7 @@ describe('Level 8: Dependency Security @security-audit', () => {
     );
     const testContent = fs.readFileSync(testFilePath, 'utf-8');
     const hasAuditTest = testContent.includes(
-      'should pass security audit with resilience to network errors',
+      'Should pass security audit with resilience to network errors',
     );
     expect(hasAuditTest, 'Audit validation must be a test case in integrity-suite.test.ts').toBe(
       true,
@@ -24,16 +24,18 @@ describe('Level 8: Dependency Security @security-audit', () => {
     expect(fullScript).not.toContain('check-audit.js');
   });
 
-  it('should run all validations (audit, version, changelog) as test cases', () => {
+  it('Should run all validations (audit, version, changelog) as test cases', () => {
     const metaDir = path.join(rootDir, '.integrity-suite', 'tests', 'meta');
     const testContent = fs
       .readdirSync(metaDir)
       .filter((f) => f.endsWith('.ts'))
       .map((f) => fs.readFileSync(path.join(metaDir, f), 'utf-8'))
       .join('\\n');
-    expect(testContent).toContain('should pass security audit with resilience to network errors');
-    expect(testContent).toMatch(/should require version bump when non-markdown files are modified/);
-    expect(testContent).toMatch(/should have CHANGELOG entry for staged version/);
+    expect(testContent).toContain('Should pass security audit with resilience to network errors');
+    expect(testContent).toMatch(
+      /Should require version bump when non-markdown files are modified/i,
+    );
+    expect(testContent).toMatch(/Should have CHANGELOG entry for staged version/i);
     const scriptFull = pkg.scripts['test:full'];
     expect(scriptFull).toBeDefined();
     expect(scriptFull).not.toContain('check-audit.js');
@@ -41,7 +43,7 @@ describe('Level 8: Dependency Security @security-audit', () => {
     expect(scriptFull).not.toContain('pnpm check-changelog');
   });
 
-  it('should have a lockfile that is not outdated relative to package.json', () => {
+  it('Should have a lockfile that is not outdated relative to package.json', () => {
     const lockPath = path.join(rootDir, 'pnpm-lock.yaml');
     const lock = fs.readFileSync(lockPath, 'utf8');
     const allDeclaredDeps = {
@@ -53,7 +55,7 @@ describe('Level 8: Dependency Security @security-audit', () => {
     });
   });
 
-  it('should not use historically vulnerable versions of critical packages', () => {
+  it('Should not use historically vulnerable versions of critical packages', () => {
     const lock = fs.readFileSync(path.join(rootDir, 'pnpm-lock.yaml'), 'utf8');
 
     const knownVulnerable: Array<{ pkg: string; bannedRange: RegExp; reason: string }> = [
@@ -79,7 +81,7 @@ describe('Level 8: Dependency Security @security-audit', () => {
     });
   });
 
-  it('should not have direct dependencies pinned below known-safe minimums', () => {
+  it('Should not have direct dependencies pinned below known-safe minimums', () => {
     const safeMinimumsForDirectDeps: Record<string, string> = {};
     const allDeps = { ...pkg.dependencies, ...pkg.devDependencies };
     Object.entries(safeMinimumsForDirectDeps).forEach(([name, minVersion]) => {

@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { execSync } from 'node:child_process';
 
 describe('Core Protection Suite', () => {
-  it('should protect core kit files from unauthorized modification @core-protection', async () => {
+  it('Should protect core kit files from unauthorized modification @core-protection', async () => {
     let changedFiles = '';
     try {
       changedFiles = execSync('git status --porcelain', { encoding: 'utf8', stdio: 'pipe' });
@@ -11,7 +11,7 @@ describe('Core Protection Suite', () => {
     }
 
     const paths = changedFiles
-      .split('\n')
+      .split('\N')
       .filter(Boolean)
       .map((line) => line.trim().slice(2).trim());
 

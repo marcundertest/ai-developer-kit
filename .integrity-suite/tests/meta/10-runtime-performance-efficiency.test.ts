@@ -5,7 +5,7 @@ import { execSync } from 'node:child_process';
 import { rootDir, codeFiles, pkg, allSourceFiles, testsDir, hasTailwind } from './shared';
 
 describe('Level 10: Runtime Performance & Efficiency @performance', () => {
-  it('should not use namespace imports (import * as) in src/', () => {
+  it('Should not use namespace imports (import * as) in src/', () => {
     const srcDir = path.join(rootDir, 'src') + path.sep;
     codeFiles
       .filter((f) => f.startsWith(srcDir))
@@ -18,7 +18,7 @@ describe('Level 10: Runtime Performance & Efficiency @performance', () => {
       });
   });
 
-  it('should not use JSON.parse(JSON.stringify(...)) as a deep-clone in src/', () => {
+  it('Should not use JSON.parse(JSON.stringify(...)) as a deep-clone in src/', () => {
     const srcDir = path.join(rootDir, 'src') + path.sep;
     codeFiles
       .filter((f) => f.startsWith(srcDir))
@@ -31,7 +31,7 @@ describe('Level 10: Runtime Performance & Efficiency @performance', () => {
       });
   });
 
-  it('should not have sequential awaits inside for...of loops in src/', () => {
+  it('Should not have sequential awaits inside for...of loops in src/', () => {
     const srcDir = path.join(rootDir, 'src') + path.sep;
     codeFiles
       .filter((f) => f.startsWith(srcDir))
@@ -44,7 +44,7 @@ describe('Level 10: Runtime Performance & Efficiency @performance', () => {
       });
   });
 
-  it('should not import the entire lodash library in src/', () => {
+  it('Should not import the entire lodash library in src/', () => {
     const srcDir = path.join(rootDir, 'src') + path.sep;
     codeFiles
       .filter((f) => f.startsWith(srcDir))
@@ -57,7 +57,7 @@ describe('Level 10: Runtime Performance & Efficiency @performance', () => {
       });
   });
 
-  it('should not use synchronous fs methods inside async functions in src/', () => {
+  it('Should not use synchronous fs methods inside async functions in src/', () => {
     const srcDir = path.join(rootDir, 'src') + path.sep;
     codeFiles
       .filter((f) => f.startsWith(srcDir))

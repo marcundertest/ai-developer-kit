@@ -7,30 +7,30 @@ import { rootDir, codeFiles, pkg, allSourceFiles, testsDir, hasTailwind } from '
 describe('Level 3: TypeScript Strictness & Config @typescript', () => {
   const tsconfig = JSON.parse(fs.readFileSync(path.join(rootDir, 'tsconfig.json'), 'utf8'));
 
-  it('should have strict mode and implicitAny disabled in tsconfig.json', () => {
+  it('Should have strict mode and implicitAny disabled in tsconfig.json', () => {
     expect(tsconfig.compilerOptions.strict).toBe(true);
     expect(tsconfig.compilerOptions.noImplicitAny).toBe(true);
   });
 
-  it('should forbid unsafe tsconfig relaxations', () => {
+  it('Should forbid unsafe tsconfig relaxations', () => {
     expect(tsconfig.compilerOptions.allowJs, 'allowJs must not be enabled').not.toBe(true);
     expect(tsconfig.compilerOptions.checkJs, 'checkJs must not be enabled').not.toBe(true);
     expect(tsconfig.compilerOptions.noEmitOnError, 'noEmitOnError must be true').toBe(true);
   });
 
-  it('should have noUnusedLocals and noUnusedParameters enabled in tsconfig', () => {
+  it('Should have noUnusedLocals and noUnusedParameters enabled in tsconfig', () => {
     expect(tsconfig.compilerOptions.noUnusedLocals, 'noUnusedLocals must be true').toBe(true);
     expect(tsconfig.compilerOptions.noUnusedParameters, 'noUnusedParameters must be true').toBe(
       true,
     );
   });
 
-  it('should have a modern target in tsconfig.json', () => {
+  it('Should have a modern target in tsconfig.json', () => {
     expect(tsconfig.compilerOptions.target).toBeDefined();
     expect(['ESNext', 'ES2022', 'ES2021']).toContain(tsconfig.compilerOptions.target);
   });
 
-  it('should be a TypeScript project and forbid bypass keywords', () => {
+  it('Should be a TypeScript project and forbid bypass keywords', () => {
     if (!fs.existsSync(testsDir)) return;
 
     expect(fs.existsSync(path.join(rootDir, 'tsconfig.json'))).toBe(true);
@@ -48,7 +48,7 @@ describe('Level 3: TypeScript Strictness & Config @typescript', () => {
     });
   });
 
-  it('should not have exports in src/ that are never imported anywhere', () => {
+  it('Should not have exports in src/ that are never imported anywhere', () => {
     if (!fs.existsSync(testsDir)) return;
 
     const srcDir = path.join(rootDir, 'src') + path.sep;
@@ -87,7 +87,7 @@ describe('Level 3: TypeScript Strictness & Config @typescript', () => {
     });
   });
 
-  it('should forbid non-null assertion operator in src/', () => {
+  it('Should forbid non-null assertion operator in src/', () => {
     const srcDir = path.join(rootDir, 'src') + path.sep;
     codeFiles
       .filter((f) => f.startsWith(srcDir))
@@ -100,7 +100,7 @@ describe('Level 3: TypeScript Strictness & Config @typescript', () => {
       });
   });
 
-  it('should forbid numeric enums in src/', () => {
+  it('Should forbid numeric enums in src/', () => {
     const srcDir = path.join(rootDir, 'src') + path.sep;
     codeFiles
       .filter((f) => f.startsWith(srcDir))
@@ -113,7 +113,7 @@ describe('Level 3: TypeScript Strictness & Config @typescript', () => {
       });
   });
 
-  it('should forbid double-assertion casting (as unknown as Type) in src/', () => {
+  it('Should forbid double-assertion casting (as unknown as Type) in src/', () => {
     const srcDir = path.join(rootDir, 'src') + path.sep;
     codeFiles
       .filter((f) => f.startsWith(srcDir))
@@ -126,7 +126,7 @@ describe('Level 3: TypeScript Strictness & Config @typescript', () => {
       });
   });
 
-  it('should type catch clause errors as unknown, not untyped in src/ and tests/', () => {
+  it('Should type catch clause errors as unknown, not untyped in src/ and tests/', () => {
     const filesToCheck = [...codeFiles.filter((f) => f.includes('/src/') || f.includes('/tests/'))];
     filesToCheck.forEach((file) => {
       const content = fs.readFileSync(file, 'utf8');
@@ -138,7 +138,7 @@ describe('Level 3: TypeScript Strictness & Config @typescript', () => {
     });
   });
 
-  it('should not have dangling or invalid module imports', () => {
+  it('Should not have dangling or invalid module imports', () => {
     const testFilePath = path.join(
       rootDir,
       '.integrity-suite',
@@ -167,28 +167,28 @@ describe('Level 3: TypeScript Strictness & Config @typescript', () => {
     });
   });
 
-  it('should have noFallthroughCasesInSwitch enabled in tsconfig.json', () => {
+  it('Should have noFallthroughCasesInSwitch enabled in tsconfig.json', () => {
     expect(
       tsconfig.compilerOptions.noFallthroughCasesInSwitch,
       'noFallthroughCasesInSwitch prevents silent fallthrough bugs in switch statements',
     ).toBe(true);
   });
 
-  it('should have exactOptionalPropertyTypes enabled in tsconfig.json', () => {
+  it('Should have exactOptionalPropertyTypes enabled in tsconfig.json', () => {
     expect(
       tsconfig.compilerOptions.exactOptionalPropertyTypes,
       'exactOptionalPropertyTypes prevents implicitly assigning undefined to optional properties',
     ).toBe(true);
   });
 
-  it('should have noPropertyAccessFromIndexSignature enabled in tsconfig.json', () => {
+  it('Should have noPropertyAccessFromIndexSignature enabled in tsconfig.json', () => {
     expect(
       tsconfig.compilerOptions.noPropertyAccessFromIndexSignature,
       'noPropertyAccessFromIndexSignature prevents dot-access on index signature types',
     ).toBe(true);
   });
 
-  it('should not have TypeScript compilation errors', () => {
+  it('Should not have TypeScript compilation errors', () => {
     try {
       const output = execSync('tsc --noEmit', {
         cwd: rootDir,

@@ -5,7 +5,7 @@ import { execSync } from 'node:child_process';
 import { rootDir, codeFiles, pkg, allSourceFiles, testsDir, hasTailwind } from './shared';
 
 describe('Level 0: Base Environment & Cleanup @base', () => {
-  it('should compile all test and script files without type errors (including implicit any)', () => {
+  it('Should compile all test and script files without type errors (including implicit any)', () => {
     try {
       const tsFiles = codeFiles.filter(
         (f) => f.endsWith('.ts') && !f.includes('node_modules') && !f.includes('dist'),
@@ -21,20 +21,20 @@ describe('Level 0: Base Environment & Cleanup @base', () => {
     }
   });
 
-  it('should be a git repository', () => {
+  it('Should be a git repository', () => {
     expect(fs.existsSync(path.join(rootDir, '.git'))).toBe(true);
   });
 
-  it('should have a .gitignore file', () => {
+  it('Should have a .gitignore file', () => {
     expect(fs.existsSync(path.join(rootDir, '.gitignore'))).toBe(true);
   });
 
-  it('should have essential config files (.husky, .markdownlint.json)', () => {
+  it('Should have essential config files (.husky, .markdownlint.json)', () => {
     expect(fs.existsSync(path.join(rootDir, '.husky'))).toBe(true);
     expect(fs.existsSync(path.join(rootDir, '.markdownlint.json'))).toBe(true);
   });
 
-  it('should have a CHANGELOG.md file in English and without emojis', () => {
+  it('Should have a CHANGELOG.md file in English and without emojis', () => {
     const changelogPath = path.join(rootDir, 'CHANGELOG.md');
     expect(fs.existsSync(changelogPath), 'CHANGELOG.md is missing').toBe(true);
     const content = fs.readFileSync(changelogPath, 'utf8');
@@ -56,14 +56,14 @@ describe('Level 0: Base Environment & Cleanup @base', () => {
     expect(content).toContain('Fixed');
   });
 
-  it('should have a pnpm-lock.yaml lockfile', () => {
+  it('Should have a pnpm-lock.yaml lockfile', () => {
     expect(
       fs.existsSync(path.join(rootDir, 'pnpm-lock.yaml')),
       'pnpm-lock.yaml is missing: reproducible builds require a lockfile',
     ).toBe(true);
   });
 
-  it('should use PNPM and forbid obsolete npm/yarn lockfiles', () => {
+  it('Should use PNPM and forbid obsolete npm/yarn lockfiles', () => {
     expect(
       fs.existsSync(path.join(rootDir, 'package-lock.json')),
       'Found obsolete package-lock.json',
@@ -71,20 +71,20 @@ describe('Level 0: Base Environment & Cleanup @base', () => {
     expect(fs.existsSync(path.join(rootDir, 'yarn.lock')), 'Found obsolete yarn.lock').toBe(false);
   });
 
-  it('should have .env patterns excluded in .gitignore', () => {
+  it('Should have .env patterns excluded in .gitignore', () => {
     const content = fs.readFileSync(path.join(rootDir, '.gitignore'), 'utf8');
     expect(content).toMatch(/^\.env$/m);
     expect(content).toMatch(/\*\.env/m);
   });
 
-  it('should exclude build artifacts from git', () => {
+  it('Should exclude build artifacts from git', () => {
     const content = fs.readFileSync(path.join(rootDir, '.gitignore'), 'utf8');
     ['dist/', 'coverage/', 'node_modules/'].forEach((pattern) => {
       expect(content, `${pattern} not in .gitignore`).toContain(pattern);
     });
   });
 
-  it('should have a commit-msg hook that enforces commitlint', () => {
+  it('Should have a commit-msg hook that enforces commitlint', () => {
     const commitMsgPath = path.join(rootDir, '.husky', 'commit-msg');
     expect(fs.existsSync(commitMsgPath), '.husky/commit-msg hook is missing').toBe(true);
     const commitMsgContent = fs.readFileSync(commitMsgPath, 'utf8');
@@ -95,7 +95,7 @@ describe('Level 0: Base Environment & Cleanup @base', () => {
     ).toContain('.integrity-suite/scripts/commitlint.config.ts');
   });
 
-  it('should have a .nvmrc or .node-version file for Node.js version pinning', () => {
+  it('Should have a .nvmrc or .node-version file for Node.js version pinning', () => {
     const hasNvmrc = fs.existsSync(path.join(rootDir, '.nvmrc'));
     const hasNodeVersion = fs.existsSync(path.join(rootDir, '.node-version'));
     expect(

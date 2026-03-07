@@ -5,7 +5,7 @@ import { execSync } from 'node:child_process';
 import { rootDir, codeFiles, pkg, allSourceFiles, testsDir, hasTailwind } from './shared';
 
 describe('Level 4: Hygiene & Global Standards @hygiene', () => {
-  it('should forbid em dash in Spanish source code comments', () => {
+  it('Should forbid em dash in Spanish source code comments', () => {
     allSourceFiles.forEach((file) => {
       const content = fs.readFileSync(file, 'utf8');
       const commentRegex = /(\/\/[^\n]*|\/\*[\s\S]*?\*\/|<!--[\s\S]*?-->)/g;
@@ -16,7 +16,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('should enforce test file naming conventions', () => {
+  it('Should enforce test file naming conventions', () => {
     const testFiles = allSourceFiles.filter(
       (f) => f.startsWith(testsDir) && !f.includes(`${path.sep}reports${path.sep}`),
     );
@@ -27,14 +27,14 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('should forbid debugger statements in source', () => {
+  it('Should forbid debugger statements in source', () => {
     codeFiles.forEach((file) => {
       const content = fs.readFileSync(file, 'utf8');
       expect(content, `debugger statement in ${file}`).not.toMatch(/\bdebugger\b/);
     });
   });
 
-  it('should not use filesystem access in unit tests', () => {
+  it('Should not use filesystem access in unit tests', () => {
     const unitDir = path.join(rootDir, 'tests', 'unit') + path.sep;
     allSourceFiles
       .filter((f) => f.startsWith(unitDir))
@@ -47,7 +47,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
       });
   });
 
-  it('should enforce English-only comments (ASCII)', () => {
+  it('Should enforce English-only comments (ASCII)', () => {
     allSourceFiles.forEach((file) => {
       if (file.endsWith('.json') || file.endsWith('.md')) return;
       const content = fs.readFileSync(file, 'utf8');
@@ -62,7 +62,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('should forbid print statements in source', () => {
+  it('Should forbid print statements in source', () => {
     codeFiles.forEach((file) => {
       const parts = file.split(path.sep);
       if (parts.includes('.integrity-suite')) return;
@@ -72,7 +72,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('should forbid unresolved tasks in non-markdown files', () => {
+  it('Should forbid unresolved tasks in non-markdown files', () => {
     allSourceFiles.forEach((file) => {
       if (file.endsWith('.md') || file.endsWith('.json')) return;
       const content = fs.readFileSync(file, 'utf8');
@@ -81,7 +81,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('should not contain AI reasoning artifacts in comments', () => {
+  it('Should not contain AI reasoning artifacts in comments', () => {
     const suspiciousPatterns = [
       /\/\/\s*(this should|not sure|i think|maybe|perhaps|let me|we need to|should work)/i,
       /\/\/\s*added by/i,
@@ -102,7 +102,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('should not have trivially passing dummy assertions in test files', () => {
+  it('Should not have trivially passing dummy assertions in test files', () => {
     const testFiles = allSourceFiles.filter(
       (f) => f.startsWith(testsDir) && /\.(test|spec)\.(ts|tsx)$/.test(f),
     );
@@ -119,7 +119,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('should not have images without alt attribute in HTML/JSX/TSX files', () => {
+  it('Should not have images without alt attribute in HTML/JSX/TSX files', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -131,7 +131,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('should not have buttons without accessible text in HTML/JSX/TSX files', () => {
+  it('Should not have buttons without accessible text in HTML/JSX/TSX files', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -144,7 +144,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('should not have form inputs without associated labels', () => {
+  it('Should not have form inputs without associated labels', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -156,7 +156,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('should have a <main> landmark element in HTML pages', () => {
+  it('Should have a <main> landmark element in HTML pages', () => {
     const htmlFiles = allSourceFiles.filter((f) => f.endsWith('.html'));
     htmlFiles.forEach((file) => {
       const content = fs.readFileSync(file, 'utf8');
@@ -164,7 +164,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('should not use known low-contrast color pairs in CSS/HTML', () => {
+  it('Should not use known low-contrast color pairs in CSS/HTML', () => {
     const styleFiles = allSourceFiles.filter((f) =>
       ['.css', '.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -175,7 +175,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('should not use positive tabIndex values in HTML/JSX/TSX files', () => {
+  it('Should not use positive tabIndex values in HTML/JSX/TSX files', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -188,7 +188,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('should not use non-semantic elements as interactive controls', () => {
+  it('Should not use non-semantic elements as interactive controls', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -201,7 +201,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('should have lang attribute on <html> element', () => {
+  it('Should have lang attribute on <html> element', () => {
     const htmlFiles = allSourceFiles.filter((f) => f.endsWith('.html'));
     htmlFiles.forEach((file) => {
       const content = fs.readFileSync(file, 'utf8');
@@ -209,7 +209,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('buttons and anchors should have pointer cursor', () => {
+  it('Buttons and anchors should have pointer cursor', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -230,7 +230,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('button content should not be selectable', () => {
+  it('Button content should not be selectable', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -251,7 +251,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('external links should use target _blank with rel noopener noreferrer', () => {
+  it('External links should use target _blank with rel noopener noreferrer', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -269,7 +269,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('should not have images without loading="lazy"', () => {
+  it('Should not have images without loading="lazy"', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -281,7 +281,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('should not have buttons without type attribute', () => {
+  it('Should not have buttons without type attribute', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -293,7 +293,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('should not have text inputs without autocomplete attribute', () => {
+  it('Should not have text inputs without autocomplete attribute', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -305,7 +305,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('should not have anchors with href="#"', () => {
+  it('Should not have anchors with href="#"', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -317,7 +317,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('should not have anchors inside buttons', () => {
+  it('Should not have anchors inside buttons', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -329,7 +329,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('should not have images without width and height attributes', () => {
+  it('Should not have images without width and height attributes', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -341,7 +341,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('should not have inputs without name attribute inside forms', () => {
+  it('Should not have inputs without name attribute inside forms', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -357,7 +357,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('should not have images with empty alt without role="presentation"', () => {
+  it('Should not have images with empty alt without role="presentation"', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -369,7 +369,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('should not have img or button with onClick without tabIndex (keyboard accessibility)', () => {
+  it('Should not have img or button with onClick without tabIndex (keyboard accessibility)', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -384,7 +384,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('labels with for attribute should reference an existing input id', () => {
+  it('Labels with for attribute should reference an existing input id', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -402,7 +402,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('button elements should not redundantly declare role="button"', () => {
+  it('Button elements should not redundantly declare role="button"', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -414,7 +414,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('clickable elements should support keyboard interaction', () => {
+  it('Clickable elements should support keyboard interaction', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -429,7 +429,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('iframes should have title attribute for accessibility', () => {
+  it('Iframes should have title attribute for accessibility', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -441,7 +441,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('tables should include table headers (th)', () => {
+  it('Tables should include table headers (th)', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -454,7 +454,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('required inputs should include aria-required', () => {
+  it('Required inputs should include aria-required', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -466,7 +466,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('aria-label attributes should not be empty', () => {
+  it('Aria-label attributes should not be empty', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -478,7 +478,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('interactive elements should not have negative tabIndex', () => {
+  it('Interactive elements should not have negative tabIndex', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -490,7 +490,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('elements should not use invalid aria roles', () => {
+  it('Elements should not use invalid aria roles', () => {
     const validRoles = [
       'button',
       'navigation',
@@ -567,7 +567,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('elements with role="button" must be focusable', () => {
+  it('Elements with role="button" must be focusable', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -582,7 +582,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('non-anchor elements should not have href attributes', () => {
+  it('Non-anchor elements should not have href attributes', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -594,7 +594,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('textarea elements should have accessible labels', () => {
+  it('Textarea elements should have accessible labels', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -606,7 +606,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('headings should not skip levels (e.g., h1 to h3)', () => {
+  it('Headings should not skip levels (e.g., h1 to h3)', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -623,7 +623,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('pages should not contain multiple h1 elements', () => {
+  it('Pages should not contain multiple h1 elements', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -634,7 +634,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('interactive elements should not have aria-hidden="true"', () => {
+  it('Interactive elements should not have aria-hidden="true"', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -646,7 +646,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('images should not use role="button"', () => {
+  it('Images should not use role="button"', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -658,7 +658,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('anchors should not contain buttons', () => {
+  it('Anchors should not contain buttons', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -670,7 +670,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('aria-checked should only be used on appropriate roles', () => {
+  it('Aria-checked should only be used on appropriate roles', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -689,7 +689,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('dialog roles should include aria-modal', () => {
+  it('Dialog roles should include aria-modal', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -701,7 +701,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('aria-controls should reference an existing id', () => {
+  it('Aria-controls should reference an existing id', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -719,7 +719,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('labels should contain accessible text', () => {
+  it('Labels should contain accessible text', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -731,7 +731,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('aria-labelledby should reference existing ids', () => {
+  it('Aria-labelledby should reference existing ids', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -752,7 +752,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('fieldset elements should contain a legend', () => {
+  it('Fieldset elements should contain a legend', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -765,7 +765,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('select elements should have associated labels', () => {
+  it('Select elements should have associated labels', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -777,7 +777,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('progress elements should expose aria-valuenow', () => {
+  it('Progress elements should expose aria-valuenow', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -789,7 +789,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('details elements should contain a summary', () => {
+  it('Details elements should contain a summary', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -802,7 +802,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('meter elements should define min and max attributes', () => {
+  it('Meter elements should define min and max attributes', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -820,7 +820,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('video elements should include controls attribute', () => {
+  it('Video elements should include controls attribute', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -832,7 +832,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('audio elements should include controls attribute', () => {
+  it('Audio elements should include controls attribute', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -844,7 +844,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('figures containing images should include figcaption', () => {
+  it('Figures containing images should include figcaption', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -861,7 +861,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('buttons should have visible text or aria-label', () => {
+  it('Buttons should have visible text or aria-label', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -872,7 +872,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('anchor elements should include href attribute', () => {
+  it('Anchor elements should include href attribute', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -884,7 +884,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('image alt text should not duplicate adjacent visible text', () => {
+  it('Image alt text should not duplicate adjacent visible text', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -903,7 +903,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('tabIndex should not be greater than 0', () => {
+  it('TabIndex should not be greater than 0', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -915,7 +915,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('labels should not contain interactive elements', () => {
+  it('Labels should not contain interactive elements', () => {
     const htmlLikeFiles = allSourceFiles.filter((f) =>
       ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
     );
@@ -930,14 +930,14 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('should not have commented-out code blocks in src/', () => {
+  it('Should not have commented-out code blocks in src/', () => {
     const srcDir = path.join(rootDir, 'src') + path.sep;
     const commentedCodePattern =
       /\/\/\s*(?:const|let|var|function\s+\w|return\s+[\w(]|import\s+[{*\w])/;
     codeFiles
       .filter((f) => f.startsWith(srcDir))
       .forEach((file) => {
-        const lines = fs.readFileSync(file, 'utf8').split('\n');
+        const lines = fs.readFileSync(file, 'utf8').split('\N');
         const hits = lines.filter((l) => commentedCodePattern.test(l));
         expect(hits.length, `Commented-out code in ${file}: ${hits.slice(0, 2).join(' | ')}`).toBe(
           0,
@@ -945,7 +945,7 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
       });
   });
 
-  it('should have node: imports before relative imports in src/ files', () => {
+  it('Should have node: imports before relative imports in src/ files', () => {
     const srcDir = path.join(rootDir, 'src') + path.sep;
     codeFiles
       .filter((f) => f.startsWith(srcDir))

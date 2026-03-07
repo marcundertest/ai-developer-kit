@@ -5,12 +5,12 @@ import { execSync } from 'node:child_process';
 import { rootDir, codeFiles, pkg, allSourceFiles, testsDir, hasTailwind, getFiles } from './shared';
 
 describe('Level 6: Testing & Coverage @testing', () => {
-  it('should have @vitest/coverage-v8 installed', () => {
+  it('Should have @vitest/coverage-v8 installed', () => {
     if (!fs.existsSync(testsDir)) return;
     expect(pkg.devDependencies['@vitest/coverage-v8']).toBeDefined();
   });
 
-  it('should have at least one non-dummy test file per source module', () => {
+  it('Should have at least one non-dummy test file per source module', () => {
     if (!fs.existsSync(testsDir)) {
       return; // nothing to validate
     }
@@ -44,7 +44,7 @@ describe('Level 6: Testing & Coverage @testing', () => {
     });
   });
 
-  it('should configure 100% test coverage threshold in vitest.config.ts', () => {
+  it('Should configure 100% test coverage threshold in vitest.config.ts', () => {
     const vitestConfigPath = path.join(rootDir, 'vitest.config.ts');
     expect(fs.existsSync(vitestConfigPath), 'vitest.config.ts does not exist').toBe(true);
 
@@ -63,7 +63,7 @@ describe('Level 6: Testing & Coverage @testing', () => {
     );
   });
 
-  it('should configure vitest timeouts', () => {
+  it('Should configure vitest timeouts', () => {
     const vitestConfigPath = path.join(rootDir, 'vitest.config.ts');
     expect(fs.existsSync(vitestConfigPath), 'vitest.config.ts does not exist').toBe(true);
 
@@ -72,14 +72,14 @@ describe('Level 6: Testing & Coverage @testing', () => {
     expect(content, 'vitest.config.ts missing hookTimeout').toContain('hookTimeout:');
   });
 
-  it('should have a src/ directory as the coverage target', () => {
+  it('Should have a src/ directory as the coverage target', () => {
     expect(
       fs.existsSync(path.join(rootDir, 'src')),
       'src/ directory is missing: coverage target does not exist',
     ).toBe(true);
   });
 
-  it('should not have coverage exclusions in vitest.config.ts', () => {
+  it('Should not have coverage exclusions in vitest.config.ts', () => {
     const content = fs.readFileSync(path.join(rootDir, 'vitest.config.ts'), 'utf8');
     const coverageBlockMatch = content.match(/coverage:\s*\{([\s\S]*?)(\n\s*\},|\n\s*\})/m);
     const coverageBlock = coverageBlockMatch ? coverageBlockMatch[1] : '';
@@ -89,12 +89,12 @@ describe('Level 6: Testing & Coverage @testing', () => {
     ).not.toMatch(/\bexclude\s*:/);
   });
 
-  it('should enforce test coverage flag in package.json scripts', () => {
+  it('Should enforce test coverage flag in package.json scripts', () => {
     if (!fs.existsSync(testsDir)) return;
     expect(pkg.scripts['test:unit']).toContain('--coverage');
   });
 
-  it('should not have bootstrap files remaining when real functionality is present', () => {
+  it('Should not have bootstrap files remaining when real functionality is present', () => {
     const srcDir = path.join(rootDir, 'src');
     const srcFiles = getFiles(srcDir).filter((f) => /\.(ts|tsx)$/.test(f));
     const hasRealSrc = srcFiles.some((f) => path.basename(f) !== 'index.ts');
@@ -114,7 +114,7 @@ describe('Level 6: Testing & Coverage @testing', () => {
     }
   });
 
-  it('should have at least one unhappy-path assertion per unit test file', () => {
+  it('Should have at least one unhappy-path assertion per unit test file', () => {
     const unitDir = path.join(rootDir, 'tests', 'unit') + path.sep;
     const unitTestFiles = allSourceFiles.filter(
       (f) => f.startsWith(unitDir) && /\.(test|spec)\.(ts|tsx)$/.test(f),
@@ -129,7 +129,7 @@ describe('Level 6: Testing & Coverage @testing', () => {
     });
   });
 
-  it('should not have duplicate test names within the same test file', () => {
+  it('Should not have duplicate test names within the same test file', () => {
     const testFiles = allSourceFiles.filter(
       (f) => f.startsWith(testsDir) && /\.(test|spec)\.(ts|tsx)$/.test(f),
     );
@@ -144,7 +144,7 @@ describe('Level 6: Testing & Coverage @testing', () => {
     });
   });
 
-  it('should not contain .only or .skip test modifiers in any test file', () => {
+  it('Should not contain .only or .skip test modifiers in any test file', () => {
     const testFiles = allSourceFiles.filter(
       (f) => f.startsWith(testsDir) && /\.(test|spec)\.(ts|tsx)$/.test(f),
     );
@@ -159,7 +159,7 @@ describe('Level 6: Testing & Coverage @testing', () => {
     });
   });
 
-  it('should have a minimum of 4 assertions per unit test file', () => {
+  it('Should have a minimum of 4 assertions per unit test file', () => {
     const unitDir = path.join(rootDir, 'tests', 'unit') + path.sep;
     allSourceFiles
       .filter((f) => f.startsWith(unitDir) && /\.(test|spec)\.(ts|tsx)$/.test(f))
@@ -172,7 +172,7 @@ describe('Level 6: Testing & Coverage @testing', () => {
       });
   });
 
-  it('should not configure passWithNoTests: true in vitest.config.ts', () => {
+  it('Should not configure passWithNoTests: true in vitest.config.ts', () => {
     const vitestContent = fs.readFileSync(path.join(rootDir, 'vitest.config.ts'), 'utf8');
     expect(vitestContent, 'passWithNoTests: true bypasses empty test runs silently').not.toMatch(
       /passWithNoTests\s*:\s*true/,

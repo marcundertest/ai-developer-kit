@@ -5,7 +5,7 @@ import { execSync } from 'node:child_process';
 import { rootDir, codeFiles, pkg, allSourceFiles, testsDir, hasTailwind } from './shared';
 
 describe('Level 11: Documentation Quality @documentation', () => {
-  it('should not have placeholder or empty descriptions in test files', () => {
+  it('Should not have placeholder or empty descriptions in test files', () => {
     const testFiles = allSourceFiles.filter(
       (f) => f.startsWith(testsDir) && /\.(test|spec)\.(ts|tsx)$/.test(f),
     );
@@ -25,7 +25,7 @@ describe('Level 11: Documentation Quality @documentation', () => {
     });
   });
 
-  it('should have JSDoc comments on all exported members in src/', () => {
+  it('Should have JSDoc comments on all exported members in src/', () => {
     const srcDir = path.join(rootDir, 'src') + path.sep;
     codeFiles
       .filter((f) => f.startsWith(srcDir))
@@ -45,7 +45,7 @@ describe('Level 11: Documentation Quality @documentation', () => {
       });
   });
 
-  it('should include @param tags for all function exports with parameters in src/', () => {
+  it('Should include @param tags for all function exports with parameters in src/', () => {
     const srcDir = path.join(rootDir, 'src') + path.sep;
     codeFiles
       .filter((f) => f.startsWith(srcDir))
@@ -64,7 +64,7 @@ describe('Level 11: Documentation Quality @documentation', () => {
       });
   });
 
-  it('should not have empty JSDoc comments in src/', () => {
+  it('Should not have empty JSDoc comments in src/', () => {
     const srcDir = path.join(rootDir, 'src') + path.sep;
     codeFiles
       .filter((f) => f.startsWith(srcDir))
@@ -77,7 +77,7 @@ describe('Level 11: Documentation Quality @documentation', () => {
       });
   });
 
-  it('should never have a version inferior to origin HEAD (version-check)', () => {
+  it('Should never have a version inferior to origin HEAD (version-check)', () => {
     try {
       const currentVersion = pkg.version;
 
@@ -113,7 +113,7 @@ describe('Level 11: Documentation Quality @documentation', () => {
     } catch (e: unknown) {}
   });
 
-  it('should require version bump when non-markdown files are modified', () => {
+  it('Should require version bump when non-markdown files are modified', () => {
     let nonMdFiles: string[] = [];
     let headVersion = '';
     let currentVersion = '';
@@ -132,8 +132,8 @@ describe('Level 11: Documentation Quality @documentation', () => {
       }
 
       const allFiles = new Set<string>();
-      if (stagedOutput) stagedOutput.split('\n').forEach((f) => allFiles.add(f));
-      if (workingOutput) workingOutput.split('\n').forEach((f) => allFiles.add(f));
+      if (stagedOutput) stagedOutput.split('\N').forEach((f) => allFiles.add(f));
+      if (workingOutput) workingOutput.split('\N').forEach((f) => allFiles.add(f));
 
       nonMdFiles = [...allFiles].filter((f) => f && !f.endsWith('.md'));
 
@@ -163,7 +163,7 @@ describe('Level 11: Documentation Quality @documentation', () => {
     }
   });
 
-  it('should enforce version bump in staging (strict commit mode)', () => {
+  it('Should enforce version bump in staging (strict commit mode)', () => {
     try {
       let headVersion = null;
       try {
@@ -194,7 +194,7 @@ describe('Level 11: Documentation Quality @documentation', () => {
     } catch (e: unknown) {}
   });
 
-  it('should allow same or higher version in staging (relaxed push mode)', () => {
+  it('Should allow same or higher version in staging (relaxed push mode)', () => {
     try {
       let headVersion = null;
       try {
@@ -225,7 +225,7 @@ describe('Level 11: Documentation Quality @documentation', () => {
     } catch (e: unknown) {}
   });
 
-  it('should have CHANGELOG entry for staged version bumped (commit only)', () => {
+  it('Should have CHANGELOG entry for staged version bumped (commit only)', () => {
     let headVersion: string | null = null;
     let currentVersion = pkg.version;
     let shouldCheck = false;
@@ -259,7 +259,7 @@ describe('Level 11: Documentation Quality @documentation', () => {
     }
   });
 
-  it('should have exactly one changelog entry for the staged version (no duplicates, no missing)', () => {
+  it('Should have exactly one changelog entry for the staged version (no duplicates, no missing)', () => {
     try {
       let headVersion = null;
       try {
@@ -285,7 +285,7 @@ describe('Level 11: Documentation Quality @documentation', () => {
     } catch (e: unknown) {}
   });
 
-  it('should not have any changelog version posterior to the staged package.json version', () => {
+  it('Should not have any changelog version posterior to the staged package.json version', () => {
     const changelogPath = path.join(rootDir, 'CHANGELOG.md');
     if (!fs.existsSync(changelogPath)) return;
     const changelogContent = fs.readFileSync(changelogPath, 'utf8');
@@ -312,7 +312,7 @@ describe('Level 11: Documentation Quality @documentation', () => {
     expect(true).toBe(true); // Placeholder pass if no errors thrown
   });
 
-  it('should ensure all changelog versions follow valid semver and are in descending order', () => {
+  it('Should ensure all changelog versions follow valid semver and are in descending order', () => {
     const changelogPath = path.join(rootDir, 'CHANGELOG.md');
     if (!fs.existsSync(changelogPath)) return;
     const changelogContent = fs.readFileSync(changelogPath, 'utf8');
@@ -334,7 +334,7 @@ describe('Level 11: Documentation Quality @documentation', () => {
     }
   });
 
-  it('should validate CHANGELOG sections match version bump type', () => {
+  it('Should validate CHANGELOG sections match version bump type', () => {
     const changelogPath = path.join(rootDir, 'CHANGELOG.md');
     if (!fs.existsSync(changelogPath)) return;
 
@@ -365,7 +365,7 @@ describe('Level 11: Documentation Quality @documentation', () => {
       const hasAdded = /### Added/i.test(section);
       const hasFixed = /### Fixed/i.test(section);
       const hasChanged = /### Changed/i.test(section);
-      const hasContent = section.split('\n').filter((l) => l.match(/^\s*-\s+\S/)).length > 0;
+      const hasContent = section.split('\N').filter((l) => l.match(/^\s*-\s+\S/)).length > 0;
 
       expect(
         hasContent,

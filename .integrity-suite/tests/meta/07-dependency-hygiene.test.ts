@@ -5,7 +5,7 @@ import { execSync } from 'node:child_process';
 import { rootDir, codeFiles, pkg, allSourceFiles, testsDir, hasTailwind } from './shared';
 
 describe('Level 7: Dependency Hygiene @dependencies', () => {
-  it('should not have dependencies that belong in devDependencies', () => {
+  it('Should not have dependencies that belong in devDependencies', () => {
     const devOnlyPackages = ['vitest', 'eslint', 'prettier', 'typescript', 'husky'];
     const prodDeps = Object.keys(pkg.dependencies || {});
     devOnlyPackages.forEach((dep) => {
@@ -13,14 +13,14 @@ describe('Level 7: Dependency Hygiene @dependencies', () => {
     });
   });
 
-  it('should not have duplicate packages across dependencies and devDependencies', () => {
+  it('Should not have duplicate packages across dependencies and devDependencies', () => {
     const deps = Object.keys(pkg.dependencies || {});
     const devDeps = Object.keys(pkg.devDependencies || {});
     const duplicates = deps.filter((d) => devDeps.includes(d));
     expect(duplicates, `Duplicate packages: ${duplicates.join(', ')}`).toHaveLength(0);
   });
 
-  it('should have packageManager field pinned to exact version and match installed version', async () => {
+  it('Should have packageManager field pinned to exact version and match installed version', async () => {
     const { execSync } = await import('node:child_process');
     expect(pkg.packageManager, 'packageManager field is missing').toBeDefined();
     expect(pkg.packageManager).toMatch(/^pnpm@\d+\.\d+\.\d+$/);
@@ -35,7 +35,7 @@ describe('Level 7: Dependency Hygiene @dependencies', () => {
     } catch (e: unknown) {}
   });
 
-  it('should not have direct dependencies at major version 0.x (unstable API)', () => {
+  it('Should not have direct dependencies at major version 0.x (unstable API)', () => {
     const allowedAt0x = ['markdownlint-cli', 'markdownlint-cli2'];
     const allDeps = { ...pkg.dependencies, ...pkg.devDependencies };
     Object.entries(allDeps).forEach(([name, version]) => {
@@ -50,7 +50,7 @@ describe('Level 7: Dependency Hygiene @dependencies', () => {
     });
   });
 
-  it('should declare a Node.js engine requirement in package.json', () => {
+  it('Should declare a Node.js engine requirement in package.json', () => {
     expect(pkg.engines, 'engines field is missing in package.json').toBeDefined();
     expect(
       pkg.engines?.node,
@@ -59,7 +59,7 @@ describe('Level 7: Dependency Hygiene @dependencies', () => {
     expect(String(pkg.engines?.node)).toMatch(/^[>=<^~\d]/);
   });
 
-  it('should not have git:// or file: dependencies in package.json', () => {
+  it('Should not have git:// or file: dependencies in package.json', () => {
     const allDeps = { ...pkg.dependencies, ...pkg.devDependencies };
     Object.entries(allDeps).forEach(([name, version]) => {
       expect(

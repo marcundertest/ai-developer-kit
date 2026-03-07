@@ -5,7 +5,7 @@ import { execSync } from 'node:child_process';
 import { rootDir, codeFiles, pkg, allSourceFiles, testsDir, hasTailwind } from './shared';
 
 describe('Level 1: Project Metadata & README @metadata', () => {
-  it('should forbid em dash in Markdown documentation files', () => {
+  it('Should forbid em dash in Markdown documentation files', () => {
     const mdFiles = allSourceFiles.filter((f) => f.endsWith('.md'));
     mdFiles.forEach((file) => {
       const content = fs.readFileSync(file, 'utf8');
@@ -17,7 +17,7 @@ describe('Level 1: Project Metadata & README @metadata', () => {
     });
   });
 
-  it('should forbid em dash in integrity-suite documentation', () => {
+  it('Should forbid em dash in integrity-suite documentation', () => {
     const docsDir = path.join(rootDir, '.integrity-suite', 'docs');
     if (!fs.existsSync(docsDir)) return;
     fs.readdirSync(docsDir)
@@ -32,14 +32,14 @@ describe('Level 1: Project Metadata & README @metadata', () => {
       });
   });
 
-  it('should have valid package.json metadata', () => {
+  it('Should have valid package.json metadata', () => {
     expect(pkg.name).toBeDefined();
     expect(pkg.name.length).toBeGreaterThan(0);
     expect(pkg.author).toBeDefined();
     expect(pkg.version).toBeDefined();
   });
 
-  it('should have a README.md with essential sections', () => {
+  it('Should have a README.md with essential sections', () => {
     const readmePath = path.join(rootDir, 'README.md');
     expect(fs.existsSync(readmePath), 'README.md is missing').toBe(true);
     const content = fs.readFileSync(readmePath, 'utf8');
@@ -48,7 +48,7 @@ describe('Level 1: Project Metadata & README @metadata', () => {
     expect(content).toContain('Contribution');
   });
 
-  it('should have essential dependencies installed', () => {
+  it('Should have essential dependencies installed', () => {
     const devDeps = pkg.devDependencies || {};
     const required = ['vitest', 'husky', 'typescript', 'eslint', 'prettier', 'markdownlint-cli'];
     required.forEach((dep) => {
@@ -56,7 +56,7 @@ describe('Level 1: Project Metadata & README @metadata', () => {
     });
   });
 
-  it('should pass security audit with resilience to network errors', () => {
+  it('Should pass security audit with resilience to network errors', () => {
     try {
       execSync('pnpm audit --prod', {
         stdio: 'pipe',

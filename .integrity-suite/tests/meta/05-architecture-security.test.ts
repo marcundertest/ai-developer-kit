@@ -5,7 +5,7 @@ import { execSync } from 'node:child_process';
 import { rootDir, codeFiles, pkg, allSourceFiles, testsDir, hasTailwind, getFiles } from './shared';
 
 describe('Level 5: Architecture & Security @security', () => {
-  it('should have a .env.example documenting required variables', () => {
+  it('Should have a .env.example documenting required variables', () => {
     if (fs.existsSync(path.join(rootDir, '.env'))) {
       expect(
         fs.existsSync(path.join(rootDir, '.env.example')),
@@ -14,7 +14,7 @@ describe('Level 5: Architecture & Security @security', () => {
     }
   });
 
-  it('should forbid process.exit() in src/', () => {
+  it('Should forbid process.exit() in src/', () => {
     const srcDir = path.join(rootDir, 'src') + path.sep;
     codeFiles
       .filter((f) => f.startsWith(srcDir))
@@ -24,7 +24,7 @@ describe('Level 5: Architecture & Security @security', () => {
       });
   });
 
-  it('should forbid wildcard or unbounded dependency ranges', () => {
+  it('Should forbid wildcard or unbounded dependency ranges', () => {
     const allDeps = { ...pkg.dependencies, ...pkg.devDependencies };
     Object.entries(allDeps || {}).forEach(([name, version]) => {
       expect(version as string, `Dependency ${name} has a wildcard range`).not.toBe('*');
@@ -32,7 +32,7 @@ describe('Level 5: Architecture & Security @security', () => {
     });
   });
 
-  it('should enforce layer isolation (Backend <-> Frontend)', () => {
+  it('Should enforce layer isolation (Backend <-> Frontend)', () => {
     codeFiles.forEach((file) => {
       const content = fs.readFileSync(file, 'utf8');
       const parts = file.split(path.sep);
@@ -45,20 +45,20 @@ describe('Level 5: Architecture & Security @security', () => {
     });
   });
 
-  it('should limit file size to 300 lines in src/', () => {
+  it('Should limit file size to 300 lines in src/', () => {
     const srcDir = path.join(rootDir, 'src');
     if (fs.existsSync(srcDir)) {
       getFiles(srcDir).forEach((file) => {
         const ext = path.extname(file);
         if (!['.ts', '.tsx', '.js', '.jsx'].includes(ext)) return;
         const content = fs.readFileSync(file, 'utf8');
-        const lineCount = content.split('\n').length;
+        const lineCount = content.split('\N').length;
         expect(lineCount, `File ${file} exceeds 300 lines`).toBeLessThanOrEqual(300);
       });
     }
   });
 
-  it('should not have functions with more than 4 parameters in src/', () => {
+  it('Should not have functions with more than 4 parameters in src/', () => {
     const srcDir = path.join(rootDir, 'src') + path.sep;
     codeFiles
       .filter((f) => f.startsWith(srcDir))
@@ -73,14 +73,14 @@ describe('Level 5: Architecture & Security @security', () => {
       });
   });
 
-  it('should ignore .env files in git', () => {
+  it('Should ignore .env files in git', () => {
     const gitignorePath = path.join(rootDir, '.gitignore');
     expect(fs.existsSync(gitignorePath), '.gitignore is missing').toBe(true);
     const content = fs.readFileSync(gitignorePath, 'utf8');
     expect(content, '.gitignore must exclude .env').toMatch(/^\.env$/m);
   });
 
-  it('should detect potential hardcoded secrets', () => {
+  it('Should detect potential hardcoded secrets', () => {
     const keys = [
       'api[_-]?key',
       'secret[_-]?key',
@@ -112,7 +112,7 @@ describe('Level 5: Architecture & Security @security', () => {
     });
   });
 
-  it('should not have classes with more than 10 public methods (SRP violation)', () => {
+  it('Should not have classes with more than 10 public methods (SRP violation)', () => {
     codeFiles.forEach((file) => {
       const content = fs.readFileSync(file, 'utf8');
       const classBlocks = content.match(/class\s+\w+[\s\S]*?(?=\nclass\s|\n*$)/g) ?? [];
@@ -129,7 +129,7 @@ describe('Level 5: Architecture & Security @security', () => {
     });
   });
 
-  it('should not instantiate concrete classes inside business logic functions in src/', () => {
+  it('Should not instantiate concrete classes inside business logic functions in src/', () => {
     const srcDir = path.join(rootDir, 'src') + path.sep;
     const builtIns = [
       'Date',
@@ -164,7 +164,7 @@ describe('Level 5: Architecture & Security @security', () => {
       });
   });
 
-  it('should not use wildcard re-exports (export * from) in src/', () => {
+  it('Should not use wildcard re-exports (export * from) in src/', () => {
     codeFiles.forEach((file) => {
       const content = fs.readFileSync(file, 'utf8');
       expect(
@@ -174,7 +174,7 @@ describe('Level 5: Architecture & Security @security', () => {
     });
   });
 
-  it('should ensure all tests are cross-platform (Meta-test)', () => {
+  it('Should ensure all tests are cross-platform (Meta-test)', () => {
     allSourceFiles.forEach((file) => {
       const parts = file.split(path.sep);
       if (!parts.includes('tests')) return;
@@ -194,7 +194,7 @@ describe('Level 5: Architecture & Security @security', () => {
     });
   });
 
-  it('should forbid linter/formatter bypass directives', () => {
+  it('Should forbid linter/formatter bypass directives', () => {
     allSourceFiles.forEach((file) => {
       const content = fs.readFileSync(file, 'utf8');
       expect(content, `Bypass directive in ${file}`).not.toContain('eslint-' + 'disable');
@@ -203,7 +203,7 @@ describe('Level 5: Architecture & Security @security', () => {
     });
   });
 
-  it('should not have extended hardcoded secret patterns', () => {
+  it('Should not have extended hardcoded secret patterns', () => {
     const extendedKeys = [
       'bearer',
       'access[_-]?key',
@@ -230,7 +230,7 @@ describe('Level 5: Architecture & Security @security', () => {
     });
   });
 
-  it('should not use eval() or dynamic new Function() in src/', () => {
+  it('Should not use eval() or dynamic new Function() in src/', () => {
     const srcDir = path.join(rootDir, 'src') + path.sep;
     codeFiles
       .filter((f) => f.startsWith(srcDir))
@@ -246,7 +246,7 @@ describe('Level 5: Architecture & Security @security', () => {
       });
   });
 
-  it('should not use dangerouslySetInnerHTML in JSX/TSX files', () => {
+  it('Should not use dangerouslySetInnerHTML in JSX/TSX files', () => {
     codeFiles
       .filter((f) => /\.(tsx|jsx)$/.test(f))
       .forEach((file) => {
@@ -258,7 +258,7 @@ describe('Level 5: Architecture & Security @security', () => {
       });
   });
 
-  it('should not throw string literals in src/', () => {
+  it('Should not throw string literals in src/', () => {
     const srcDir = path.join(rootDir, 'src') + path.sep;
     codeFiles
       .filter((f) => f.startsWith(srcDir))
