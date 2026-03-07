@@ -68,6 +68,26 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 150
+
+- **Fecha**: 2026-03-07 01:10
+- **Versión**: 1.4.67
+- **Requerimiento**: Crear test que detecte errores de compilación TypeScript en la propia suite de integridad, y reparar tests de validación de CHANGELOG y requirements.md para que fallen correctamente cuando falten las entradas de versión.
+- **Información adicional**: Necesitamos detectar errors de compilación TypeScript en integrity-suite.test.ts. Además, los tests de validación de CHANGELOG y requirements.md estaban silenciosamente siendo saltados debido a bugs en execSync.
+- **Interpretación**: Agregar un nuevo test que compile integrity-suite.test.ts con flags específicos para detectar errores de tipo. Reparar ambos tests de validación de versión moviendo expect() fuera del try-catch y usando syntax correcta de execSync sin stdio incorrecto.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `.integrity-suite/tests/integrity-suite.test.ts` (estado: modificado)
+  - `package.json` (estado: modificado - version bump)
+  - `CHANGELOG.md` (estado: modificado)
+- **Tests**:
+  - `should compile this integrity-suite test file without type errors` (agregado)
+  - `should have CHANGELOG entry for staged version bumped (commit only)` (reparado)
+  - `should have requirements entry for staged version bumped (commit only)` (reparado)
+- **Estado**: Completado
+- **Resultados de los tests**:
+  - **Iteración 01**: 2026-03-07 01:10 - ✅ 208/208 tests passed
+
 ### Requerimiento 149
 
 - **Fecha**: 2026-03-06 19:14

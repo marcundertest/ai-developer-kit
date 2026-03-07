@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.67] - 2026-03-07
+
+### Fixed
+
+- **Enhanced type-checking in meta-tests:** added compile-check test to detect
+  TypeScript errors in integrity-suite itself.
+- **Improved CHANGELOG and requirements validation:** fixed tests for detecting
+  missing version entries when version bump occurs; tests now properly fail when
+  entries are absent and skip when no version change detected.
+
 ## [1.4.65] - 2026-03-06
 
 ### Changed

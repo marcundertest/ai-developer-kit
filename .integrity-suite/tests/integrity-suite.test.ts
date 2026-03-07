@@ -52,6 +52,19 @@ describe('Integrity Suite', () => {
   const hasTailwind = pkg.dependencies?.tailwindcss || pkg.devDependencies?.tailwindcss;
 
   describe('Level 0: Base Environment & Cleanup @base', () => {
+    it('should compile this integrity-suite test file without type errors', () => {
+      try {
+        // specify flags to match project expectations and avoid down-level issues
+        execSync(
+          'tsc --noEmit --target ESNext --module NodeNext --lib ESNext --moduleResolution NodeNext --esModuleInterop true --strict true --skipLibCheck true .integrity-suite/tests/integrity-suite.test.ts',
+          { encoding: 'utf8' },
+        );
+      } catch (e: any) {
+        const msg = e.stdout ? e.stdout.toString() : String(e.message || e);
+        expect(false, `TypeScript compilation failed:\n${msg}`).toBe(true);
+      }
+    });
+
     it('should be a git repository', () => {
       expect(fs.existsSync(path.join(rootDir, '.git'))).toBe(true);
     });
@@ -3053,7 +3066,6 @@ describe('Integrity Suite', () => {
         try {
           const headPkg = execSync('git show HEAD:package.json', {
             encoding: 'utf8',
-            shell: true,
           });
           headVersion = JSON.parse(headPkg).version;
         } catch (e) {
@@ -3155,66 +3167,76 @@ describe('Integrity Suite', () => {
 
     it('should have CHANGELOG entry for staged version bumped (commit only)', () => {
       // @version-release
-      // Only in test:full: if version was bumped, CHANGELOG must list it
+      // If version was bumped, CHANGELOG must list it
+      let headVersion: string | null = null;
+      let currentVersion = pkg.version;
+      let shouldCheck = false;
+
       try {
-        let headVersion = null;
         try {
-          const pkgAtHead = execSync('git show HEAD:package.json 2>/dev/null', {
+          const pkgAtHead = execSync('git show HEAD:package.json', {
             encoding: 'utf8',
-            stdio: ['pipe', 'pipe', 'pipe'],
           });
           headVersion = JSON.parse(pkgAtHead).version;
         } catch (e: unknown) {
           headVersion = '0.0.0';
         }
 
-        if (headVersion && pkg.version !== headVersion) {
-          // version was bumped; verify CHANGELOG has entry
-          const changelogPath = path.join(rootDir, 'CHANGELOG.md');
-          const changelogContent = fs.readFileSync(changelogPath, 'utf8');
-          const hasEntry =
-            changelogContent.includes('## [' + pkg.version + ']') ||
-            changelogContent.includes('## ' + pkg.version);
-
-          expect(
-            hasEntry,
-            'CHANGELOG.md must include entry "## [' + pkg.version + ']" after version bump',
-          ).toBe(true);
+        if (headVersion && currentVersion !== headVersion) {
+          shouldCheck = true;
         }
       } catch (e: unknown) {
-        // skip if unavailable
+        // skip if git unavailable
+      }
+
+      if (shouldCheck && headVersion) {
+        const changelogPath = path.join(rootDir, 'CHANGELOG.md');
+        const changelogContent = fs.readFileSync(changelogPath, 'utf8');
+        const hasEntry =
+          changelogContent.includes('## [' + currentVersion + ']') ||
+          changelogContent.includes('## ' + currentVersion);
+
+        expect(
+          hasEntry,
+          `CHANGELOG.md must include entry "## [${currentVersion}]" when version bumped from ${headVersion}`,
+        ).toBe(true);
       }
     });
 
     it('should have requirements entry for staged version bumped (commit only)', () => {
       // @version-release
-      // Only in test:full: if version was bumped, requirements.md must list it
+      // If version was bumped, requirements.md must list it
+      let headVersion: string | null = null;
+      let currentVersion = pkg.version;
+      let shouldCheck = false;
+
       try {
-        let headVersion = null;
         try {
-          const pkgAtHead = execSync('git show HEAD:package.json 2>/dev/null', {
+          const pkgAtHead = execSync('git show HEAD:package.json', {
             encoding: 'utf8',
-            stdio: ['pipe', 'pipe', 'pipe'],
           });
           headVersion = JSON.parse(pkgAtHead).version;
         } catch (e: unknown) {
           headVersion = '0.0.0';
         }
 
-        if (headVersion && pkg.version !== headVersion) {
-          // version was bumped; verify requirements.md has entry
-          const reqPath = path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md');
-          const reqContent = fs.readFileSync(reqPath, 'utf8');
-          const patternStr = '\\*\\*Versi[oó]n\\*\\*: ' + pkg.version.replace(/\./g, '\\.');
-          const versionPattern = new RegExp(patternStr);
-
-          expect(
-            versionPattern.test(reqContent),
-            'requirements.md must include "**Versión**: ' + pkg.version + '" after version bump',
-          ).toBe(true);
+        if (headVersion && currentVersion !== headVersion) {
+          shouldCheck = true;
         }
       } catch (e: unknown) {
-        // skip if unavailable
+        // skip if git unavailable
+      }
+
+      if (shouldCheck && headVersion) {
+        const reqPath = path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md');
+        const reqContent = fs.readFileSync(reqPath, 'utf8');
+        const patternStr = '\\*\\*Versi[oó]n\\*\\*: ' + currentVersion.replace(/\./g, '\\.');
+        const versionPattern = new RegExp(patternStr);
+
+        expect(
+          versionPattern.test(reqContent),
+          `requirements.md must include "**Versión**: ${currentVersion}" when version bumped from ${headVersion}`,
+        ).toBe(true);
       }
     });
 
