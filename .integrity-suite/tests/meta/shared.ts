@@ -40,11 +40,25 @@ export function ruleEnabled(rule: string): boolean {
 }
 
 // custom it that respects configuration
-export function it(title: string, fn: any) {
-  if (!ruleEnabled(title)) {
-    return vitestIt.skip(title + ' (disabled via config)', fn);
+// wrapper supports both Vitest 3 (name, fn, opts) and Vitest 4 (name, opts, fn)
+export function it(title: string, arg2: any, arg3?: any) {
+  let opts: any;
+  let fn: any;
+
+  if (arg3 !== undefined) {
+    // called as it(name, opts, fn)
+    opts = arg2 || {};
+    fn = arg3;
+  } else {
+    // called as it(name, fn) or it(name, fn, opts)
+    fn = arg2;
+    opts = {};
   }
-  return vitestIt(title, fn);
+
+  if (!ruleEnabled(title)) {
+    return vitestIt.skip(title + ' (disabled via config)', opts, fn);
+  }
+  return vitestIt(title, opts, fn);
 }
 
 export const isMonorepo = fs.existsSync(path.join(rootDir, 'pnpm-workspace.yaml'));

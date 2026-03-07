@@ -57,7 +57,7 @@ describe('Level 1: Project Metadata & README @metadata', () => {
     });
   });
 
-  it('Should pass security audit with resilience to network errors', () => {
+  it('Should pass security audit with resilience to network errors', { timeout: 60000 }, () => {
     try {
       execSync('pnpm audit --prod', {
         stdio: 'pipe',
