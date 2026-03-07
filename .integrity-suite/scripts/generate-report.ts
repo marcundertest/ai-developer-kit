@@ -3,6 +3,9 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+// configurable severity classifications
+import { severityMap, Severity } from './severity.config.js';
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '..', '..');
 const reportsDir = path.join(rootDir, '.integrity-suite', 'tests', 'reports');
@@ -81,30 +84,43 @@ try {
         };
       }
 
-      let severity = 'low';
+      let severity: Severity = 'low';
       const rawTitle = test.title.toLowerCase();
+      const allAncestors = test.ancestorTitles.join(' ').toLowerCase();
 
-      if (
-        rawTitle.includes('security') ||
-        rawTitle.includes('unauthorized') ||
-        rawTitle.includes('secret') ||
-        test.ancestorTitles.includes('Core Protection Suite')
-      ) {
-        severity = 'critical';
-      } else if (
-        rawTitle.includes('forbid') ||
-        rawTitle.includes('never') ||
-        rawTitle.includes('require')
-      ) {
-        severity = 'high';
-      } else if (
-        rawTitle.includes('should check') ||
-        rawTitle.includes('lint') ||
-        rawTitle.includes('format')
-      ) {
-        severity = 'medium';
-      } else {
-        severity = 'low';
+      // first check custom map entries; matching any tag in title or describe
+      for (const [tag, sev] of Object.entries(severityMap)) {
+        const lowered = tag.toLowerCase();
+        if (rawTitle.includes(lowered) || allAncestors.includes(lowered)) {
+          severity = sev;
+          break;
+        }
+      }
+
+      // fallback heuristics for legacy keywords
+      if (severity === 'low') {
+        if (
+          rawTitle.includes('security') ||
+          rawTitle.includes('unauthorized') ||
+          rawTitle.includes('secret') ||
+          test.ancestorTitles.includes('Core Protection Suite')
+        ) {
+          severity = 'critical';
+        } else if (
+          rawTitle.includes('forbid') ||
+          rawTitle.includes('never') ||
+          rawTitle.includes('require')
+        ) {
+          severity = 'high';
+        } else if (
+          rawTitle.includes('should check') ||
+          rawTitle.includes('lint') ||
+          rawTitle.includes('format')
+        ) {
+          severity = 'medium';
+        } else {
+          severity = 'low';
+        }
       }
 
       test.severity = severity;
