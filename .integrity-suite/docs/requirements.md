@@ -68,6 +68,25 @@ Los requerimientos deben estar ordenados cronológicamente (del más reciente al
 
 ## Historial de requerimientos
 
+### Requerimiento 155
+
+- **Fecha**: 2026-03-07 04:00
+- **Versión**: 1.4.72
+- **Requerimiento**: Limpieza en profundidad de "core-protection.test.ts" y "integrity-suite.test.ts" reduciendo a lo mínimo indispensable los comentarios.
+- **Información adicional**: N/A
+- **Interpretación**: Eliminar comentarios no indispensables en los archivos `core-protection.test.ts` e `integrity-suite.test.ts` para reducir la longitud de los archivos y mantener el código limpio y profesional, sin necesidad de leer trazas o comentarios obvios originados en desarrollos previos.
+- **Testeable**: true
+- **Archivos afectados**:
+  - `.integrity-suite/tests/integrity-suite.test.ts` (estado: modificado)
+  - `.integrity-suite/tests/core-protection.test.ts` (estado: modificado)
+  - `package.json` (estado: modificado)
+  - `CHANGELOG.md` (estado: modificado)
+  - `.integrity-suite/docs/requirements.md` (estado: modificado)
+- **Tests**: (Todos los de integridad validan los archivos como TypeScript válidos)
+- **Estado**: Completado
+- **Resultados de los tests**:
+  - **Iteración 1**: 2026-03-07 04:00 - ✅ Eliminación de comentarios confirmada.
+
 ### Requerimiento 154
 
 - **Fecha**: 2026-03-07 03:30

@@ -1,8 +1,3 @@
-// Meta‑tests used by the Integrity Suite.  Keep the file valid (no real
-// type/lint errors) so that it can run against projects without requiring
-// any special exemptions; examples of banned patterns are expressed in
-// comments only, not as actual code.
-
 import { describe, it, expect } from 'vitest';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
@@ -10,7 +5,6 @@ import { fileURLToPath } from 'node:url';
 import { execSync } from 'node:child_process';
 
 describe('Integrity Suite', () => {
-  // adjust path: tests -> .integrity-suite -> project root
   const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 
   const getFiles = (dir: string, allFiles: string[] = []) => {
@@ -49,7 +43,6 @@ describe('Integrity Suite', () => {
   describe('Level 0: Base Environment & Cleanup @base', () => {
     it('should compile this integrity-suite test file without type errors', () => {
       try {
-        // specify flags to match project expectations and avoid down-level issues
         execSync(
           'tsc --noEmit --target ESNext --module NodeNext --lib ESNext --moduleResolution NodeNext --esModuleInterop true --strict true --skipLibCheck true .integrity-suite/tests/integrity-suite.test.ts',
           { encoding: 'utf8' },
@@ -169,7 +162,6 @@ describe('Integrity Suite', () => {
       const mdFiles = allSourceFiles.filter((f) => f.endsWith('.md'));
       mdFiles.forEach((file) => {
         const content = fs.readFileSync(file, 'utf8');
-        // Allow em dash inside fenced code blocks (English content or examples are legitimate there)
         const withoutCodeBlocks = content.replace(/```[\s\S]*?```/g, '');
         expect(
           withoutCodeBlocks,
@@ -218,13 +210,11 @@ describe('Integrity Suite', () => {
     });
 
     it('should pass security audit with resilience to network errors', () => {
-      // Encapsulates check-audit.js logic: pnpm audit with graceful network handling
       try {
         execSync('pnpm audit --prod', {
           stdio: 'pipe',
           encoding: 'utf8',
         });
-        // No vulnerabilities
       } catch (e: unknown) {
         const errorMessage = e instanceof Error ? e.message : String(e);
         const networkErrors = [
@@ -237,13 +227,11 @@ describe('Integrity Suite', () => {
         const isNetworkError = networkErrors.some((err) => errorMessage.includes(err));
 
         if (isNetworkError) {
-          // Network unavailable is acceptable; test passes with warning
           console.warn('⚠️  Audit skipped: network unavailable. Check audit later.');
           return;
         }
 
         if (errorMessage.includes('registry') || errorMessage.includes('fetch')) {
-          // Registry unreachable is acceptable
           console.warn('⚠️  Audit warning: registry unreachable. Check registry status.');
           return;
         }
@@ -252,7 +240,6 @@ describe('Integrity Suite', () => {
           expect(false, '❌ Audit failed: vulnerabilities detected in dependencies').toBe(true);
         }
 
-        // Unknown error: fail the test
         expect(false, `Audit failed with unexpected error: ${errorMessage}`).toBe(true);
       }
     });
@@ -402,7 +389,6 @@ describe('Integrity Suite', () => {
         .split('\n')
         .map((l) => l.trim())
         .filter((l) => l && !l.startsWith('#'));
-      // Normalize by stripping trailing slashes; wildcard suffixes handled by startsWith
       const normalize = (s: string) => s.replace(/\/+$/, '');
       const allowedRoots = [
         'node_modules',
@@ -478,7 +464,6 @@ describe('Integrity Suite', () => {
         'No requirements found in history section of requirements.md',
       ).toBeGreaterThan(1);
 
-      // reqBlocks[1] is the latest one
       const latestReqRaw = reqBlocks[1];
       const latestIdMatch = latestReqRaw.match(/^(\d+)/);
       const latestId = latestIdMatch ? latestIdMatch[1] : 'unknown';
@@ -508,7 +493,6 @@ describe('Integrity Suite', () => {
       for (let i = 1; i < reqBlocks.length; i++) {
         const block = reqBlocks[i];
 
-        // Prevent accidentally merged requirements (e.g. missing a heading)
         const estadoMatches = (block.match(/- \*\*Estado\*\*:/g) || []).length;
         expect(
           estadoMatches,
@@ -557,7 +541,6 @@ describe('Integrity Suite', () => {
         }
       }
 
-      // Requirements are newest-first, so dates must be descending
       for (let i = 0; i < dates.length - 1; i++) {
         expect(
           dates[i].getTime(),
@@ -568,17 +551,14 @@ describe('Integrity Suite', () => {
 
     it('should have a zero-tolerance validation script with consolidated validations in tests', () => {
       const script = pkg.scripts['test:full'];
-      // Pipeline should have linting, formatting, type checking, and vitest runner
       expect(script).toContain('eslint . --max-warnings 0');
       expect(script).toContain('markdownlint .');
       expect(script).toContain('prettier --check .');
       expect(script).toContain('tsc --noEmit');
       expect(script).toContain('vitest run .integrity-suite/tests');
-      // Verify it's clean: no direct CLI calls to check-version, check-changelog, or audit scripts
       expect(script).not.toContain('check-version');
       expect(script).not.toContain('check-changelog');
       expect(script).not.toContain('check-audit.js');
-      // Verify vitest tests run before unit/e2e tests
       expect(
         script.indexOf('vitest run .integrity-suite/tests'),
         'vitest tests must run before other test suites',
@@ -755,9 +735,6 @@ describe('Integrity Suite', () => {
     });
 
     it('should be a TypeScript project and forbid bypass keywords', () => {
-      // if the tests folder is missing, assume this is an intentional cleanup and
-      // skip over the bypass-keyword enforcement; without test files the scan is
-      // meaningless and only triggers false positives on tooling/config files.
       if (!fs.existsSync(testsDir)) return;
 
       expect(fs.existsSync(path.join(rootDir, 'tsconfig.json'))).toBe(true);
@@ -776,9 +753,6 @@ describe('Integrity Suite', () => {
     });
 
     it('should not have exports in src/ that are never imported anywhere', () => {
-      // skip when there are no user-written tests; otherwise every export will be
-      // flagged as "unused" and the requirement becomes impossible to meet after
-      // we delete the example tests.
       if (!fs.existsSync(testsDir)) return;
 
       const srcDir = path.join(rootDir, 'src') + path.sep;
@@ -800,9 +774,6 @@ describe('Integrity Suite', () => {
             /^export\s+(?:const|function|class|type|interface|enum)\s+(\w+)/gm,
           ),
         ].map((m) => m[1]);
-        // The `version` and `ping` exports are simple metadata/liveness probes; they
-        // aren't used elsewhere in this skeleton project once the example tests
-        // have been removed.  Excluding them prevents false-positive failures.
         namedExports = namedExports.filter((n) => !['version', 'ping'].includes(n));
 
         namedExports.forEach((exportName) => {
@@ -865,7 +836,6 @@ describe('Integrity Suite', () => {
       ];
       filesToCheck.forEach((file) => {
         const content = fs.readFileSync(file, 'utf8');
-        // Look for catch (e) or catch(e) without type annotation
         const untypedCatch = content.match(/catch\s*\(\s*\w+\s*\)(?!\s*:\s*unknown)/g);
         expect(
           untypedCatch,
@@ -875,7 +845,6 @@ describe('Integrity Suite', () => {
     });
 
     it('should not have dangling or invalid module imports', () => {
-      // Test should detect references to deleted modules
       const testFilePath = path.join(
         rootDir,
         '.integrity-suite',
@@ -884,7 +853,6 @@ describe('Integrity Suite', () => {
       );
       const content = fs.readFileSync(testFilePath, 'utf8');
 
-      // Check for imports of deleted modules
       const deletedModules = [
         '../scripts/check-version.js',
         '../scripts/check-changelog.js',
@@ -926,18 +894,15 @@ describe('Integrity Suite', () => {
     });
 
     it('should not have TypeScript compilation errors', () => {
-      // Ensures the entire project compiles without errors
       try {
         const output = execSync('tsc --noEmit', {
           cwd: rootDir,
           encoding: 'utf8',
           stdio: ['pipe', 'pipe', 'pipe'],
         });
-        // If compilation succeeds, it won't throw and we just pass
         expect(true).toBe(true);
       } catch (e: unknown) {
         const errorMessage = e instanceof Error ? e.message : String(e);
-        // If tsc fails, we should capture and fail the test
         expect(false, `TypeScript compilation failed:\n${errorMessage}`).toBe(true);
       }
     });
@@ -1070,7 +1035,6 @@ describe('Integrity Suite', () => {
       );
       htmlLikeFiles.forEach((file) => {
         const content = fs.readFileSync(file, 'utf8');
-        // <img without alt= anywhere after it before closing >
         expect(content, `Image without alt attribute in ${file}`).not.toMatch(
           /<img(?![^>]*\balt\s*=)[^>]*>/i,
         );
@@ -1083,7 +1047,6 @@ describe('Integrity Suite', () => {
       );
       htmlLikeFiles.forEach((file) => {
         const content = fs.readFileSync(file, 'utf8');
-        // <button> with no content AND no aria-label
         const emptyButtons = content.match(/<button(?![^>]*aria-label)[^>]*>\s*<\/button>/gi) ?? [];
         expect(emptyButtons.length, `Button without accessible text or aria-label in ${file}`).toBe(
           0,
@@ -1097,7 +1060,6 @@ describe('Integrity Suite', () => {
       );
       htmlLikeFiles.forEach((file) => {
         const content = fs.readFileSync(file, 'utf8');
-        // Input without id AND without aria-label AND without aria-labelledby
         expect(content, `Input without label/aria-label in ${file}`).not.toMatch(
           /<input(?![^>]*(?:aria-label|aria-labelledby|id\s*=))[^>]*>/i,
         );
@@ -1116,7 +1078,6 @@ describe('Integrity Suite', () => {
       const styleFiles = allSourceFiles.filter((f) =>
         ['.css', '.html', '.tsx', '.jsx'].includes(path.extname(f)),
       );
-      // Known problematic: light gray text (#ccc, #999, #aaa) - likely insufficient on white
       const lowContrastPattern = /(color\s*:\s*#(?:ccc|999|aaa|bbb|ddd)|color\s*:\s*lightgr[ae]y)/i;
       styleFiles.forEach((file) => {
         const content = fs.readFileSync(file, 'utf8');
@@ -1984,7 +1945,6 @@ describe('Integrity Suite', () => {
         .filter((f) => f.startsWith(srcDir))
         .forEach((file) => {
           const content = fs.readFileSync(file, 'utf8');
-          // Matches function declarations and arrow functions with 5+ params
           const manyParamsPattern =
             /(?:function\s+\w+|(?:const|let)\s+\w+\s*=\s*(?:async\s*)?\()\s*[^)]*,[^)]*,[^)]*,[^)]*,[^)]/;
           expect(
@@ -2011,7 +1971,6 @@ describe('Integrity Suite', () => {
         'auth[_-]?key',
         'credential',
       ];
-      // Point 4: Enhanced regex to detect more variants of hardcoded secrets
       const patterns = keys.map(
         (key) =>
           new RegExp(
@@ -2029,7 +1988,6 @@ describe('Integrity Suite', () => {
           expect(content, `Potential hardcoded secret in ${file}`).not.toMatch(pattern);
         });
 
-        // Point 4: Detect JWT-like strings (header.payload.signature)
         const jwtPattern = /ey[a-zA-Z0-9_-]{10,}\.ey[a-zA-Z0-9_-]{10,}\.[a-zA-Z0-9_-]{10,}/;
         expect(content, `Potential JWT token found in ${file}`).not.toMatch(jwtPattern);
       });
@@ -2054,8 +2012,6 @@ describe('Integrity Suite', () => {
 
     it('should not instantiate concrete classes inside business logic functions in src/', () => {
       const srcDir = path.join(rootDir, 'src') + path.sep;
-      // Pattern: new Something() inside a function body (not at module level)
-      // We look for function bodies containing "new" for non-built-in types
       const builtIns = [
         'Date',
         'Map',
@@ -2111,8 +2067,6 @@ describe('Integrity Suite', () => {
           .replace(/import\s+.*from\s+['"].*['"]/g, '')
           .replace(/https?:\/\/[^\s'"]+/g, '');
 
-        // Point 5: Refined slash detection to avoid false positives in strings like './src/index'
-        // Only flag if a slash is used inside an .includes() or .match() that looks like a path check
         const hardcodedSlashPattern = /\.(includes|match)\(['"][^'"]*[/\\][^'"]*['"]\)/;
         expect(
           content.match(hardcodedSlashPattern),
@@ -2201,15 +2155,11 @@ describe('Integrity Suite', () => {
 
   describe('Level 6: Testing & Coverage @testing', () => {
     it('should have @vitest/coverage-v8 installed', () => {
-      // when the entire tests/ tree has been removed there is no point in
-      // checking for a coverage provider; the project can still compile but
-      // there are simply no tests to run.
       if (!fs.existsSync(testsDir)) return;
       expect(pkg.devDependencies['@vitest/coverage-v8']).toBeDefined();
     });
 
     it('should have at least one non-dummy test file per source module', () => {
-      // if the tests directory has been removed entirely, skip this check
       if (!fs.existsSync(testsDir)) {
         return; // nothing to validate
       }
@@ -2226,7 +2176,6 @@ describe('Integrity Suite', () => {
         const moduleName = path.basename(srcFile, path.extname(srcFile));
         const relPath = path.relative(rootDir, srcFile).replace(/\\/g, '/');
 
-        // Must import from this module AND have at least one real assertion
         const coveringTests = testFiles.filter((testFile) => {
           const content = fs.readFileSync(testFile, 'utf8');
           const importsModule =
@@ -2281,7 +2230,6 @@ describe('Integrity Suite', () => {
 
     it('should not have coverage exclusions in vitest.config.ts', () => {
       const content = fs.readFileSync(path.join(rootDir, 'vitest.config.ts'), 'utf8');
-      // Point 1: Robust extraction of coverage block to avoid false negatives
       const coverageBlockMatch = content.match(/coverage:\s*\{([\s\S]*?)(\n\s*\},|\n\s*\})/m);
       const coverageBlock = coverageBlockMatch ? coverageBlockMatch[1] : '';
       expect(
@@ -2291,7 +2239,6 @@ describe('Integrity Suite', () => {
     });
 
     it('should enforce test coverage flag in package.json scripts', () => {
-      // nothing to check if there are no unit tests defined
       if (!fs.existsSync(testsDir)) return;
       expect(pkg.scripts['test:unit']).toContain('--coverage');
     });
@@ -2303,7 +2250,6 @@ describe('Integrity Suite', () => {
 
       const bootstrapTests = [path.join(rootDir, 'tests', 'e2e', 'dummy.spec.ts')];
 
-      // If we have real code files in src/, we shouldn't have dummy e2e tests
       if (hasRealSrc) {
         bootstrapTests.forEach((file) => {
           if (fs.existsSync(file)) {
@@ -2315,10 +2261,6 @@ describe('Integrity Suite', () => {
           }
         });
       }
-
-      // If index.ts has been fundamentally changed (not just dummyping),
-      // the agent can decide to keep it or rename it.
-      // But the e2e dummy.spec.ts is the clearest "REMOVEME" marker.
     });
 
     it('should have at least one unhappy-path assertion per unit test file', () => {
@@ -2410,7 +2352,6 @@ describe('Integrity Suite', () => {
       expect(pkg.packageManager, 'packageManager field is missing').toBeDefined();
       expect(pkg.packageManager).toMatch(/^pnpm@\d+\.\d+\.\d+$/);
 
-      // Point 11: Verify installed pnpm version matches packageManager
       const [, expectedVersion] = pkg.packageManager.split('@');
       try {
         const installedVersion = execSync('pnpm --version').toString().trim();
@@ -2418,9 +2359,7 @@ describe('Integrity Suite', () => {
           installedVersion,
           `Installed pnpm version (${installedVersion}) does not match packageManager (${expectedVersion})`,
         ).toBe(expectedVersion);
-      } catch (e: unknown) {
-        // Skip if pnpm is not in path (likely CI environment without pnpm)
-      }
+      } catch (e: unknown) {}
     });
 
     it('should not have direct dependencies at major version 0.x (unstable API)', () => {
@@ -2464,7 +2403,6 @@ describe('Integrity Suite', () => {
 
   describe('Level 8: Dependency Security @security-audit', () => {
     it('should have audit check integrated as a test case', () => {
-      // Verify that the audit validation has been moved into tests
       const testFilePath = path.join(
         rootDir,
         '.integrity-suite',
@@ -2478,13 +2416,11 @@ describe('Integrity Suite', () => {
       expect(hasAuditTest, 'Audit validation must be a test case in integrity-suite.test.ts').toBe(
         true,
       );
-      // Verify pipeline scripts are no longer directly calling check-audit.js
       const fullScript = pkg.scripts['test:full'];
       expect(fullScript).not.toContain('check-audit.js');
     });
 
     it('should run all validations (audit, version, changelog) as test cases', () => {
-      // Verify that validation tests exist within the test suite
       const testFilePath = path.join(
         rootDir,
         '.integrity-suite',
@@ -2495,7 +2431,6 @@ describe('Integrity Suite', () => {
       expect(testContent).toContain('should pass security audit with resilience to network errors');
       expect(testContent).toContain('should require version to be bumped for non-markdown files');
       expect(testContent).toContain('should update CHANGELOG.md when version changes');
-      // Verify pipeline no longer has direct calls to check scripts
       const scriptFull = pkg.scripts['test:full'];
       expect(scriptFull).toBeDefined();
       expect(scriptFull).not.toContain('check-audit.js');
@@ -2574,7 +2509,6 @@ describe('Integrity Suite', () => {
     it('should use strict equality (===) instead of loose equality (==) in src/', () => {
       codeFiles.forEach((file) => {
         const content = fs.readFileSync(file, 'utf8');
-        // Exclude !== by requiring the char before == is not !, =, <, or >
         expect(content, `Loose equality (==) in ${file}`).not.toMatch(/(?<![!=<>])={2}(?!=)/);
         expect(content, `Loose inequality (!=) in ${file}`).not.toMatch(/!={1}(?!=)/);
       });
@@ -2612,7 +2546,6 @@ describe('Integrity Suite', () => {
         .filter((f) => f.startsWith(srcDir))
         .forEach((file) => {
           const content = fs.readFileSync(file, 'utf8');
-          // Matches .map(x => ...) or .filter(x => ...) where x has no type annotation
           const untypedArrayCallback = /\.(map|filter|forEach|find|some|every|reduce)\(\s*\w+\s*=>/;
           expect(
             content,
@@ -2645,7 +2578,6 @@ describe('Integrity Suite', () => {
     it('should not use Math.random() for security-sensitive operations', () => {
       codeFiles.forEach((file) => {
         const content = fs.readFileSync(file, 'utf8');
-        // Flag if Math.random() appears near security-related variable names
         const securityContext =
           /(token|secret|password|key|auth|nonce|salt|id)\s*=.*Math\.random|Math\.random.*=.*(token|secret|password|key|auth|nonce|salt)/i;
         expect(
@@ -2895,8 +2827,6 @@ describe('Integrity Suite', () => {
     });
 
     it('should have requirements.md in git staging area (for commits)', () => {
-      // @staging
-      // Tag: @staging - runs during test:full to enforce requirements tracking
       try {
         const stagingFiles = execSync('git diff --cached --name-only', {
           encoding: 'utf8',
@@ -2910,15 +2840,10 @@ describe('Integrity Suite', () => {
           hasRequirements,
           'requirements.md must be staged during commits to track completed requirements',
         ).toBe(true);
-      } catch (e: unknown) {
-        // Git command failure likely means not in a git repo or no staging area
-        // Skip this test in non-git contexts
-      }
+      } catch (e: unknown) {}
     });
 
     it('should never have a version inferior to origin HEAD (version-check)', () => {
-      // @version-check
-      // Tag: @version-check - runs in both test:full and test:nobump to prevent version regression
       try {
         const currentVersion = pkg.version;
 
@@ -2933,7 +2858,6 @@ describe('Integrity Suite', () => {
           );
           originVersion = JSON.parse(pkgAtOrigin).version;
         } catch (e: unknown) {
-          // If we can't get origin version, it's OK (new repo or no origin)
           originVersion = null;
         }
 
@@ -2952,41 +2876,31 @@ describe('Integrity Suite', () => {
             }
           }
         }
-      } catch (e: unknown) {
-        // If git is unavailable or version parsing fails, skip gracefully
-      }
+      } catch (e: unknown) {}
     });
 
     it('should record current version in requirements file', () => {
-      // @version-release
-      // Ensures user requirement log tracks version bumps
       try {
         const reqContent = fs.readFileSync(
           path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md'),
           'utf8',
         );
-        // construct regex string without backticks to quiet ESLint
         const patternStr = '\\*\\*Versi[oó]n\\*\\*: ' + pkg.version.replace(/\./g, '\\.');
         const versionPattern = new RegExp(patternStr);
         expect(
           versionPattern.test(reqContent),
           'requirements.md must include "**Versión**: ' + pkg.version + '" for the current release',
         ).toBe(true);
-      } catch (e) {
-        // if file missing, let other tests catch it
-      }
+      } catch (e) {}
     });
 
     it('should require version bump when non-markdown files are modified', () => {
-      // @version-release
-      // If any non-markdown files are modified (staging or working dir), version MUST be different from HEAD
       let nonMdFiles: string[] = [];
       let headVersion = '';
       let currentVersion = '';
       let shouldCheck = false;
 
       try {
-        // 1. Get all modified files from both staging and working directory
         let stagedOutput = '';
         let workingOutput = '';
         try {
@@ -3008,7 +2922,6 @@ describe('Integrity Suite', () => {
           return;
         }
 
-        // 2. Get HEAD version
         try {
           const headPkg = execSync('git show HEAD:package.json', {
             encoding: 'utf8',
@@ -3018,16 +2931,11 @@ describe('Integrity Suite', () => {
           return;
         }
 
-        // 3. Get current version
         currentVersion = pkg.version;
 
-        // 4. Mark that we should check versions
         shouldCheck = true;
-      } catch (e: unknown) {
-        // If any git error occurs, skip
-      }
+      } catch (e: unknown) {}
 
-      // IMPORTANT: expect is OUTSIDE the try-catch so failures propagate correctly
       if (shouldCheck) {
         expect(
           currentVersion,
@@ -3037,8 +2945,6 @@ describe('Integrity Suite', () => {
     });
 
     it('should enforce version bump in staging (strict commit mode)', () => {
-      // @version-release
-      // Strict: version in staging MUST be higher than current HEAD version
       try {
         let headVersion = null;
         try {
@@ -3048,7 +2954,6 @@ describe('Integrity Suite', () => {
           });
           headVersion = JSON.parse(pkgAtHead).version;
         } catch (e: unknown) {
-          // initial commit, allow it
           headVersion = '0.0.0';
         }
 
@@ -3071,14 +2976,10 @@ describe('Integrity Suite', () => {
               ')',
           ).toBe(true);
         }
-      } catch (e: unknown) {
-        // skip if git unavailable
-      }
+      } catch (e: unknown) {}
     });
 
     it('should allow same or higher version in staging (relaxed push mode)', () => {
-      // @version-check
-      // Relaxed: version in staging must be >= HEAD version
       try {
         let headVersion = null;
         try {
@@ -3106,14 +3007,10 @@ describe('Integrity Suite', () => {
             'Version in staging (' + pkg.version + ') must be >= HEAD (' + headVersion + ')',
           ).toBe(true);
         }
-      } catch (e: unknown) {
-        // skip if git unavailable
-      }
+      } catch (e: unknown) {}
     });
 
     it('should have CHANGELOG entry for staged version bumped (commit only)', () => {
-      // @version-release
-      // If version was bumped, CHANGELOG must list it
       let headVersion: string | null = null;
       let currentVersion = pkg.version;
       let shouldCheck = false;
@@ -3131,9 +3028,7 @@ describe('Integrity Suite', () => {
         if (headVersion && currentVersion !== headVersion) {
           shouldCheck = true;
         }
-      } catch (e: unknown) {
-        // skip if git unavailable
-      }
+      } catch (e: unknown) {}
 
       if (shouldCheck && headVersion) {
         const changelogPath = path.join(rootDir, 'CHANGELOG.md');
@@ -3150,8 +3045,6 @@ describe('Integrity Suite', () => {
     });
 
     it('should have requirements entry for staged version bumped (commit only)', () => {
-      // @version-release
-      // If version was bumped, requirements.md must list it
       let headVersion: string | null = null;
       let currentVersion = pkg.version;
       let shouldCheck = false;
@@ -3169,9 +3062,7 @@ describe('Integrity Suite', () => {
         if (headVersion && currentVersion !== headVersion) {
           shouldCheck = true;
         }
-      } catch (e: unknown) {
-        // skip if git unavailable
-      }
+      } catch (e: unknown) {}
 
       if (shouldCheck && headVersion) {
         const reqPath = path.join(rootDir, '.integrity-suite', 'docs', 'requirements.md');
@@ -3202,7 +3093,6 @@ describe('Integrity Suite', () => {
         if (headVersion && pkg.version !== headVersion) {
           const changelogPath = path.join(rootDir, 'CHANGELOG.md');
           const changelogContent = fs.readFileSync(changelogPath, 'utf8');
-          // Count exact occurrences of "## [version]"
           const pattern = new RegExp('## \\[' + pkg.version.replace(/\./g, '\\.') + '\\]', 'g');
           const matches = changelogContent.match(pattern) || [];
           expect(
@@ -3210,9 +3100,7 @@ describe('Integrity Suite', () => {
             `CHANGELOG.md must have exactly 1 entry for version ${pkg.version}, but found ${matches.length}`,
           ).toBe(1);
         }
-      } catch (e: unknown) {
-        // skip if unavailable
-      }
+      } catch (e: unknown) {}
     });
 
     it('should not have any changelog version posterior to the staged package.json version', () => {
@@ -3220,12 +3108,10 @@ describe('Integrity Suite', () => {
       if (!fs.existsSync(changelogPath)) return;
       const changelogContent = fs.readFileSync(changelogPath, 'utf8');
 
-      // Extract all version headers from CHANGELOG
       const versionMatches = [...changelogContent.matchAll(/## \[([0-9]+\.[0-9]+\.[0-9]+)\]/g)];
 
       versionMatches.forEach((match) => {
         const changelogVersion = match[1];
-        // Compare versions: changelogVersion should NOT be greater than pkg.version
         const changelogParts = changelogVersion.split('.').map(Number);
         const pkgParts = pkg.version.split('.').map(Number);
 
@@ -3249,7 +3135,6 @@ describe('Integrity Suite', () => {
       if (!fs.existsSync(reqPath)) return;
       const reqContent = fs.readFileSync(reqPath, 'utf8');
 
-      // Extract all versions from requirements.md
       let headVersion = null;
       try {
         const pkgAtHead = execSync('git show HEAD:package.json 2>/dev/null', {
@@ -3262,19 +3147,16 @@ describe('Integrity Suite', () => {
       }
 
       if (!headVersion || pkg.version === headVersion) {
-        // No version bump, skip
         expect(true).toBe(true);
         return;
       }
 
-      // Find all version entries in requirements.md
       const versionMatches = [
         ...reqContent.matchAll(/\*\*Versi[oó]n\*\*:\s*([0-9]+\.[0-9]+\.[0-9]+)/g),
       ];
 
       versionMatches.forEach((match) => {
         const reqVersion = match[1];
-        // Compare versions: reqVersion should NOT be greater than pkg.version
         const reqParts = reqVersion.split('.').map(Number);
         const pkgParts = pkg.version.split('.').map(Number);
 
@@ -3296,7 +3178,6 @@ describe('Integrity Suite', () => {
       const versionMatches = [...changelogContent.matchAll(/## \[([0-9]+\.[0-9]+\.[0-9]+)\]/g)];
       const versions = versionMatches.map((m) => m[1]);
 
-      // Check descending order
       for (let i = 0; i < versions.length - 1; i++) {
         const currParts = versions[i].split('.').map(Number);
         const nextParts = versions[i + 1].split('.').map(Number);
@@ -3316,7 +3197,6 @@ describe('Integrity Suite', () => {
       if (!fs.existsSync(reqPath)) return;
       const reqContent = fs.readFileSync(reqPath, 'utf8');
 
-      // Extract version for each requirement (requirements are ordered by number descending)
       const reqBlocks = reqContent.split('\n### Requerimiento');
       const versionsByReq: Record<number, string> = {};
 
@@ -3330,7 +3210,6 @@ describe('Integrity Suite', () => {
         }
       }
 
-      // Verify: requirements are descending by number, so their versions should generally be descending too
       const reqNums = Object.keys(versionsByReq)
         .map(Number)
         .sort((a, b) => b - a);
@@ -3341,7 +3220,6 @@ describe('Integrity Suite', () => {
         const currVersion = versionsByReq[currReqNum];
         const nextVersion = versionsByReq[nextReqNum];
 
-        // currVersion should be >= nextVersion (newer or equal)
         const currParts = currVersion.split('.').map(Number);
         const nextParts = nextVersion.split('.').map(Number);
 
@@ -3377,7 +3255,6 @@ describe('Integrity Suite', () => {
         const [currMajor, currMinor, currPatch] = pkg.version.split('.').map(Number);
         const [headMajor, headMinor, headPatch] = headVersion.split('.').map(Number);
 
-        // Extract current version section
         const versionSection = changelogContent.match(
           new RegExp(`## \\[${pkg.version}\\][\\s\\S]*?(?=## \\[|$)`, 'i'),
         );
@@ -3395,21 +3272,17 @@ describe('Integrity Suite', () => {
         ).toBe(true);
 
         if (currMajor > headMajor) {
-          // Major bump: any section OK, but should likely have Changed
           expect(
             hasAdded || hasChanged || hasFixed,
             `CHANGELOG major bump (${headVersion} -> ${pkg.version}) should have substantial content`,
           ).toBe(true);
         } else if (currMinor > headMinor) {
-          // Minor bump: should have Added
           expect(
             hasAdded || hasChanged,
             `CHANGELOG minor bump (${headVersion} -> ${pkg.version}) should include ### Added section`,
           ).toBe(true);
         }
-      } catch (e: unknown) {
-        // skip if git unavailable
-      }
+      } catch (e: unknown) {}
     });
 
     it('should not have future dates in requirements.md', () => {
@@ -3453,7 +3326,6 @@ describe('Integrity Suite', () => {
         }
       });
 
-      // Ensure we actually validated some requirements
       expect(validCount, 'No valid requirements found in requirements.md').toBeGreaterThan(0);
     });
 
@@ -3462,12 +3334,10 @@ describe('Integrity Suite', () => {
       if (!fs.existsSync(reqPath)) return;
       const reqContent = fs.readFileSync(reqPath, 'utf8');
 
-      // Only look at actual histogram section, not templates
       const historialStart = reqContent.indexOf('## Historial de requerimientos');
       if (historialStart === -1) return;
       const historialContent = reqContent.substring(historialStart);
 
-      // Match Fecha lines: they should all be in format YYYY-MM-DD or YYYY-MM-DD HH:MM (not yyyy-MM-dd)
       const fechaLines = [...historialContent.matchAll(/^\s*-\s+\*\*Fecha\*\*:\s*(.+)$/gm)];
       fechaLines.forEach((match) => {
         const valor = match[1].trim();
