@@ -3,7 +3,7 @@ import { it } from './shared.js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { execSync } from 'node:child_process';
-import { rootDir, pkg } from './shared.js';
+import { rootDir, pkg, codeFiles } from './shared.js';
 
 describe('Level 7: Dependency Hygiene @dependencies', () => {
   it('Should not have dependencies that belong in devDependencies', () => {
@@ -19,6 +19,18 @@ describe('Level 7: Dependency Hygiene @dependencies', () => {
     const devDeps = Object.keys(pkg.devDependencies || {});
     const duplicates = deps.filter((d) => devDeps.includes(d));
     expect(duplicates, `Duplicate packages: ${duplicates.join(', ')}`).toHaveLength(0);
+  });
+
+  it('Should not have unused dependencies in package.json', () => {
+    const usedPackages = new Set<string>();
+    codeFiles.forEach((file) => {
+      const content = fs.readFileSync(file, 'utf8');
+      const imports = [...content.matchAll(/from\s+['"]([^./][^'"]+)['"]/g)];
+      imports.forEach((m) => usedPackages.add(m[1].split('/')[0]));
+    });
+    Object.keys(pkg.dependencies ?? {}).forEach((dep) => {
+      expect(usedPackages.has(dep), `Unused dependency: ${dep}`).toBe(true);
+    });
   });
 
   it('Should have packageManager field pinned to exact version and match installed version', async () => {
