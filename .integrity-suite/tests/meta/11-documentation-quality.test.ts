@@ -96,18 +96,24 @@ describe('Level 11: Documentation Quality @documentation', () => {
       }
 
       if (originVersion) {
-        const current = currentVersion.split('.').map(Number);
-        const origin = originVersion.split('.').map(Number);
+        const semverGt = (a: string, b: string): boolean => {
+          const parse = (v: string) => v.split('.').map((p) => parseInt(p, 10));
+          const [aMaj, aMin, aPat] = parse(a);
+          const [bMaj, bMin, bPat] = parse(b);
+          if (aMaj !== bMaj) return aMaj > bMaj;
+          if (aMin !== bMin) return aMin > bMin;
+          if (aPat !== bPat) return aPat > bPat;
+          return !a.includes('-') && b.includes('-');
+        };
 
-        for (let i = 0; i < 3; i++) {
-          if (current[i] > origin[i]) break;
-          if (current[i] < origin[i]) {
-            expect(
-              false,
-              `Version regression detected: current ${currentVersion} is lower than origin ${originVersion}`,
-            ).toBe(true);
-            break;
-          }
+        const isLower =
+          !semverGt(currentVersion, originVersion) && currentVersion !== originVersion;
+
+        if (isLower) {
+          expect(
+            false,
+            `Version regression detected: current ${currentVersion} is lower than origin ${originVersion}`,
+          ).toBe(true);
         }
       }
     } catch (e: unknown) {}
@@ -290,22 +296,26 @@ describe('Level 11: Documentation Quality @documentation', () => {
     if (!fs.existsSync(changelogPath)) return;
     const changelogContent = fs.readFileSync(changelogPath, 'utf8');
 
-    const versionMatches = [...changelogContent.matchAll(/## \[([0-9]+\.[0-9]+\.[0-9]+)\]/g)];
+    const versionMatches = [
+      ...changelogContent.matchAll(/## \[(\d+\.\d+\.\d+(?:-[a-zA-Z0-9.]+)?)]/g),
+    ];
+
+    const semverGt = (a: string, b: string): boolean => {
+      const parse = (v: string) => v.split('.').map((p) => parseInt(p, 10));
+      const [aMaj, aMin, aPat] = parse(a);
+      const [bMaj, bMin, bPat] = parse(b);
+      if (aMaj !== bMaj) return aMaj > bMaj;
+      if (aMin !== bMin) return aMin > bMin;
+      if (aPat !== bPat) return aPat > bPat;
+      return !a.includes('-') && b.includes('-');
+    };
 
     versionMatches.forEach((match) => {
       const changelogVersion = match[1];
-      const changelogParts = changelogVersion.split('.').map(Number);
-      const pkgParts = pkg.version.split('.').map(Number);
-
-      for (let i = 0; i < 3; i++) {
-        if (changelogParts[i] > pkgParts[i]) {
-          throw new Error(
-            `CHANGELOG contains version ${changelogVersion} which is posterior to package.json version ${pkg.version}`,
-          );
-        }
-        if (changelogParts[i] < pkgParts[i]) {
-          break; // Earlier version is OK
-        }
+      if (semverGt(changelogVersion, pkg.version)) {
+        throw new Error(
+          `CHANGELOG contains version ${changelogVersion} which is posterior to package.json version ${pkg.version}`,
+        );
       }
     });
 
@@ -317,20 +327,26 @@ describe('Level 11: Documentation Quality @documentation', () => {
     if (!fs.existsSync(changelogPath)) return;
     const changelogContent = fs.readFileSync(changelogPath, 'utf8');
 
-    const versionMatches = [...changelogContent.matchAll(/## \[([0-9]+\.[0-9]+\.[0-9]+)\]/g)];
+    const versionMatches = [
+      ...changelogContent.matchAll(/## \[(\d+\.\d+\.\d+(?:-[a-zA-Z0-9.]+)?)]/g),
+    ];
     const versions = versionMatches.map((m) => m[1]);
 
-    for (let i = 0; i < versions.length - 1; i++) {
-      const currParts = versions[i].split('.').map(Number);
-      const nextParts = versions[i + 1].split('.').map(Number);
+    function semverGt(a: string, b: string): boolean {
+      const parse = (v: string) => v.split('.').map((p) => parseInt(p, 10));
+      const [aMaj, aMin, aPat] = parse(a);
+      const [bMaj, bMin, bPat] = parse(b);
+      if (aMaj !== bMaj) return aMaj > bMaj;
+      if (aMin !== bMin) return aMin > bMin;
+      if (aPat !== bPat) return aPat > bPat;
+      return !a.includes('-') && b.includes('-');
+    }
 
-      for (let j = 0; j < 3; j++) {
-        expect(
-          currParts[j],
-          `CHANGELOG versions not in descending order: ${versions[i]} should be > ${versions[i + 1]}`,
-        ).toBeGreaterThanOrEqual(nextParts[j]);
-        if (currParts[j] > nextParts[j]) break;
-      }
+    for (let i = 0; i < versions.length - 1; i++) {
+      expect(
+        semverGt(versions[i], versions[i + 1]),
+        `CHANGELOG not in descending order: ${versions[i]} vs ${versions[i + 1]}`,
+      ).toBe(true);
     }
   });
 
