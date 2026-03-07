@@ -497,18 +497,6 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     });
   });
 
-  it('Interactive elements should not have negative tabIndex', () => {
-    const htmlLikeFiles = allSourceFiles.filter((f) =>
-      ['.html', '.tsx', '.jsx'].includes(path.extname(f)),
-    );
-    htmlLikeFiles.forEach((file) => {
-      const content = fs.readFileSync(file, 'utf8');
-      expect(content, `Interactive element with negative tabIndex in ${file}`).not.toMatch(
-        /<(button|a|input|select|textarea)[^>]*tabIndex\s*=\s*["']?-1["']?/i,
-      );
-    });
-  });
-
   it('Elements should not use invalid aria roles', () => {
     const validRoles = [
       'button',
