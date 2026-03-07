@@ -27,7 +27,7 @@ try {
   try {
     console.log('Running meta-tests...');
     execSync(
-      `npx vitest run .integrity-suite/tests --reporter=json --outputFile="${resultsPath}"`,
+      `pnpm exec vitest run .integrity-suite/tests --reporter=json --outputFile="${resultsPath}"`,
       {
         cwd: rootDir,
         stdio: 'inherit',
@@ -40,8 +40,7 @@ try {
   }
 
   if (!fs.existsSync(resultsPath)) {
-    console.error('Error: Results file was not generated.');
-    process.exit(1);
+    throw new Error('Results file was not generated. Check if vitest ran correctly.');
   }
 
   const data = JSON.parse(fs.readFileSync(resultsPath, 'utf8'));
