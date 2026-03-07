@@ -1,5 +1,16 @@
 # Changelog
 
+All notable changes to this project will be documented in this file. This file is strictly maintained in **English** and must only contain **ASCII** characters.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.4.111] - 2026-03-07
+
+### Removed
+
+- Deleted 12-transitive-dependency-integrity.test.ts and all references. Version bump enforced by Integrity Suite.
+
 ## [1.4.110] - 2026-03-07
 
 ### Changed
