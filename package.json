@@ -1,13 +1,13 @@
 {
   "name": "integrity-suite",
-  "version": "1.4.114",
+  "version": "1.4.115",
   "type": "module",
   "description": "Strict project template for automated setup and code quality.",
   "main": "index.js",
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js || echo 'No entry point configured'",
-    "test:unit": "echo 'no unit tests'",
+    "test:unit": "sh -c 'if [ -d tests/unit ] && ls tests/unit/*.{test,spec}.{ts,tsx,js,jsx} >/dev/null 2>&1; then vitest run tests/unit --coverage; else echo \"no unit tests\"; fi'",
     "test:e2e": "echo 'no e2e tests'",
     "test:full": "eslint . --max-warnings 0 && markdownlint . && prettier --check . && tsc --noEmit && vitest run .integrity-suite/tests && pnpm test:unit && pnpm test:e2e",
     "test:develop": "eslint . --max-warnings 0 && markdownlint . && prettier --check . && tsc --noEmit && vitest run .integrity-suite/tests/meta && pnpm test:unit && pnpm test:e2e",

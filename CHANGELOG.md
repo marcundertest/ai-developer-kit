@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file. This file i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.115] - 2026-03-07
+
+### Changed
+
+- Updated `test:unit` script in `package.json` to include `--coverage` flag as required by meta-test level 6.
+
 ## [1.4.114] - 2026-03-07
 
 ### Changed
