@@ -59,7 +59,7 @@ describe('Level 9: Advanced Code Safety & Consistency @consistency', () => {
         expect(
           indentSpaces,
           `Line ${idx + 1} in ${file} exceeds 4 levels of nesting (${indentSpaces / 4} levels assuming 4-space indent)`,
-        ).toBeLessThanOrEqual(32);
+        ).toBeLessThanOrEqual(16);
       });
     });
   });
