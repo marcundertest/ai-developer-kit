@@ -63,6 +63,15 @@ export function it(title: string, arg2: any, arg3?: any) {
 
 export const isMonorepo = fs.existsSync(path.join(rootDir, 'pnpm-workspace.yaml'));
 
+type IntegrityCache = {
+  targetDirs: string[];
+  allSourceFiles: string[];
+};
+
+const cache = (globalThis as Record<string, unknown>)['__integritySuiteCache'] as
+  | IntegrityCache
+  | undefined;
+
 function getWorkspacePackages(): string[] {
   const workspacePath = path.join(rootDir, 'pnpm-workspace.yaml');
   if (!fs.existsSync(workspacePath)) return [];
@@ -100,7 +109,8 @@ function getWorkspacePackages(): string[] {
   }
 }
 
-export const targetDirs = isMonorepo ? getWorkspacePackages() : [rootDir];
+export const targetDirs: string[] =
+  cache?.targetDirs ?? (isMonorepo ? getWorkspacePackages() : [rootDir]);
 
 export function getMainBranch(): string {
   try {
@@ -155,7 +165,8 @@ export const getFiles = (dir: string, allFiles: string[] = [], depth = 0): strin
   return allFiles;
 };
 
-export const allSourceFiles = Array.from(new Set(targetDirs.flatMap((dir) => getFiles(dir))));
+export const allSourceFiles: string[] =
+  cache?.allSourceFiles ?? Array.from(new Set(targetDirs.flatMap((dir) => getFiles(dir))));
 export const srcDirs = targetDirs.map((d) => path.join(d, 'src') + path.sep);
 export const testsDirs = targetDirs.map((d) => path.join(d, 'tests') + path.sep);
 export const codeFiles = allSourceFiles.filter((f) => {
