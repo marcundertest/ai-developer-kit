@@ -58,7 +58,19 @@ export function getFiles(dir: string, allFiles: string[] = [], depth = 0): strin
     } else {
       const ext = path.extname(entry.name);
       if (
-        ['.ts', '.js', '.tsx', '.jsx', '.html', '.css', '.json'].includes(ext) ||
+        [
+          '.ts',
+          '.js',
+          '.tsx',
+          '.jsx',
+          '.html',
+          '.css',
+          '.json',
+          '.mts',
+          '.cts',
+          '.mjs',
+          '.cjs',
+        ].includes(ext) ||
         entry.name.startsWith('.env')
       ) {
         allFiles.push(name);
