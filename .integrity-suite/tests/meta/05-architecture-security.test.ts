@@ -141,12 +141,12 @@ describe('Level 5: Architecture & Security @security', () => {
 
     allSourceFiles.forEach((file) => {
       const base = path.basename(file);
+      const YAML_ALLOWLIST = new Set(['pnpm-lock.yaml', 'pnpm-workspace.yaml']);
       if (
         base === '.env' ||
         file.endsWith('.md') ||
         base === 'tsconfig.json' ||
-        base === 'pnpm-lock.yaml' ||
-        file.endsWith('.yaml')
+        YAML_ALLOWLIST.has(base)
       )
         return;
 
