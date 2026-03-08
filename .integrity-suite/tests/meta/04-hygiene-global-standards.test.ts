@@ -61,14 +61,16 @@ describe('Level 4: Hygiene & Global Standards @hygiene', () => {
     const tmpDir = path.join(rootDir, '.integrity-suite', 'tests', 'tmp-ext');
     if (fs.existsSync(tmpDir)) fs.rmSync(tmpDir, { recursive: true, force: true });
     fs.mkdirSync(tmpDir, { recursive: true });
-    const names = ['a.mts', 'b.cts', 'c.mjs', 'd.cjs', 'e.txt'];
-    names.forEach((n) => fs.writeFileSync(path.join(tmpDir, n), ''));
-    const scanned = getFiles(tmpDir);
-    expect(scanned).toEqual(
-      expect.arrayContaining(names.slice(0, 4).map((n) => path.join(tmpDir, n))),
-    );
-    // remove temporary files to avoid clutter
-    fs.rmSync(tmpDir, { recursive: true, force: true });
+    try {
+      const names = ['a.mts', 'b.cts', 'c.mjs', 'd.cjs', 'e.txt'];
+      names.forEach((n) => fs.writeFileSync(path.join(tmpDir, n), ''));
+      const scanned = getFiles(tmpDir);
+      expect(scanned).toEqual(
+        expect.arrayContaining(names.slice(0, 4).map((n) => path.join(tmpDir, n))),
+      );
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
   });
 
   it('Should enforce English-only comments (ASCII)', () => {
