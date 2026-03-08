@@ -22,6 +22,19 @@ function sanitizePaths(text: string): string {
     .replace(/\/home\/[^/]+\//g, '~/');
 }
 
+function escapeHtml(raw: string): string {
+  return raw
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function sanitize(text: string): string {
+  return escapeHtml(sanitizePaths(text ?? ''));
+}
+
 if (!fs.existsSync(reportsDir)) {
   fs.mkdirSync(reportsDir, { recursive: true });
 }
@@ -503,15 +516,12 @@ try {
                                     <li class="test-item" data-status="${test.status}" data-severity="${test.severity}">
                                         <div class="test-row">
                                             <div class="status-indicator status-${test.status}"></div>
-                                            <span class="test-title">${test.title}</span>
+                                            <span class="test-title">${sanitize(test.title)}</span>
                                         </div>
                                         ${
                                           test.status === 'failed'
                                             ? `
-                                            <div class="error-box">${test.failureMessages
-                                              .map((m: string) => sanitizePaths(m))
-                                              .join('\n')
-                                              .replace(/</g, '&lt;')}</div>
+                                            <div class="error-box">${sanitize(test.failureMessages?.join('\n') ?? '')}</div>
                                         `
                                             : ''
                                         }
